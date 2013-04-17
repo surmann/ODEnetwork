@@ -1,0 +1,8 @@
+#!/usr/bin/env Rscript --vanilla
+
+setwd("html-docs")
+try ({
+  library(knitr)
+  knit_rd("ODEnetwork")
+})
+setwd("..")

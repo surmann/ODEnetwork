@@ -1,0 +1,12 @@
+Package: ODEnetwork
+Title: Network of Differential Equations
+Description: Simulate a network of ordinary differential equations
+Version: 1.0
+Depends: methods
+Imports: BBmisc
+Suggests: 
+Author: Dirk Surmann <surmann@statistik.tu-dortmund.de>
+Maintainer: Dirk Surmann <surmann@statistik.tu-dortmund.de>
+License: BSD
+LazyData: yes
+ByteCompile: yes
