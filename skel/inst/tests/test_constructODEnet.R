@@ -9,8 +9,10 @@ test_that("ODEnetwork", {
   odenet <- ODEnetwork(masses, dampers, springs)
   
   expect_equal(odenet$masses, masses)
+  dampers2 <- dampers
   dampers2[2, 1] <- 3
   expect_equal(odenet$dampers, dampers2)
+  springs2 <- springs
   springs2[3, 2] <- 5
   expect_equal(odenet$springs, springs2)
   

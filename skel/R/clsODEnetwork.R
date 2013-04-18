@@ -34,8 +34,8 @@ ODEnetwork <- function(masses, dampers, springs) {
   dampers[lower.tri(dampers)] <- dampers[upper.tri(dampers)]
   springs[lower.tri(springs)] <- springs[upper.tri(springs)]
   # create class ODEnetwork
-  res <- list(masses = masses, dampers = dampers, springs = springs)
-  class(res) <- "ODEnetwork"
+  odenet <- list(masses = masses, dampers = dampers, springs = springs)
+  class(odenet) <- "ODEnetwork"
   # return
-  res
+  odenet
 }
