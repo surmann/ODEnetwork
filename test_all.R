@@ -5,7 +5,7 @@ library(BBmisc)
 library(deSolve)
 
 if (interactive()) {
-  load_all("skel")
+  load_all("skel", reset = TRUE)
 } else {
   library(ODEnetwork)  
 }
