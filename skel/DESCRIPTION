@@ -4,7 +4,7 @@ Description: Simulate a network of ordinary differential equations
 Version: 1.0.0
 Date: 01.01.01
 Depends: methods
-Imports: BBmisc
+Imports: BBmisc, deSolve
 Suggests: testthat
 Author: Dirk Surmann <surmann@statistik.tu-dortmund.de>
 Maintainer: Dirk Surmann <surmann@statistik.tu-dortmund.de>
