@@ -1,6 +1,6 @@
 context("creating parameter vector")
 
-test_that("setState", {
+test_that("createParamVec", {
   masses <- 1
   dampers <- as.matrix(0.1)
   springs <- as.matrix(4)
