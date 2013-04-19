@@ -30,8 +30,8 @@ setState <- function(odenet, state1, state2, euclidian) {
 setState.ODEnetwork <- function(odenet, state1, state2, euclidian=TRUE) {
   # test parameter
   checkArg(odenet, "ODEnetwork", na.ok=FALSE)
-  checkArg(state1, "numeric", len=length(odenet$masses), na.ok=FALSE)
-  checkArg(state2, "numeric", len=length(odenet$masses), na.ok=FALSE)
+  checkArg(state1, c("numeric", "vector"), len=length(odenet$masses), na.ok=FALSE)
+  checkArg(state2, c("numeric", "vector"), len=length(odenet$masses), na.ok=FALSE)
   checkArg(euclidian, "logical", len=1, na.ok=FALSE)
   
   # set state type

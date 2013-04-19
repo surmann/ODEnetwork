@@ -12,6 +12,7 @@ createOscillators <- function(odenet) {
   UseMethod("createOscillators")
 }
 createOscillators.ODEnetwork <- function(odenet) {
+  checkArg(odenet, "ODEnetwork", na.ok=FALSE)
   # Quelltext erstellen
   strFunktion <- "with(as.list(c(cState, cParameters)), {"
   # Zeitwert in Indexwert der AR-Prozzes setzen

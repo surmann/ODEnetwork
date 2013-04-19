@@ -23,9 +23,9 @@
 #' odenet <- ODEnetwork(mM, mD, mK)
 ODEnetwork <- function(masses, dampers, springs) {
   # test parameter
-  checkArg(masses, "vector", min.len=1L, na.ok=FALSE)
-  checkArg(dampers, "matrix", min.len=1L, na.ok=FALSE)
-  checkArg(springs, "matrix", min.len=1L, na.ok=FALSE)
+  checkArg(masses, c("numeric", "vector"), min.len=1L, na.ok=FALSE)
+  checkArg(dampers, c("numeric", "matrix"), min.len=1L, na.ok=FALSE)
+  checkArg(springs, c("numeric", "matrix"), min.len=1L, na.ok=FALSE)
   # test on equal dimenstions
   if (var(c(length(masses), dim(dampers), dim(springs))) != 0)
     stop("All parameter must be of the same length or size!")
