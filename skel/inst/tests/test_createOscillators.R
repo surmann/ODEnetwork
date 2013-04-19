@@ -5,7 +5,8 @@ test_that("createOscillators", {
   damper <- as.matrix(1)
   spring <- as.matrix(1)
   odenet <- ODEnetwork(mass, damper, spring)
-  odenet <- createOscillators(odenet)
+  
+  funOscillators <- createOscillators(odenet)
   funOsci <- function (cTime, cState, cParameters) {
     with(as.list(c(cState, cParameters)), {
       dx.1 <- v.1
@@ -13,5 +14,5 @@ test_that("createOscillators", {
       list(c(dx.1, dv.1))
     })
   }
-  expect_equal(odenet$funOscillators, funOsci)
+  expect_equal(funOscillators, funOsci)
 })
