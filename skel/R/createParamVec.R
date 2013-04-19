@@ -12,7 +12,7 @@ createParamVec <- function(odenet) {
   UseMethod("createParamVec")
 }
 createParamVec.ODEnetwork <- function(odenet) {
-  # test arguments
+  # check arguments
   checkArg(odenet, "ODEnetwork", na.ok=FALSE)
   
   # Parametervektor starten

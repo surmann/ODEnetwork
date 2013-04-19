@@ -13,7 +13,7 @@ calcResonances <- function(odenet) {
   UseMethod("calcResonances")
 }
 calcResonances.ODEnetwork <- function(odenet) {
-  # test parameter
+  # test arguments
   checkArg(odenet, "ODEnetwork", na.ok=FALSE)
   
   # Resonanzfrequenz
