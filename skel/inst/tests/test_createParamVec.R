@@ -1,4 +1,4 @@
-context("Test creating parameter vector")
+context("creating parameter vector")
 
 test_that("setState", {
   masses <- 1

@@ -1,4 +1,4 @@
-context("Test creating oscillators function")
+context("creating oscillators function")
 
 test_that("createOscillators", {
   mass <- 1

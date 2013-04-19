@@ -1,4 +1,4 @@
-context("Test calculation of resonance frequencies")
+context("calculation of resonance frequencies")
 
 test_that("calcResonances", {
   masses <- rep(5, 3)

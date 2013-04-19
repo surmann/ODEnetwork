@@ -1,4 +1,4 @@
-context("Test setting start state")
+context("setting start state")
 
 test_that("setState", {
   mass <- rep(1, 2)

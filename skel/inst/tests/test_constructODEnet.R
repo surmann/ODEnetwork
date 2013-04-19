@@ -1,4 +1,4 @@
-context("Test construction of ode network class")
+context("construction of ode network class")
 
 test_that("ODEnetwork", {
   masses <- c(1:3)
