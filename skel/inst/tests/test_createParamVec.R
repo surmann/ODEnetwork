@@ -7,7 +7,7 @@ test_that("createParamVec", {
   odenet <- ODEnetwork(masses, dampers, springs)
   cPar <- createParamVec(odenet)
   
-  expect_is(cPar, c("numeric", "vector"))
+  expect_is(cPar, "numeric")
   expect_equal(cPar, c(m.1=1, d.1=0.1, k.1=4))
   
   masses <- c(1, 2)
