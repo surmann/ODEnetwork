@@ -2,7 +2,7 @@ Package: ODEnetwork
 Title: Network of Differential Equations
 Description: Simulate a network of ordinary differential equations
 Version: 1.0.0
-Date: 01.01.01
+Date: 99.99.99
 Depends: methods
 Imports: BBmisc, deSolve
 Suggests: testthat
