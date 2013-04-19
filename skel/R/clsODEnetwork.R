@@ -11,7 +11,7 @@
 #' @param springs [\code{matrix}}] quadratic of size n\cr
 #'   The springs are defined in the network like matrix of dampers.
 #' @return a list of class [\code{\link{ODEnetwork}}].
-#' @export
+#' @exportClass
 #' @examples
 #' mM <- c(40, 10, 10)
 #' mD <- diag(c(1, 5, 0))

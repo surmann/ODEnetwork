@@ -1,10 +1,11 @@
 Package: ODEnetwork
 Title: Network of Differential Equations
 Description: Simulate a network of ordinary differential equations
-Version: 1.0
+Version: 1.0.0
+Date: 01.01.01
 Depends: methods
 Imports: BBmisc
-Suggests: 
+Suggests: testthat
 Author: Dirk Surmann <surmann@statistik.tu-dortmund.de>
 Maintainer: Dirk Surmann <surmann@statistik.tu-dortmund.de>
 License: BSD

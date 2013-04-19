@@ -1,0 +1,7 @@
+#!/usr/bin/env Rscript --vanilla
+
+gitdate = system("git log -1 --date=short --pretty=format:'%ad'", TRUE)
+
+desc = read.dcf("pkg/DESCRIPTION")
+desc[,"Date"] = sprintf("%s", gitdate)
+write.dcf(desc, file="pkg/DESCRIPTION")

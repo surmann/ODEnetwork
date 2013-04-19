@@ -2,3 +2,6 @@
 .Rhistory
 .RData
 pkg
+R.css
+highlight.css
+highlight.pack.js

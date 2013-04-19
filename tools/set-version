@@ -9,5 +9,5 @@ v = sapply(v, removeM)
 revision = max(as.integer(v))
 
 desc = read.dcf("pkg/DESCRIPTION")
-desc[,"Version"] = sprintf("%s-%i", desc[,"Version"], revision)
+desc[,"Version"] = sprintf("%s-%s", desc[,"Version"], revision)
 write.dcf(desc, file="pkg/DESCRIPTION")

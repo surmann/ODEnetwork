@@ -26,9 +26,11 @@ clean:
 roxygenize: clean
 	echo "Roxygenizing package ..."
 	${RSCRIPT} ./tools/roxygenize
-	echo "Setting version ..."
-	${RSCRIPT} ./tools/set-version
-  # FIXME
+	#echo "Setting version ..."
+	#${RSCRIPT} ./tools/set-version
+	echo "Setting date ..."
+	${RSCRIPT} ./tools/set-date
+	# FIXME
 	mv pkg/man/nin.Rd pkg/man/nin2.Rd
 	sed s/%nin%.*\)/x\ %nin%\ table/ < pkg/man/nin2.Rd > pkg/man/nin.Rd
 	rm pkg/man/nin2.Rd
