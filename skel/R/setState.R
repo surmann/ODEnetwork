@@ -4,7 +4,7 @@
 #' One can set the state in euclidian coordinates (position and
 #' velocitiy) or in polar coordinates (angle and magnitude).
 #'
-#' @param odenetwork [\code{ODEnetwork}]\cr
+#' @param odenet [\code{ODEnetwork}]\cr
 #'    List of class \code{\link{ODEnetwork}}.
 #' @param state1 [\code{numeric(n)}]\cr
 #'    Numeric vector of length n (same as in \code{\link{ODEnetwork}}) with position or angle.
@@ -20,10 +20,10 @@
 #' masses <- 4:6
 #' dampers <- diag(1:3)
 #' springs <- diag(7:9)
-#' odenetwork <- ODEnetwork(masses, dampers, springs)
+#' odenet <- ODEnetwork(masses, dampers, springs)
 #' position <- rep(10, 3)
 #' velocity <- rep(0, 3)
-#' odenetwork <- setState(odenetwork, position, velocity)
+#' odenet <- setState(odenet, position, velocity)
 setState <- function(odenet, state1, state2, euclidian) {
   UseMethod("setState")
 }

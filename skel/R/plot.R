@@ -3,7 +3,7 @@
 #' Plots the results of \code{simuNetwork} of the given \code{\link{ODEnetwork}}
 #' in different ways.
 #'
-#' @param odenetwork [\code{ODEnetwork}]\cr
+#' @param x [\code{ODEnetwork}]\cr
 #'    List of class \code{\link{ODEnetwork}}.
 #' @param select [\code{character}]\cr
 #'    The type of result, that is plotted.
@@ -12,15 +12,25 @@
 #'    If \code{state12}, state1 and state2 are plotted over time.
 #'    If \code{state1vs2}, state2 is plotted over state1.
 #'    Default is \code{state12}
+#' @param ... Additional arguments.
 #' @export
-#' @rd
 #' @examples
-#' plot(odenetwork)
-plot.ODEnetwork <- function(odenet, select = "state12") {
-  # check arguments
+#' masses <- c(1, 2)
+#' dampers <- diag(c(0.1, 0.5))
+#' dampers[1, 2] <- 0.05
+#' springs <- diag(c(4, 10))
+#' springs[1, 2] <- 6
+#' odenet <- ODEnetwork(masses, dampers, springs)
+#' odenet <- setState(odenet, c(1, 3), c(0, 0))
+#' odenet <- simuNetwork(odenet, seq(0, 10, by = 0.05))
+#' plot(odenet)
+#' plot(odenet, select = "state1")
+#' plot(odenet, select = "state2")
+#' plot(odenet, select = "state1vs2")
+plot.ODEnetwork <- function(x, ..., select = "state12") {
   checkArg(select, "character", len=1, na.ok=FALSE)
   # Read ode result
-  mRes <- odenet$simulation$results
+  mRes <- x$simulation$results
   switch(select
          , "state12" = {
            plot(mRes)

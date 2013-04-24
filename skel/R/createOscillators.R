@@ -1,13 +1,20 @@
 #' Creates Set of Differential Equations
 #' 
 #' Creates the set of differential equations of order one from the \code{\link{ODEnetwork}}.
-#' ACHTUNG: Soll nicht exportiert werden
 #'
-#' @param odenetwork [\code{ODEnetwork}]\cr
+#' @param odenet [\code{ODEnetwork}]\cr
 #'   List of class \code{\link{ODEnetwork}}.
 #' @return a function with a set of differential equations of order one to use in a numerical step
 #' @examples
-#' createOscillators(odenetwork)
+#' if (interactive()) {
+#'   masses <- c(1, 2)
+#'   dampers <- diag(c(0.1, 0.5))
+#'   dampers[1, 2] <- 0.05
+#'   springs <- diag(c(4, 10))
+#'   springs[1, 2] <- 6
+#'   odenet <- ODEnetwork(masses, dampers, springs)
+#'   createOscillators(odenet)
+#' }
 createOscillators <- function(odenet) {
   UseMethod("createOscillators")
 }

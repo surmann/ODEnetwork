@@ -14,6 +14,9 @@ odenet <- ODEnetwork(masses, dampers, springs)
 odenet <- setState(odenet, 3, 0)
 odenet <- simuNetwork(odenet, seq(0, 50, by = 0.1))
 plot(odenet)
+plot(odenet, "state1")
+plot(odenet, "state2")
+plot(odenet, "state1vs2")
 
 # Testweise
 createParamVec(odenet)
@@ -28,8 +31,13 @@ springs <- diag(c(4, 10))
 springs[1, 2] <- 6
 
 odenet <- ODEnetwork(masses, dampers, springs)
-odenet <- setState(odenet, c(3, 3), c(0, 0))
-odenet <- simuNetwork(odenet, seq(0, 50, by = 0.1))
+odenet <- setState(odenet, c(1, 3), c(0, 0))
+odenet <- simuNetwork(odenet, seq(0, 10, by = 0.05))
+
+plot(odenet)
+plot(odenet, "state1")
+plot(odenet, "state2")
+plot(odenet, "state1vs2")
 
 createParamVec(odenet)
 createState(odenet)

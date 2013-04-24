@@ -2,7 +2,7 @@
 #' 
 #' Simulates the given \code{\link{ODEnetwork}} over a time range.
 #'
-#' @param odenetwork [\code{ODEnetwork}]\cr
+#' @param odenet [\code{ODEnetwork}]\cr
 #'    List of class \code{\link{ODEnetwork}}.
 #' @param times [\code{numeric}]\cr
 #'    time sequence for which output is wanted,
@@ -10,9 +10,13 @@
 #' @return an extended list of class [\code{\link{ODEnetwork}}].
 #' @export
 #' @examples
+#' masses <- 4:6
+#' dampers <- diag(1:3)
+#' springs <- diag(7:9)
+#' odenet <- ODEnetwork(masses, dampers, springs)
 #' position <- rep(10, 3)
 #' velocity <- rep(0, 3)
-#' odenetwork <- setState(odenetwork, position, velocity)
+#' odenet <- setState(odenet, position, velocity)
 simuNetwork <- function(odenet, times) {
   UseMethod("simuNetwork")
 }

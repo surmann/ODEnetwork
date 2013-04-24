@@ -3,11 +3,19 @@
 #' Creates a vector with assigned parameters of the given \code{\link{ODEnetwork}}.
 #' ACHTUNG: Soll nicht exportiert werden
 #'
-#' @param odenetwork [\code{ODEnetwork}]\cr
+#' @param odenet [\code{ODEnetwork}]\cr
 #'   List of class \code{\link{ODEnetwork}}.
 #' @return a named vector with assigned values
 #' @examples
-#' createParamVec(odenetwork)
+#' if (interactive()) {
+#'   masses <- c(1, 2)
+#'   dampers <- diag(c(0.1, 0.5))
+#'   dampers[1, 2] <- 0.05
+#'   springs <- diag(c(4, 10))
+#'   springs[1, 2] <- 6
+#'   odenet <- ODEnetwork(masses, dampers, springs)
+#'   createParamVec(odenet)
+#' }
 createParamVec <- function(odenet) {
   UseMethod("createParamVec")
 }
