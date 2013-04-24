@@ -1,3 +1,5 @@
+# FIXME: parse ... arguments to plot
+# 
 #' Plots Results of ODEnetwork
 #' 
 #' Plots the results of \code{simuNetwork} of the given \code{\link{ODEnetwork}}
@@ -29,6 +31,7 @@
 #' plot(odenet, select = "state1vs2")
 plot.ODEnetwork <- function(x, ..., select = "state12") {
   checkArg(select, "character", len=1, na.ok=FALSE)
+#   args = commandArgs(...)
   # Read ode result
   mRes <- x$simulation$results
   switch(select
