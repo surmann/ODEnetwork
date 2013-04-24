@@ -19,17 +19,42 @@
 plot.ODEnetwork <- function(odenet, select = "state12") {
   # check arguments
   checkArg(select, "character", len=1, na.ok=FALSE)
-  
-  if (select == "state12") {
-    mRes <- odenet$simulation$results
-    plot(mRes)
-  } else if (select == "state1") {
-    
-  } else if (select == "state2") {
-    
-  } else if (select == "state1vs2") {
-    
-  } else {
-    stop("Wrong option of argument 'select'!")
-  } 
+  # Read ode result
+  mRes <- odenet$simulation$results
+  switch(select
+         , "state12" = {
+           plot(mRes)
+         }
+         , "state1" = {
+           classes <- class(mRes)
+           mRes <- mRes[, c(1, seq(2, ncol(mRes), by=2))]
+           attr(mRes, "class") <- classes
+           plot(mRes)
+         }
+         , "state2" = {
+           classes <- class(mRes)
+           mRes <- mRes[, c(1, seq(3, ncol(mRes), by=2))]
+           attr(mRes, "class") <- classes
+           plot(mRes)
+         }
+         , "state1vs2" = {
+           # calculate plot size
+           intVars <- ncol(mRes)-1
+           intRows <- intCols <- floor(sqrt(intVars/2))
+           intCols <- intCols + 1
+           if (intCols*intRows < intVars/2)
+             intRows <- intRows + 1
+
+           op <- par(mfrow = c(intRows, intCols))
+           for(intVar in seq(2, intVars, by=2)) {
+             # plot x vs. v
+             plot(  mRes[, intVar], mRes[, intVar+1], type = "l"
+                  , xlab = colnames(mRes)[intVar], ylab = colnames(mRes)[intVar+1])
+             # plot starting point
+             points(mRes[1, intVar], mRes[1, intVar+1], col = "red", pch = 13)
+           }
+           par(op)
+         }
+         , stop("Wrong option of argument 'select'!")
+  )
 }
