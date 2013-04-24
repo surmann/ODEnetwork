@@ -30,10 +30,6 @@ roxygenize: clean
 	#${RSCRIPT} ./tools/set-version
 	echo "Setting date ..."
 	${RSCRIPT} ./tools/set-date
-	# FIXME
-	mv pkg/man/nin.Rd pkg/man/nin2.Rd
-	sed s/%nin%.*\)/x\ %nin%\ table/ < pkg/man/nin2.Rd > pkg/man/nin.Rd
-	rm pkg/man/nin2.Rd
   
 package: roxygenize
 	echo "Building package file ..."
