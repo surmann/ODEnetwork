@@ -8,7 +8,7 @@
 #'    time sequence for which output is wanted,
 #'    the first value of \code{times} is the initial time..
 #' @return an extended list of class [\code{\link{ODEnetwork}}].
-#' @exportMethod
+#' @export
 #' @examples
 #' position <- rep(10, 3)
 #' velocity <- rep(0, 3)
@@ -16,9 +16,9 @@
 simuNetwork <- function(odenet, times) {
   UseMethod("simuNetwork")
 }
+
+#' @S3method simuNetwork ODEnetwork
 simuNetwork.ODEnetwork <- function(odenet, times) {
-  # check arguments
-  checkArg(odenet, "ODEnetwork", na.ok=FALSE)
   checkArg(times, "numeric", na.ok=FALSE)
   checkArg(times, "vector", na.ok=FALSE)
   

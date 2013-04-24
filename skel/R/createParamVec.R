@@ -11,10 +11,9 @@
 createParamVec <- function(odenet) {
   UseMethod("createParamVec")
 }
+
+#' @S3method createParamVec ODEnetwork
 createParamVec.ODEnetwork <- function(odenet) {
-  # check arguments
-  checkArg(odenet, "ODEnetwork", na.ok=FALSE)
-  
   # Parametervektor starten
   strParams <- "c("
   # Anregungen, Massen, Daempfer- und Federkonstanten auflisten	

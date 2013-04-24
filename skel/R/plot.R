@@ -12,15 +12,12 @@
 #'    If \code{state12}, state1 and state2 are plotted over time.
 #'    If \code{state1vs2}, state2 is plotted over state1.
 #'    Default is \code{state12}
-#' @exportMethod
+#' @export
+#' @rd
 #' @examples
 #' plot(odenetwork)
-plot <- function(odenet, select) {
-  UseMethod("plot")
-}
 plot.ODEnetwork <- function(odenet, select = "state12") {
   # check arguments
-  checkArg(odenet, "ODEnetwork", na.ok=FALSE)
   checkArg(select, "character", len=1, na.ok=FALSE)
   
   if (select == "state12") {

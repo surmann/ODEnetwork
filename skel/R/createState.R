@@ -1,7 +1,7 @@
+
 #' Creates starting State Vector
 #' 
 #' Creates a vector with the starting state of the given \code{\link{ODEnetwork}}.
-#' ACHTUNG: Soll nicht exportiert werden
 #'
 #' @param odenetwork [\code{ODEnetwork}]\cr
 #'   List of class \code{\link{ODEnetwork}}.
@@ -11,10 +11,9 @@
 createState <- function(odenet) {
   UseMethod("createState")
 }
+
+#' @S3method createState ODEnetwork
 createState.ODEnetwork <- function(odenet) {
-  # check arguments
-  checkArg(odenet, "ODEnetwork", na.ok=FALSE)
-  
   # convert from polar to euclidian
   if (odenet$statetype == "polar") {
     stop("Missing convert to euclidian coordinates")

@@ -15,7 +15,7 @@
 #'    otherwise angle and magnitude.
 #'    Default is \code{TRUE}.
 #' @return an extended list of class [\code{\link{ODEnetwork}}].
-#' @exportMethod
+#' @export
 #' @examples
 #' masses <- 4:6
 #' dampers <- diag(1:3)
@@ -27,9 +27,9 @@
 setState <- function(odenet, state1, state2, euclidian) {
   UseMethod("setState")
 }
+
+#' @S3method setState ODEnetwork
 setState.ODEnetwork <- function(odenet, state1, state2, euclidian=TRUE) {
-  # check arguments
-  checkArg(odenet, "ODEnetwork", na.ok=FALSE)
   checkArg(state1, "numeric", len=length(odenet$masses), na.ok=FALSE)
   checkArg(state1, "vector", len=length(odenet$masses), na.ok=FALSE)
   checkArg(state2, "numeric", len=length(odenet$masses), na.ok=FALSE)

@@ -3,7 +3,6 @@ Title: Network of Differential Equations
 Description: Simulate a network of ordinary differential equations
 Version: 1.0.0
 Date: 99.99.99
-Depends: methods
 Imports: BBmisc, deSolve
 Suggests: testthat
 Author: Dirk Surmann <surmann@statistik.tu-dortmund.de>

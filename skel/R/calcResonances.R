@@ -6,12 +6,14 @@
 #' @param odenetwork [\code{ODEnetwork}]\cr
 #'   List of class \code{\link{ODEnetwork}}.
 #' @return a data frame with a vector of resonance frequencies.
-#' @exportMethod
+#' @export
 #' @examples
 #' calcResonances(odenetwork)
 calcResonances <- function(odenet) {
   UseMethod("calcResonances")
 }
+
+#' @S3method calcResonances ODEnetwork
 calcResonances.ODEnetwork <- function(odenet) {
   # test arguments
   checkArg(odenet, "ODEnetwork", na.ok=FALSE)

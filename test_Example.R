@@ -1,3 +1,8 @@
+library(devtools)
+library(testthat)
+
+load_all("skel", reset = TRUE)
+
 #########################
 # 1d Beispiel
 #########################
@@ -10,6 +15,7 @@ odenet <- setState(odenet, 3, 0)
 odenet <- simuNetwork(odenet, seq(0, 50, by = 0.1))
 plot(odenet)
 
+# Testweise
 createParamVec(odenet)
 
 #########################
