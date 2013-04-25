@@ -1,5 +1,3 @@
-# FIXME: parse ... arguments to plot
-# 
 #' Plots Results of ODEnetwork
 #' 
 #' Plots the results of \code{simuNetwork} of the given \code{\link{ODEnetwork}}
@@ -31,24 +29,29 @@
 #' plot(odenet, select = "state1vs2")
 plot.ODEnetwork <- function(x, ..., select = "state12") {
   checkArg(select, "character", len=1, na.ok=FALSE)
-#   args = commandArgs(...)
   # Read ode result
   mRes <- x$simulation$results
   switch(select
          , "state12" = {
-           plot(mRes)
+           op <- par(no.readonly = TRUE)
+           plot(mRes, ...)
+           par(op)
          }
          , "state1" = {
            classes <- class(mRes)
            mRes <- mRes[, c(1, seq(2, ncol(mRes), by=2))]
            attr(mRes, "class") <- classes
-           plot(mRes)
+           op <- par(no.readonly = TRUE)
+           plot(mRes, ...)
+           par(op)
          }
          , "state2" = {
            classes <- class(mRes)
            mRes <- mRes[, c(1, seq(3, ncol(mRes), by=2))]
            attr(mRes, "class") <- classes
-           plot(mRes)
+           op <- par(no.readonly = TRUE)
+           plot(mRes, ...)
+           par(op)
          }
          , "state1vs2" = {
            # calculate plot size
@@ -62,7 +65,7 @@ plot.ODEnetwork <- function(x, ..., select = "state12") {
            for(intVar in seq(2, intVars, by=2)) {
              # plot x vs. v
              plot(  mRes[, intVar], mRes[, intVar+1], type = "l"
-                  , xlab = colnames(mRes)[intVar], ylab = colnames(mRes)[intVar+1])
+                  , xlab = colnames(mRes)[intVar], ylab = colnames(mRes)[intVar+1], ...)
              # plot starting point
              points(mRes[1, intVar], mRes[1, intVar+1], col = "red", pch = 13)
            }
