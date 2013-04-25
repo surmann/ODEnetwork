@@ -1,18 +1,29 @@
 library(devtools)
 library(testthat)
 
+library(BBmisc)
+library(deSolve)
+
 load_all("skel", reset = TRUE)
 
 #########################
 # 1d Beispiel
 #########################
 masses <- 1
-dampers <- as.matrix(0.1)
+dampers <- as.matrix(1.5)
 springs <- as.matrix(4)
 
 odenet <- ODEnetwork(masses, dampers, springs)
-odenet <- setState(odenet, 3, 0)
-odenet <- simuNetwork(odenet, seq(0, 50, by = 0.1))
+odenet <- setState(odenet, 0, 3)
+odenet <- setState(odenet, cbind(c(0, 1), c(0, 0)), 3)
+odenet$state
+odenet <- simuNetwork(odenet, seq(0, 10, by = 0.1))
+
+createOscillators(odenet)
+
+mRes <- getResult(odenet)
+plot(diff(mRes[, 3]), type = "l")
+
 plot(odenet)
 plot(odenet, select = "state1")
 plot(odenet, select = "state2")

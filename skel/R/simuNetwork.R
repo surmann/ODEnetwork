@@ -36,7 +36,7 @@ simuNetwork.ODEnetwork <- function(odenet, times) {
                  , method = "rk4"
   )
   # convert to polar coordinates
-  if (odenet$statetype == "polar") {
+  if (odenet$coordtype == "polar") {
     strNames <- c("a", "m")
     n <- length(odenet$masses)
     colnames(mResOde) <- c(colnames(mResOde)[1], paste(rep(strNames, n), rep(1:n, each=2), sep="."))

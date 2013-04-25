@@ -1,3 +1,7 @@
+# FIXME: die Einträge in der Matrix für state. sind entweder fix bis zum nächsten Eintrag oder Ende
+# der Matrix; Alternativ kann das auch als einmaliges setzen auf einen Wert interpretiert werden
+# (Ball fest halten und irgendwann loslassen vs. Ball treten und schauen was passiert)
+#
 #' Set starting State
 #' 
 #' Sets the starting State for the given \code{\link{ODEnetwork}}.
@@ -30,20 +34,47 @@ setState <- function(odenet, state1, state2, euclidian) {
 
 #' @S3method setState ODEnetwork
 setState.ODEnetwork <- function(odenet, state1, state2, euclidian=TRUE) {
-  checkArg(state1, "numeric", len=length(odenet$masses), na.ok=FALSE)
-  checkArg(state1, "vector", len=length(odenet$masses), na.ok=FALSE)
-  checkArg(state2, "numeric", len=length(odenet$masses), na.ok=FALSE)
-  checkArg(state2, "vector", len=length(odenet$masses), na.ok=FALSE)
+#   checkArg(state1, "numeric", len=length(odenet$masses), na.ok=FALSE)
+#   checkArg(state1, "vector", len=length(odenet$masses), na.ok=FALSE)
+#   checkArg(state2, "numeric", len=length(odenet$masses), na.ok=FALSE)
+#   checkArg(state2, "vector", len=length(odenet$masses), na.ok=FALSE)
+  checkArg(state1, "numeric")
+  checkArg(state2, "numeric")
   checkArg(euclidian, "logical", len=1, na.ok=FALSE)
   
   # set state type
-  if (euclidian)
-    odenet$statetype <- "euclidian"
-  else
-    odenet$statetype <- "polar"
+  if (euclidian) {
+    odenet$coordtype <- "euclidian"
+    labState <- c("x", "v")
+  } else {
+    odenet$coordtype <- "polar"
+    labState <- c("a", "m")
+  }
   
   # set state1 and state2
-  odenet$state <- cbind(state1, state2)
+#   odenet$state <- cbind(state1, state2)
+  # simple starting state, with one value per state1 / state2
+  if (is.vector(state1)) {
+    checkArg(state1, "vector", len=length(odenet$masses), na.ok=FALSE)
+    odenet$state$one <- state1
+  }
+  if (is.vector(state2)) {
+    checkArg(state2, "vector", len=length(odenet$masses), na.ok=FALSE)
+    odenet$state$two <- state2
+  }
+  # starting state over time in a matrix
+  if (is.matrix(state1)) {
+    if (ncol(state1) != length(odenet$masses)+1)
+      stop("state1 as a matrix have to consist of a time column and a column for every mass.")
+    colnames(state1) <- c("time", paste(labState[1], 1:length(odenet$masses), sep = "."))
+    odenet$state$one <- state1
+  }
+  if (is.matrix(state2)) {
+    if (ncol(state2) != length(odenet$masses)+1)
+      stop("state2 as a matrix have to consist of a time column and a column for every mass.")
+    colnames(state2) <- c("time", paste(labState[2], 1:length(odenet$masses), sep = "."))
+    odenet$state$two <- state2
+  }
   
   return(odenet)
 }

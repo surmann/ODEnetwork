@@ -23,11 +23,11 @@ createState <- function(odenet) {
 #' @S3method createState ODEnetwork
 createState.ODEnetwork <- function(odenet) {
   # convert from polar to euclidian
-  if (odenet$statetype == "polar") {
+  if (odenet$coordtype == "polar") {
     stop("Missing convert to euclidian coordinates")
   } else {
-    cPos <- odenet$state[, "state1"]
-    cVel <- odenet$state[, "state2"]
+    cPos <- odenet$state$one
+    cVel <- odenet$state$two
   }
   # create vector for state
   strState <- "c("
