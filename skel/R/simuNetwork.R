@@ -29,7 +29,7 @@ simuNetwork.ODEnetwork <- function(odenet, times) {
   checkArg(times, "vector", na.ok=FALSE)
   
   # DGLs nummerisch l?sen
-  mResOde <- ode(  createState(odenet)		# starting state
+  mResOde <- ode(  y = createState(odenet)		# starting state
                  , times = times     # time vector
                  , func = createOscillators(odenet) # function of all differential equations
                  , parms = createParamVec(odenet)  # create parmeter vector from masses, springs and dampers
@@ -43,7 +43,7 @@ simuNetwork.ODEnetwork <- function(odenet, times) {
   }
   
   # extend the ODEnetwork object
-  odenet$simulation$method <- "rk4"
+  odenet$simulation$method <- attr(mResOde, "type")
   odenet$simulation$results <- mResOde
-  return(odenet)
+  odenet
 }

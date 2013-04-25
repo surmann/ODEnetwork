@@ -23,9 +23,7 @@ createOscillators <- function(odenet) {
 createOscillators.ODEnetwork <- function(odenet) {
   # Quelltext erstellen
   strFunktion <- "with(as.list(c(cState, cParameters)), {"
-  # Zeitwert in Indexwert der AR-Prozzes setzen
-#   strTemp <- paste("AR.t <- AR.times(cTime, Hz_s)", sep = "")
-#   strFunktion <- c(strFunktion, strTemp)
+#   strTemp <- 
   # Einzelnen Knoten durchgehen und die Differentialgleichungen erstellen
   for (i in 1:length(odenet$masses)) {
     # keine äußere Anregung mehr vorhanden, alle F. sind 0
@@ -34,8 +32,8 @@ createOscillators.ODEnetwork <- function(odenet) {
     # dx <- v
     strTemp <- paste("dx.", i, " <- v.", i, sep = "")
     strFunktion <- c(strFunktion, strTemp)
+    # F1 ist die äußere Anregung, welche in ODEnetwork nicht genutzt wird.
     # dv1 <- (F1 - d*v1 - k*x1 - d12*(v1-v2) - k12*(x1-x2)) / m1
-    # nur falls am Knoten eine au?ere Anregung oder Anregungsaenderung vorliegt die Anregung einbauen
     strTemp <- paste("dv.", i, " <- (", sep = "")
     # Daempfer und Feder der aktuellen Masse
     strTemp <- paste(strTemp, " - d.", i, "*v.", i, " - k.", i, "*x.", i, sep = "")
@@ -78,9 +76,9 @@ createOscillators.ODEnetwork <- function(odenet) {
   formals(fktOszillator) <- alist(cTime=, cState=, cParameters=)
   # Funktionstext in Funktion verpacken
   expstrFunktion <- parse(text = strFunktion)
-  # Funktion in den K?rper der leeren Funktion packen
+  # Funktion in den Körper der leeren Funktion packen
   body(fktOszillator) <- as.call(c(as.name("{"), expstrFunktion))
   
   # Fertige Funktion des DGL-Systems ausgeben
-  return(fktOszillator)
+  fktOszillator
 }

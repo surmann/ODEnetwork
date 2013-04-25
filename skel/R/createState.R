@@ -1,11 +1,13 @@
-
 #' Creates starting State Vector
 #' 
 #' Creates a vector with the starting state of the given \code{\link{ODEnetwork}}.
 #'
 #' @param odenet [\code{ODEnetwork}]\cr
 #'   List of class \code{\link{ODEnetwork}}.
-#' @return a named vector with assigned starting state
+#' @param timepoint [\code{numeric(1)}]
+#'   Timepoint at which returning the state
+#' @return A named vector with assigned starting state for given timepoint.
+#'   Returns the init state only with default \code{timepoint=NULL}.
 #' @examples
 #' if (interactive()) {
 #'   masses <- c(1, 2)
@@ -15,26 +17,51 @@
 #'   springs[1, 2] <- 6
 #'   odenet <- ODEnetwork(masses, dampers, springs)
 #'   createState(odenet)
+#'   createState(odenet, 1)
 #' }
-createState <- function(odenet) {
+createState <- function(odenet, timepoint) {
   UseMethod("createState")
 }
 
 #' @S3method createState ODEnetwork
-createState.ODEnetwork <- function(odenet) {
+createState.ODEnetwork <- function(odenet, timepoint = NULL) {
+  if (!is.null(timepoint))
+    checkArg(timepoint, "numeric", len=1, na.ok=FALSE)
+  cState1 <- odenet$state$one
+  cState2 <- odenet$state$two
+  # timepoint only makes sense, if state1 and/or state2 is a matrix with timepoints
+  if (!is.null(timepoint) && !is.matrix(cState1) && !is.matrix(cState2))
+    stop("With given timepoint, at least one state must be a matrix with timepoints.")
+  if (!is.null(timepoint)) {
+    rowState1 <- rowState2 <- NA
+    # search row for state1 or set state1 to NA
+    if (is.matrix(cState1) && timepoint < max(cState1[, "time"]))
+      rowState1 <- max(which(cState1[, "time"] <= timepoint))
+    else
+      cState1 <- rep(NA, length(odenet$masses))
+    # search row for state2 or set state2 to NA
+    if (is.matrix(cState2) && timepoint < max(cState2[, "time"]))
+      rowState2 <- max(which(cState2[, "time"] <= timepoint))
+    else
+      cState2 <- rep(NA, length(odenet$masses))
+  } else
+    rowState1 <- rowState2 <- 1
+  # get values from matrix
+  if (is.matrix(cState1))
+    cState1 <- cState1[rowState1, -1]
+  if (is.matrix(cState2))
+    cState2 <- cState2[rowState2, -1]
   # convert from polar to euclidian
   if (odenet$coordtype == "polar") {
     stop("Missing convert to euclidian coordinates")
   } else {
-    cPos <- odenet$state$one
-    cVel <- odenet$state$two
   }
   # create vector for state
   strState <- "c("
   for (i in 1:length(odenet$masses)) {
     # Startauslenkung und -geschwindigkeit der Massen
-    strState <- paste(strState, "x.", i, " = ", cPos[i], ", ", sep = "")
-    strState <- paste(strState, "v.", i, " = ", cVel[i], sep = "")
+    strState <- paste(strState, "x.", i, " = ", cState1[i], ", ", sep = "")
+    strState <- paste(strState, "v.", i, " = ", cState2[i], sep = "")
     # Komma oder Abschluss
     if (i < length(odenet$masses)) {
       strState <- paste(strState, ",")
