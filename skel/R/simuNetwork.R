@@ -1,3 +1,5 @@
+# FIXME: Converting polar to cartesian coordinates missing
+
 #' Simulation of the Differential Equations
 #' 
 #' Simulates the given \code{\link{ODEnetwork}} over a time range.
@@ -30,7 +32,7 @@ simuNetwork.ODEnetwork <- function(odenet, times) {
   mResOde <- ode(  createState(odenet)		# starting state
                  , times = times     # time vector
                  , func = createOscillators(odenet) # function of all differential equations
-                 , parms = createParamVec(odenet)  # set parmeters
+                 , parms = createParamVec(odenet)  # create parmeter vector from masses, springs and dampers
                  , method = "rk4"
   )
   # convert to polar coordinates
