@@ -27,29 +27,37 @@ createParamVec.ODEnetwork <- function(odenet) {
   # Anregungen, Massen, Daempfer- und Federkonstanten auflisten	
   for (i in 1:length(odenet$masses)) {
     # Masse
-    strParams <- paste(strParams, "m.", i, " = ", odenet$masses[i], ", ", sep = "")
+    strParams <- paste(strParams, "m.", i, " = ", odenet$masses[i], sep = "")
     # Daempfer
-    strParams <- paste(strParams, "d.", i, " = ", diag(odenet$dampers)[i], ", ", sep = "")
+    if (diag(odenet$dampers)[i] != 0) {
+      strParams = paste(strParams, ", ", sep = "")
+      strParams <- paste(strParams, "d.", i, " = ", diag(odenet$dampers)[i], sep = "")
+    }
     # Feder
-    strParams <- paste(strParams, "k.", i, " = ", diag(odenet$springs)[i], sep = "")
+    if (diag(odenet$springs)[i] != 0) {
+      strParams = paste(strParams, ", ", sep = "")
+      strParams <- paste(strParams, "k.", i, " = ", diag(odenet$springs)[i], sep = "")
+    }
     # Daempfer und Feder zu den verknuepften Massen
     for (j in 1:length(odenet$masses)) {
       # Aktuellen Knoten ueberspringen
       if (j == i)
         next
       if (odenet$dampers[i, j] != 0) {
-        strParams <- paste(strParams, ", d.", i, ".", j, " = ", odenet$dampers[i, j], ", ", sep = "")
+        strParams = paste(strParams, ", ", sep = "")
+        strParams <- paste(strParams, "d.", i, ".", j, " = ", odenet$dampers[i, j], sep = "")
       }
       if (odenet$springs[i, j] != 0) {
+        strParams = paste(strParams, ", ", sep = "")
         strParams <- paste(strParams, "k.", i, ".", j, " = ", odenet$springs[i, j], sep = "")
       }
     }
     # Komma oder Abschluss
     if (i < length(odenet$masses))
-      strParams <- paste(strParams, ",")
+      strParams <- paste(strParams, ", ", sep = "")
     else
       strParams <- paste(strParams, ")", sep = "")
   }	
   # Rueckgabe
-  return(eval(parse(text = strParams)))
+  eval(parse(text = strParams))
 }
