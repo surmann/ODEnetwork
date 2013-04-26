@@ -21,7 +21,6 @@ createOscillators <- function(odenet) {
 
 #' @S3method createOscillators ODEnetwork
 createOscillators.ODEnetwork <- function(odenet) {
-  cStateNew <- createState(odenet)
   # Quelltext erstellen
   strFunktion <- "with(as.list(c(cState, cParameters)), {"
   # Testausgabe
@@ -32,8 +31,13 @@ createOscillators.ODEnetwork <- function(odenet) {
 #   strFunktion <- c(strFunktion, strTemp)
 #   strTemp <- "print(unname(c(x.1, cStateNew[1], v.1, cStateNew[2])))"
 #   strFunktion <- c(strFunktion, strTemp)
-  strTemp <- "if (cTime > 0) print(c(cTime, lagvalue(cTime)))"
+#   strTemp <- "if (cTime > 0) print(c(cTime, lagvalue(cTime)))"
+#   strFunktion <- c(strFunktion, strTemp)
+  strTemp <- bquote(currState <- createState(odenet, cTime))
   strFunktion <- c(strFunktion, strTemp)
+  strTemp <- bquote(print(unname(c(cTime, currState))))
+  strFunktion <- c(strFunktion, strTemp)
+  
   # Einzelnen Knoten durchgehen und die Differentialgleichungen erstellen
   for (i in 1:length(odenet$masses)) {
     # keine äußere Anregung mehr vorhanden, alle F. sind 0
