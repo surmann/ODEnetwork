@@ -49,14 +49,14 @@ createState.ODEnetwork <- function(odenet, timepoint = NULL) {
   # get values from matrix and replace entries with future NAs
   if (is.matrix(cState1)) {
     cState1 <- cState1[rowState1, -1]
-    if (rowState1 < nrow(odenet$state$one)) {
+    if (rowState1 < nrow(odenet$state$one) && timepoint != odenet$state$one[rowState1, "time"]) {
       cTemp <- odenet$state$one[rowState1+1, -1]
       cState1[is.na(cTemp)] <- cTemp[is.na(cTemp)]
     }
   }
   if (is.matrix(cState2)) {
     cState2 <- cState2[rowState2, -1]
-    if (rowState2 < nrow(odenet$state$two)) {
+    if (rowState2 < nrow(odenet$state$two) && timepoint != odenet$state$two[rowState2, "time"]) {
       cTemp <- odenet$state$two[rowState2+1, -1]
       cState2[is.na(cTemp)] <- cTemp[is.na(cTemp)]
     }

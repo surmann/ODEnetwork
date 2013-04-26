@@ -29,6 +29,7 @@ test_that("createState", {
   expect_error(createState(odenet), "Missing convert to euclidian coordinates")
   
   # Tests with timepoints
+  # one mass
   masses <- 1
   dampers <- as.matrix(0.1)
   springs <- as.matrix(4)
@@ -45,6 +46,7 @@ test_that("createState", {
   expect_equal(createState(odenet, 1.5), c(x.1=NA, v.1=2))
   expect_equal(createState(odenet, 2.5), c(x.1=NA, v.1=NA))
 
+  # two masses
   masses <- c(1, 2)
   dampers <- diag(c(0.1, 0.5))
   springs <- diag(c(4, 10))
@@ -65,7 +67,11 @@ test_that("createState", {
   
   odenet <- setState(odenet, c(5, 1), cbind(c(0, 1, 2, 3), c(1, 2, -1, NA), c(8, 9, 12, 14)))
   expect_equal(createState(odenet, 1.5), c(x.1=NA, v.1=2, x.2=NA, v.2=9))
+  expect_equal(createState(odenet, 2), c(x.1=NA, v.1=-1, x.2=NA, v.2=12))
   expect_equal(createState(odenet, 2.5), c(x.1=NA, v.1=NA, x.2=NA, v.2=12))
   expect_equal(createState(odenet, 3), c(x.1=NA, v.1=NA, x.2=NA, v.2=14))
   expect_equal(createState(odenet, 3.5), c(x.1=NA, v.1=NA, x.2=NA, v.2=NA))
+
+  odenet <- setState(odenet, cbind(c(0, 1, 2), c(1, 2, -1), c(8, NA, NA)), c(5, 1))
+  expect_equal(createState(odenet, 0), c(x.1=1, v.1=NA, x.2=8, v.2=NA))
 })
