@@ -25,7 +25,6 @@ createState <- function(odenet, timepoint) {
 
 #' @S3method createState ODEnetwork
 createState.ODEnetwork <- function(odenet, timepoint = NULL) {
-  print(paste("tp:", timepoint))
   if (!is.null(timepoint))
     checkArg(timepoint, "numeric", len=1, na.ok=FALSE)
   cState1 <- odenet$state$one
