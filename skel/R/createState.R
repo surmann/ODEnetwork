@@ -25,6 +25,7 @@ createState <- function(odenet, timepoint) {
 
 #' @S3method createState ODEnetwork
 createState.ODEnetwork <- function(odenet, timepoint = NULL) {
+  print(paste("tp:", timepoint))
   if (!is.null(timepoint))
     checkArg(timepoint, "numeric", len=1, na.ok=FALSE)
   cState1 <- odenet$state$one
@@ -49,14 +50,18 @@ createState.ODEnetwork <- function(odenet, timepoint = NULL) {
   # get values from matrix and replace entries with future NAs
   if (is.matrix(cState1)) {
     cState1 <- cState1[rowState1, -1]
-    if (rowState1 < nrow(odenet$state$one) && timepoint != odenet$state$one[rowState1, "time"]) {
+    if (rowState1 < nrow(odenet$state$one) 
+        && !is.null(timepoint)
+        && timepoint != odenet$state$one[rowState1, "time"]) {
       cTemp <- odenet$state$one[rowState1+1, -1]
       cState1[is.na(cTemp)] <- cTemp[is.na(cTemp)]
     }
   }
   if (is.matrix(cState2)) {
     cState2 <- cState2[rowState2, -1]
-    if (rowState2 < nrow(odenet$state$two) && timepoint != odenet$state$two[rowState2, "time"]) {
+    if (rowState2 < nrow(odenet$state$two)
+        && !is.null(timepoint)
+        && timepoint != odenet$state$two[rowState2, "time"]) {
       cTemp <- odenet$state$two[rowState2+1, -1]
       cState2[is.na(cTemp)] <- cTemp[is.na(cTemp)]
     }
