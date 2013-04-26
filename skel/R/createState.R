@@ -35,22 +35,32 @@ createState.ODEnetwork <- function(odenet, timepoint = NULL) {
   if (!is.null(timepoint)) {
     rowState1 <- rowState2 <- NA
     # search row for state1 or set state1 to NA
-    if (is.matrix(cState1) && timepoint < max(cState1[, "time"]))
+    if (is.matrix(cState1) && timepoint <= max(cState1[, "time"]))
       rowState1 <- max(which(cState1[, "time"] <= timepoint))
     else
       cState1 <- rep(NA, length(odenet$masses))
     # search row for state2 or set state2 to NA
-    if (is.matrix(cState2) && timepoint < max(cState2[, "time"]))
+    if (is.matrix(cState2) && timepoint <= max(cState2[, "time"]))
       rowState2 <- max(which(cState2[, "time"] <= timepoint))
     else
       cState2 <- rep(NA, length(odenet$masses))
   } else
-    rowState1 <- rowState2 <- 1
-  # get values from matrix
-  if (is.matrix(cState1))
+    rowState1 <- rowState2 <- 1   # starting state
+  # get values from matrix and replace entries with future NAs
+  if (is.matrix(cState1)) {
     cState1 <- cState1[rowState1, -1]
-  if (is.matrix(cState2))
+    if (rowState1 < nrow(odenet$state$one)) {
+      cTemp <- odenet$state$one[rowState1+1, -1]
+      cState1[is.na(cTemp)] <- cTemp[is.na(cTemp)]
+    }
+  }
+  if (is.matrix(cState2)) {
     cState2 <- cState2[rowState2, -1]
+    if (rowState2 < nrow(odenet$state$two)) {
+      cTemp <- odenet$state$two[rowState2+1, -1]
+      cState2[is.na(cTemp)] <- cTemp[is.na(cTemp)]
+    }
+  }
   # convert from polar to euclidian
   if (odenet$coordtype == "polar") {
     stop("Missing convert to euclidian coordinates")
