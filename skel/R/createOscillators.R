@@ -43,26 +43,26 @@ createOscillators.ODEnetwork <- function(odenet) {
     # keine äußere Anregung mehr vorhanden, alle F. sind 0
     # Erstelle das Differentialgleichungs-System der Feder-Masse-Schwingers
     # Es werden nur Differentialgleichungen der 1. Ordnung verwendet
-    # Test
+
     # dx <- v
-    strTemp <- paste("if (is.na(currState['x.", i, "'])) {", sep = "")
+    strTemp <- paste("if (is.na(currState['x.", i, "'])) {", sep = "") # if (is.na(x.1)) {
     strFunktion <- c(strFunktion, strTemp)
     strTemp <- paste("dx.", i, " <- v.", i, sep = "")
     strFunktion <- c(strFunktion, strTemp)
-    strFunktion <- c(strFunktion, "} else if (cTime > 0.1) {")
-    strTemp <- paste("dx.", i, " <- (currState['x.", i, "'] - lagvalue(cTime-timestep(), ", 2*i-1, ")) / (cTime - timestep())", sep ="")
-    strFunktion <- c(strFunktion, strTemp)
-    strFunktion <- c(strFunktion, "} else {")
+#     strFunktion <- c(strFunktion, "} else if (cTime > 0.1) {")
+#     strTemp <- paste("dx.", i, " <- (currState['x.", i, "'] - lagvalue(cTime-timestep(), ", 2*i-1, ")) / (cTime - timestep())", sep ="")
+#     strFunktion <- c(strFunktion, strTemp)
+    strFunktion <- c(strFunktion, "} else {")   # } else {
     strTemp <- paste("dx.", i, " <- 0", sep = "")
     strFunktion <- c(strFunktion, strTemp)
     strFunktion <- c(strFunktion, "}")
     # Testausgabe
-    strTemp <- bquote(print(unname(c(cTime, dx.1))))
-    strFunktion <- c(strFunktion, strTemp)
+#     strTemp <- bquote(print(unname(c(cTime, dx.1))))
+#     strFunktion <- c(strFunktion, strTemp)
+    
     # dv1 <- (F1 - d*v1 - k*x1 - d12*(v1-v2) - k12*(x1-x2)) / m1
-    strTemp <- paste("if (is.na(currState['v.", i, "'])) {", sep = "")
+    strTemp <- paste("if (is.na(currState['v.", i, "'])) {", sep = "")  # if (is.na(v.1)) {
     strFunktion <- c(strFunktion, strTemp)
-    #     if (is.na(v.1)) {
     strTemp <- paste("dv.", i, " <- (", sep = "")
     # Dämpfer der aktuellen Masse hinzufügen
     if (odenet$dampers[i, i] != 0)
@@ -86,12 +86,10 @@ createOscillators.ODEnetwork <- function(odenet) {
     # Abschluss: Klammer schließen und durch Masse teilen
     strTemp <- paste(strTemp, ")/m.", i, sep = "")
     strFunktion <- c(strFunktion, strTemp)
-    strFunktion <- c(strFunktion, "} else {")
-    #     } else {
+      strFunktion <- c(strFunktion, "} else {")   # } else {
     strTemp <- paste("dv.", i, " <- 0", sep = "")
     strFunktion <- c(strFunktion, strTemp)
     strFunktion <- c(strFunktion, "}")
-    #     }
   }
   
   # Rueckgabeliste der Werte des Zustandsraumes

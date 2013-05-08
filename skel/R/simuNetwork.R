@@ -29,11 +29,11 @@ simuNetwork.ODEnetwork <- function(odenet, times) {
   checkArg(times, "vector", na.ok=FALSE)
   
   # DGLs nummerisch l?sen
-  mResOde <- dede(  y = createState(odenet)		# starting state
-                  , times = times     # time vector
-                  , func = createOscillators(odenet) # function of all differential equations
-                  , parms = createParamVec(odenet)  # create parmeter vector from masses, springs and dampers
-#                  , method = "rk4"
+  mResOde <- ode(  y = createState(odenet)		# starting state
+                 , times = times     # time vector
+                 , func = createOscillators(odenet) # function of all differential equations
+                 , parms = createParamVec(odenet)  # create parmeter vector from masses, springs and dampers
+#                 , method = "rk4"
   )
   # convert to polar coordinates
   if (odenet$coordtype == "polar") {

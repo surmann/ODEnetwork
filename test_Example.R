@@ -15,7 +15,7 @@ springs <- as.matrix(4)
 
 odenet <- ODEnetwork(masses, dampers, springs)
 odenet <- setState(odenet, 0, 3)
-odenet <- setState(odenet, cbind(time=c(0, 1, 2), x=c(0, 1, 0)), 3)
+odenet <- setState(odenet, cbind(time=c(0, 0.5, 1), x=c(0, 1, 0)), 3)
 odenet$state
 createState(odenet, 0.5)
 odenet <- simuNetwork(odenet, seq(0, 10, by = 0.1))
@@ -52,9 +52,10 @@ plot(odenet, select = "state1")
 plot(odenet, select = "state2")
 plot(odenet, select = "state1vs2")
 
+odenet$state
 createOscillators(odenet)
 createParamVec(odenet)
-createState(odenet, 0.5)
+createState(odenet, -1)
 
 mRes <- getResult(odenet)
 tail(mRes)

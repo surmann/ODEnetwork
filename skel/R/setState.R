@@ -14,9 +14,13 @@
 #'    Numeric vector of length n (same as in \code{\link{ODEnetwork}}) with position or angle.
 #' @param state2 [\code{numeric(n)}]\cr
 #'    Numeric vector of length n (same as in \code{\link{ODEnetwork}}) with velocity or magnitude.
+#' @param statetype [\code{character}]\cr
+#'    String to describe the state type.
+#'    Choices are \code{"event"}, \code{"constant"} or \code{"linear"}.\cr
+#'    Default is \code{"event"}.
 #' @param euclidian [\code{boolean(1)}]\cr
 #'    If \code{TRUE}, \code{state1} and \code{state2} are position and velocity,
-#'    otherwise angle and magnitude.
+#'    otherwise angle and magnitude.\cr
 #'    Default is \code{TRUE}.
 #' @return an extended list of class [\code{\link{ODEnetwork}}].
 #' @export
@@ -33,7 +37,7 @@ setState <- function(odenet, state1, state2, euclidian) {
 }
 
 #' @S3method setState ODEnetwork
-setState.ODEnetwork <- function(odenet, state1, state2, euclidian=TRUE) {
+setState.ODEnetwork <- function(odenet, state1, state2, statetype = "event", euclidian=TRUE) {
 #   checkArg(state1, "numeric", len=length(odenet$masses), na.ok=FALSE)
 #   checkArg(state1, "vector", len=length(odenet$masses), na.ok=FALSE)
 #   checkArg(state2, "numeric", len=length(odenet$masses), na.ok=FALSE)
@@ -63,18 +67,26 @@ setState.ODEnetwork <- function(odenet, state1, state2, euclidian=TRUE) {
     odenet$state$two <- state2
   }
   # starting state over time in a matrix
+  
   if (is.matrix(state1)) {
     if (ncol(state1) != length(odenet$masses)+1)
       stop("state1 as a matrix have to consist of a time column and a column for every mass.")
     colnames(state1) <- c("time", paste(labState[1], 1:length(odenet$masses), sep = "."))
-    odenet$state$one <- state1
+    odenet$state$one <- state1[, 1]
   }
   if (is.matrix(state2)) {
     if (ncol(state2) != length(odenet$masses)+1)
       stop("state2 as a matrix have to consist of a time column and a column for every mass.")
     colnames(state2) <- c("time", paste(labState[2], 1:length(odenet$masses), sep = "."))
-    odenet$state$two <- state2
+    odenet$state$two <- state2[, 1]
   }
+  
+  data.frame(a = character(0), b = double(0))
+  eventdat <- data.frame(var = c(rep("v1", 10), rep("v2", 10)), 
+                         time = c(1:10, 1:10),
+                         value = runif(20),
+                         method = rep("add", 20))
+  
   
   return(odenet)
 }
