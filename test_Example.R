@@ -1,13 +1,16 @@
 library(devtools)
 library(testthat)
 
+library(BBmisc)
+library(deSolve)
+
 load_all("skel", reset = TRUE)
 
 #########################
 # 1d Beispiel
 #########################
 masses <- 1
-dampers <- as.matrix(0.1)
+dampers <- as.matrix(1.5)
 springs <- as.matrix(4)
 
 odenet <- ODEnetwork(masses, dampers, springs)
@@ -25,9 +28,9 @@ createParamVec(odenet)
 # 2d Beispiel
 #########################
 masses <- c(1, 2)
-dampers <- diag(c(0.1, 0.5))
-dampers[1, 2] <- 0.05
-springs <- diag(c(4, 10))
+dampers <- diag(c(1.1, 1.5))
+dampers[1, 2] <- 0.5
+springs <- diag(c(4, 0))
 springs[1, 2] <- 6
 
 odenet <- ODEnetwork(masses, dampers, springs)
