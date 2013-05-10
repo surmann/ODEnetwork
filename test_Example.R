@@ -15,13 +15,25 @@ springs <- as.matrix(4)
 
 odenet <- ODEnetwork(masses, dampers, springs)
 odenet <- setState(odenet, 3, 0)
-odenet <- simuNetwork(odenet, seq(0, 50, by = 0.1))
+odenet <- simuNetwork(odenet, seq(0, 10, by = 0.1))
 plot(odenet)
+
+eventdat <- data.frame(  var = c("x.1", "x.1")
+                         , time = c(1, 2)
+                         , value = c(3, 3)
+)
+odenet <- setState(odenet, 0, 0)
+odenet <- setEvents(odenet, eventdat, type = "constant")
+odenet <- simuNetwork(odenet, seq(0, 10, by = 0.1))
+plot(odenet)
+
 plot(odenet, select = "state1")
 plot(odenet, select = "state2")
 plot(odenet, select = "state1vs2")
 
 # Testweise
+createState(odenet)
+createOscillators(odenet)
 createParamVec(odenet)
 
 #########################
