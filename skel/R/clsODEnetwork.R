@@ -30,8 +30,10 @@ ODEnetwork <- function(masses, dampers, springs) {
   checkArg(springs, "matrix", min.len=1L, na.ok=FALSE)
   # test on equal dimenstions
   if (var(c(length(masses), dim(dampers), dim(springs))) != 0)
-    stop("All parameter must be of the same length or size!")
-  
+    stop("All parameter have be of the same length or size!")
+  # mass has to be positive
+  if (sum(masses <= 0) > 0)
+    stop("All masses have to be positive!")
   # copy upper triangonal to lower triangonal => symmetric matrix
   dampers[lower.tri(dampers)] <- dampers[upper.tri(dampers)]
   springs[lower.tri(springs)] <- springs[upper.tri(springs)]
