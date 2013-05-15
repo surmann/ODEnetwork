@@ -8,7 +8,8 @@
 #'    List of class \code{\link{ODEnetwork}}.
 #' @param times [\code{numeric}]\cr
 #'    time sequence for which output is wanted,
-#'    the first value of \code{times} is the initial time..
+#'    the first value of \code{times} is the initial time.
+#' @param ... Additional arguments.
 #' @return an extended list of class [\code{\link{ODEnetwork}}].
 #' @export
 #' @examples
