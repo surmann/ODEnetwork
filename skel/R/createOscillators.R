@@ -21,11 +21,14 @@ createOscillators <- function(odenet) {
 
 #' @S3method createOscillators ODEnetwork
 createOscillators.ODEnetwork <- function(odenet) {
+  # Funktion ZeroDeriv falls vorhanden auslesen ansonsten immer NA zurückgeben
+  if (is.null(odenet$events$zeroderiv)) {
+    fktZeroDeriv <- function(cState) NA
+  } else {
+    fktZeroDeriv <- odenet$events$zeroderiv
+  }
   # Quelltext erstellen
   strFunktion <- "with(as.list(c(cState, cParameters)), {"
-  # Zeitwert in Indexwert der AR-Prozzes setzen
-#   strTemp <- paste("AR.t <- AR.times(cTime, Hz_s)", sep = "")
-#   strFunktion <- c(strFunktion, strTemp)
   # Einzelnen Knoten durchgehen und die Differentialgleichungen erstellen
   for (i in 1:length(odenet$masses)) {
     # keine äußere Anregung mehr vorhanden, alle F. sind 0
@@ -33,9 +36,17 @@ createOscillators.ODEnetwork <- function(odenet) {
     # Es werden nur Differentialgleichungen der 1. Ordnung verwendet
     # dx <- v
     strTemp <- paste("dx.", i, " <- v.", i, sep = "")
-    strFunktion <- c(strFunktion, strTemp)
+    if (is.na(fktZeroDeriv(paste("x.", i, sep = "")))) {
+      strFunktion <- c(strFunktion, strTemp)
+    } else {
+      strFunktion <- c(strFunktion, paste("if (odenet$events$zeroderiv(\"x.", i, "\", cTime)) {", sep = "")) # if (zeroderiv(x.1)) {
+      strFunktion <- c(strFunktion, paste("dx.", i, " <- 0", sep = ""))
+      strFunktion <- c(strFunktion, "} else {")   # } else {
+      strFunktion <- c(strFunktion, strTemp)
+      strFunktion <- c(strFunktion, "}")
+    }
     # dv1 <- (F1 - d*v1 - k*x1 - d12*(v1-v2) - k12*(x1-x2)) / m1
-    # nur falls am Knoten eine au?ere Anregung oder Anregungsaenderung vorliegt die Anregung einbauen
+    # nur falls am Knoten eine aussere Anregung oder Anregungsaenderung vorliegt die Anregung einbauen
     strTemp <- paste("dv.", i, " <- (", sep = "")
     # Daempfer und Feder der aktuellen Masse
     strTemp <- paste(strTemp, " - d.", i, "*v.", i, " - k.", i, "*x.", i, sep = "")
@@ -54,7 +65,15 @@ createOscillators.ODEnetwork <- function(odenet) {
     }
     # Abschluss: Klammer schließen und durch Masse teilen
     strTemp <- paste(strTemp, ")/m.", i, sep = "")
-    strFunktion <- c(strFunktion, strTemp)
+    if (is.na(fktZeroDeriv(paste("v.", i, sep = "")))) {
+      strFunktion <- c(strFunktion, strTemp)
+    } else {
+      strFunktion <- c(strFunktion, paste("if (odenet$events$zeroderiv(\"v.", i, "\", cTime)) {", sep = "")) # if (zeroderiv(v.1)) {
+      strFunktion <- c(strFunktion, paste("dv.", i, " <- 0", sep = ""))
+      strFunktion <- c(strFunktion, "} else {")   # } else {
+      strFunktion <- c(strFunktion, strTemp)
+      strFunktion <- c(strFunktion, "}")
+    }
   }
   
   # Rueckgabeliste der Werte des Zustandsraumes
