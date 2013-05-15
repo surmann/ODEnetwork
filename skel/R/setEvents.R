@@ -47,7 +47,7 @@ setEvents.ODEnetwork <- function(odenet, events, type="dirac") {
   if (ncol(events) < 3 || ncol(events) > 4)
     stop ("The events data.frame must have 3 or 4 columns.")
   
-  if (ncol(events) == 3)
+  if (ncol(events) == 3 && type != "linear")
     events <- cbind(events, method = rep("rep", nrow(events)))
   # set event type
   odenet$events$type <- type
@@ -76,6 +76,16 @@ setEvents.ODEnetwork <- function(odenet, events, type="dirac") {
     odenet$events$zeroderiv <- fktDerivZero
   } else {
     odenet$events$zeroderiv <- NULL
+  }
+  
+  if (type == "linear") {
+    # add forcings function
+    strFun <- ""
+    for (strVar in levels(events$var)) {
+      strFun <- paste(strFun, "if (cState == \"", strVar, "\") {", sep = "")
+      fTemp <- approxfun(subset(events, var == strVar)[, c("time", "value")])
+      
+    }
   }
   
   return(odenet)

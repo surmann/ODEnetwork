@@ -1,3 +1,4 @@
+library(deSolve)
 ## =============================================================================
 ## FORCING FUNCTION: The sediment oxygen consumption example - R-code:
 ## =============================================================================
@@ -13,13 +14,11 @@ Flux <- matrix(ncol=2,byrow=TRUE,data=c(
 
 parms <- c(k=0.01)
 
-times <- 1:500
-
 ## the model
 sediment <- function( t, cState, cParameters) {
   with(as.list(c(cState, cParameters)), {
     if (!is.na(Depo(t))) {
-      ddepo <- 0
+      ddepo <- -0.01
       dO2 <- Depo(t) - k * O2
     } else {
       ddepo <- 0.01
@@ -32,7 +31,8 @@ sediment <- function( t, cState, cParameters) {
 # the forcing functions; rule = 2 avoids NaNs in interpolation
 Depo <- approxfun(x = Flux[,1], y = Flux[,2], method = "linear", rule = 1)
 
-Out <- ode(y = c(O2 = 63, depo = 0), times = times, func = sediment, parms = parms)
+Out <- ode(y = c(O2 = 63, depo = 0), times = 0:500, func = sediment, parms = parms
+           , events = list(data=data.frame(var="depo", time=400, value=0, method="rep")))
 plot(Out)
 
 ## same forcing functions, now constant interpolation
