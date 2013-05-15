@@ -17,6 +17,7 @@
 #'    to this value.\cr
 #'    Default is \code{dirac}.
 #' @return an extended list of class [\code{\link{ODEnetwork}}].
+#' @export
 #' @examples
 #' masses <- 1
 #' dampers <- as.matrix(1.5)
