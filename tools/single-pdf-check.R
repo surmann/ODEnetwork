@@ -1,4 +1,7 @@
-library(ODEnetwork)
+library(devtools)
+library(BBmisc)
+
+load_all("skel", reset = TRUE)
 
 dir = file.path("pkg", "man")
 fs = list.files(dir, pattern=".Rd", full.names=TRUE)
