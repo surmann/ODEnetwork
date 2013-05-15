@@ -6,8 +6,8 @@ test_that("plot", {
   springs <- as.matrix(4)
   
   odenet <- ODEnetwork(masses, dampers, springs)
-  expect_error(odenet)
+  expect_error(plot(odenet))
   
   odenet <- setState(odenet, 0, -3)
-  expect_error(odenet)
+  expect_error(plot(odenet))
 })
