@@ -6,7 +6,7 @@
 #'    List of class \code{\link{ODEnetwork}}.
 #' @param events [\code{data.frame}]\cr
 #'    Data frame with a time base and named column per variable.
-#'    See \code{\link{deSolve::events}} for detailed definition of \code{events}.
+#'    See \code{\link{events}} for detailed definition of \code{events}.
 #' @param type [\code{character}]\cr
 #'    The type of the events to use.
 #'    Possible values are \code{dirac}, \code{constant} or \code{linear}.\cr
