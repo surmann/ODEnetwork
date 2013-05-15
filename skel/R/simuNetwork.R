@@ -19,12 +19,12 @@
 #' position <- rep(10, 3)
 #' velocity <- rep(0, 3)
 #' odenet <- setState(odenet, position, velocity)
-simuNetwork <- function(odenet, times) {
+simuNetwork <- function(odenet, times, ...) {
   UseMethod("simuNetwork")
 }
 
 #' @S3method simuNetwork ODEnetwork
-simuNetwork.ODEnetwork <- function(odenet, times) {
+simuNetwork.ODEnetwork <- function(odenet, times, ...) {
   checkArg(times, "numeric", na.ok=FALSE)
   checkArg(times, "vector", na.ok=FALSE)
   
@@ -42,6 +42,7 @@ simuNetwork.ODEnetwork <- function(odenet, times) {
                  , parms = createParamVec(odenet)  # create parmeter vector from masses, springs and dampers
                  , events = eventdat
 #                  , method = "rk4"
+                 , ...
   )
   # convert to polar coordinates
   if (odenet$statetype == "polar") {
