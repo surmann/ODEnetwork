@@ -29,6 +29,9 @@
 #' plot(odenet, select = "state1vs2")
 plot.ODEnetwork <- function(x, ..., select = "state12") {
   checkArg(select, "character", len=1, na.ok=FALSE)
+  # Check ode result
+  if (is.null(x$simulation$results))
+    stop("Simulation results missing!")
   # Read ode result
   mRes <- x$simulation$results
   switch(select
