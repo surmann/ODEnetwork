@@ -16,7 +16,7 @@ getResult <- function(odenet) {
   UseMethod("getResult")
 }
 
-#' @S3method setState ODEnetwork
+#' @S3method getResult ODEnetwork
 getResult.ODEnetwork <- function(odenet) {
   odenet$simulation$results
 }
