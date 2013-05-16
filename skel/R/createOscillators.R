@@ -57,7 +57,6 @@ createOscillators.ODEnetwork <- function(odenet) {
       strFun <- c(strFun, strTemp)
       strFun <- c(strFun, "}")
     }
-strFun <- c(strFun, "print(c(unname(cTime), unname(x.1)))")
     # dv1 <- (F1 - d*v1 - k*x1 - d12*(v1-v2) - k12*(x1-x2)) / m1
     # nur falls am Knoten eine aussere Anregung oder Anregungsaenderung vorliegt die Anregung einbauen
     strTemp <- paste("dv.", i, " <- (", sep = "")
