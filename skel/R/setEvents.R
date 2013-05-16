@@ -41,13 +41,14 @@ setEvents.ODEnetwork <- function(odenet, events, type="dirac") {
   checkArg(type, "character", len=1, na.ok=FALSE)
   checkArg(type, "character", choices=c("dirac", "constant", "linear"))
   
-  if (type == "linear")
-    stop ("Not implemented yet.")
+  # clear events
+  odenet$events <- NULL
+  
   # test data frame
   if (ncol(events) < 3 || ncol(events) > 4)
     stop ("The events data.frame must have 3 or 4 columns.")
   
-  if (ncol(events) == 3 && type != "linear")
+  if (ncol(events) == 3)
     events <- cbind(events, method = rep("rep", nrow(events)))
   # set event type
   odenet$events$type <- type
@@ -75,17 +76,37 @@ setEvents.ODEnetwork <- function(odenet, events, type="dirac") {
     # save in odenet
     odenet$events$zeroderiv <- fktDerivZero
   } else {
+    # true for dirac and linear
     odenet$events$zeroderiv <- NULL
   }
   
   if (type == "linear") {
-    # add forcings function
-    strFun <- ""
+    # create empty function
+    fktLinInter <- function() {}
+    # initialise this part to make it accessable for odenet$events$linear[[strVar]]
+    odenet$events$linear$complete <- fktLinInter
+    # add linear interpolated function (forcings)
+    strFun <- "switch(cState"
     for (strVar in levels(events$var)) {
-      strFun <- paste(strFun, "if (cState == \"", strVar, "\") {", sep = "")
-      fTemp <- approxfun(subset(events, var == strVar)[, c("time", "value")])
-      
+      # no interpolation with one point
+      if (table(events$var)[strVar] == 1)
+        next
+      # create function
+      odenet$events$linear[[strVar]] <- approxfun(subset(events, var == strVar)[, c("time", "value")])
+      # add link to switch statement
+      strFun <- paste(strFun, ", ", strVar, " = odenet$events$linear$", strVar, "(cTime)", sep = "")
     }
+    strFun <- paste(strFun, ")", sep = "")
+    # add parameters
+    formals(fktLinInter) <- alist(cState=, cTime=0)
+    # parse function text to build a function
+    expstrFunktion <- parse(text = strFun)
+    # add function text to body
+    body(fktLinInter) <- as.call(c(as.name("{"), expstrFunktion))
+    # save in odenet
+    odenet$events$linear$complete <- fktLinInter
+  } else {
+    odenet$events$linear <- NULL
   }
   
   return(odenet)

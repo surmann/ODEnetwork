@@ -28,7 +28,17 @@ createOscillators.ODEnetwork <- function(odenet) {
     fktZeroDeriv <- odenet$events$zeroderiv
   }
   # Quelltext erstellen
-  strFunktion <- "with(as.list(c(cState, cParameters)), {"
+  strFun <- "with(as.list(c(cState, cParameters)), {"
+  # walk through the nodes and check for forcings
+  for (i in 1:length(odenet$masses)) {
+    for (strVar in c("x.", "v.")) {
+      if (!is.null(odenet$events$linear[[paste(strVar, i, sep = "")]])) {
+        # linear (...$linear$.. returns NA or number if it exist, NULL otherwise)
+        strFun <- c(strFun, paste("if (!is.na(odenet$events$linear$", strVar, i, "(cTime)))", sep = ""))
+        strFun <- c(strFun, paste(strVar, i, " <- odenet$events$linear$", strVar, i, "(cTime)", sep = ""))
+      }
+    }
+  }
   # Einzelnen Knoten durchgehen und die Differentialgleichungen erstellen
   for (i in 1:length(odenet$masses)) {
     # keine äußere Anregung mehr vorhanden, alle F. sind 0
@@ -36,15 +46,18 @@ createOscillators.ODEnetwork <- function(odenet) {
     # Es werden nur Differentialgleichungen der 1. Ordnung verwendet
     # dx <- v
     strTemp <- paste("dx.", i, " <- v.", i, sep = "")
+    # constant (fktZeroDeriv returns boolean if it exist, NA otherwise)
     if (is.na(fktZeroDeriv(paste("x.", i, sep = "")))) {
-      strFunktion <- c(strFunktion, strTemp)
+      # dirac, linear or no events
+      strFun <- c(strFun, strTemp)
     } else {
-      strFunktion <- c(strFunktion, paste("if (odenet$events$zeroderiv(\"x.", i, "\", cTime)) {", sep = "")) # if (zeroderiv(x.1)) {
-      strFunktion <- c(strFunktion, paste("dx.", i, " <- 0", sep = ""))
-      strFunktion <- c(strFunktion, "} else {")   # } else {
-      strFunktion <- c(strFunktion, strTemp)
-      strFunktion <- c(strFunktion, "}")
+      strFun <- c(strFun, paste("if (odenet$events$zeroderiv(\"x.", i, "\", cTime)) {", sep = "")) # if (zeroderiv(x.1)) {
+      strFun <- c(strFun, paste("dx.", i, " <- 0", sep = ""))
+      strFun <- c(strFun, "} else {")   # } else {
+      strFun <- c(strFun, strTemp)
+      strFun <- c(strFun, "}")
     }
+strFun <- c(strFun, "print(c(unname(cTime), unname(x.1)))")
     # dv1 <- (F1 - d*v1 - k*x1 - d12*(v1-v2) - k12*(x1-x2)) / m1
     # nur falls am Knoten eine aussere Anregung oder Anregungsaenderung vorliegt die Anregung einbauen
     strTemp <- paste("dv.", i, " <- (", sep = "")
@@ -66,13 +79,13 @@ createOscillators.ODEnetwork <- function(odenet) {
     # Abschluss: Klammer schließen und durch Masse teilen
     strTemp <- paste(strTemp, ")/m.", i, sep = "")
     if (is.na(fktZeroDeriv(paste("v.", i, sep = "")))) {
-      strFunktion <- c(strFunktion, strTemp)
+      strFun <- c(strFun, strTemp)
     } else {
-      strFunktion <- c(strFunktion, paste("if (odenet$events$zeroderiv(\"v.", i, "\", cTime)) {", sep = "")) # if (zeroderiv(v.1)) {
-      strFunktion <- c(strFunktion, paste("dv.", i, " <- 0", sep = ""))
-      strFunktion <- c(strFunktion, "} else {")   # } else {
-      strFunktion <- c(strFunktion, strTemp)
-      strFunktion <- c(strFunktion, "}")
+      strFun <- c(strFun, paste("if (odenet$events$zeroderiv(\"v.", i, "\", cTime)) {", sep = "")) # if (zeroderiv(v.1)) {
+      strFun <- c(strFun, paste("dv.", i, " <- 0", sep = ""))
+      strFun <- c(strFun, "} else {")   # } else {
+      strFun <- c(strFun, strTemp)
+      strFun <- c(strFun, "}")
     }
   }
   
@@ -84,21 +97,31 @@ createOscillators.ODEnetwork <- function(odenet) {
     if (i < length(odenet$masses))
       strTemp <- paste(strTemp, ",")
     else
-      strTemp <- paste(strTemp, "))", sep = "")
+      strTemp <- paste(strTemp, ")", sep = "")
   }
-  strFunktion <- c(strFunktion, strTemp)
+  # add return of forcings
+  for (i in 1:length(odenet$masses)) {
+    for (strVar in c("x.", "v.")) {
+      if (!is.null(odenet$events$linear[[paste(strVar, i, sep = "")]])) {
+        strTemp <- paste(strTemp, ", ", strVar, i, "Force = odenet$events$linear$", strVar, i, "(cTime)", sep = "")
+      }
+    }
+  }
+  # close list
+  strTemp <- paste(strTemp, ")", sep = "")
+  strFun <- c(strFun, strTemp)
   
   # Ende von 'with(as.list(
-  strFunktion <- c(strFunktion, "})")
+  strFun <- c(strFun, "})")
   
   # leere Funktion erstellen
   fktOszillator <- function() {}
   # Eingabeparameter einstellen
   formals(fktOszillator) <- alist(cTime=, cState=, cParameters=)
   # Funktionstext in Funktion verpacken
-  expstrFunktion <- parse(text = strFunktion)
+  expstrFun <- parse(text = strFun)
   # Funktion in den K?rper der leeren Funktion packen
-  body(fktOszillator) <- as.call(c(as.name("{"), expstrFunktion))
+  body(fktOszillator) <- as.call(c(as.name("{"), expstrFun))
   
   # Fertige Funktion des DGL-Systems ausgeben
   return(fktOszillator)

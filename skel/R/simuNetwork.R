@@ -33,8 +33,16 @@ simuNetwork.ODEnetwork <- function(odenet, times, ...) {
     eventdat <- NULL
   } else if (odenet$events$type == "dirac" || odenet$events$type == "constant") {
     eventdat <- list(data = odenet$events$data)
-  } else {
-    eventdat <- NULL
+  } else if (odenet$events$type == "linear") {
+    # get maximum from eventdata, to generate an event that sets the state to the correct value
+    # when forcing ends
+    eventdat <- odenet$events$data
+    # we need only label, and with Martin Morgan trick sorting over label is not needed
+    cLab <- eventdat$var[cOrder <- order(eventdat$time)]
+    blnLast <- !duplicated(cLab, fromLast = TRUE) # it finds last (max) occurrence of label
+    eventdat <- eventdat[seq_len(nrow(eventdat))[cOrder][blnLast], ]
+    # switch to format for events in ode
+    eventdat <- list(data = eventdat)
   }
   # DGLs nummerisch lösen
   mResOde <- ode(  y = createState(odenet)		# starting state
@@ -45,6 +53,25 @@ simuNetwork.ODEnetwork <- function(odenet, times, ...) {
 #                  , method = "rk4"
                  , ...
   )
+  # extend the ODEnetwork object
+  odenet$simulation$method <- attr(mResOde, "type")
+  # write forcings over calculations
+  if (!is.null(odenet$events) && odenet$events$type == "linear") {
+    # add return of forcings
+    for (i in 1:length(odenet$masses)) {
+      for (strVar in c("x.", "v.")) {
+        if (!is.null(odenet$events$linear[[paste(strVar, i, sep = "")]])) {
+          state <- paste(strVar, i, sep = "")
+          stateF <- paste(strVar, i, "Force", sep = "")
+          # replace non-forcing with forcing, where forcings are not NA
+          mResOde[!is.na(mResOde[, stateF]), state] <- mResOde[!is.na(mResOde[, stateF]), stateF]
+          mResOde <- mResOde[, colnames(mResOde) %nin% stateF]
+        }
+      }
+    }
+    # add necessary deSolve class attributes
+    attr(mResOde, "class") <- c("deSolve", "matrix")
+  }
   # convert to polar coordinates
   if (odenet$statetype == "polar") {
     strNames <- c("a", "m")
@@ -53,7 +80,6 @@ simuNetwork.ODEnetwork <- function(odenet, times, ...) {
   }
   
   # extend the ODEnetwork object
-  odenet$simulation$method <- "rk4"
   odenet$simulation$results <- mResOde
   return(odenet)
 }

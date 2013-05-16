@@ -18,13 +18,11 @@ parms <- c(k=0.01)
 sediment <- function( t, cState, cParameters) {
   with(as.list(c(cState, cParameters)), {
     if (!is.na(Depo(t))) {
-      ddepo <- -0.01
-      dO2 <- Depo(t) - k * O2
-    } else {
-      ddepo <- 0.01
-      dO2 <- depo - k * O2
+      depo <- Depo(t)
     }
-    list (c(dO2, ddepo), depo = Depo(t))
+    ddepo <- 0.01
+    dO2 <- depo - k * O2
+    list (c(dO2, ddepo), depo1 = Depo(t))
   })
 }
 
@@ -32,7 +30,7 @@ sediment <- function( t, cState, cParameters) {
 Depo <- approxfun(x = Flux[,1], y = Flux[,2], method = "linear", rule = 1)
 
 Out <- ode(y = c(O2 = 63, depo = 0), times = 0:500, func = sediment, parms = parms
-           , events = list(data=data.frame(var="depo", time=400, value=0, method="rep")))
+           , events = list(data=data.frame(var="depo", time=365, value=1.135, method="rep")))
 plot(Out)
 
 ## same forcing functions, now constant interpolation
@@ -47,6 +45,21 @@ lines(Out2[,"time"], Out2[,"depo"], col = "red", lwd = 2)
 
 plot (Out, which = "O2", type = "l", lwd = 2, mfrow = NULL)
 lines(Out2[,"time"], Out2[,"O2"], col = "red", lwd = 2)
+
+## =============================================================================
+## Testing
+## =============================================================================
+
+f1 <- approxfun(c(1, 2), c(4, 5))
+f2 <- function(x) {x+2}
+fges <- function(cState, cTime) {
+  switch(cState
+         , x.1 = f1(cTime)
+         , x.2 = f2(cTime))
+}
+fges("x.1", 0) # NA
+fges("x.2", 1) # 3
+fges("x.3", 3) # existiert nicht: NULL
 
 ## =============================================================================
 ## SCOC is the same model, as implemented in FORTRAN
