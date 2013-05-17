@@ -45,8 +45,10 @@ simuNetwork.ODEnetwork <- function(odenet, times, ...) {
     eventdat <- list(data = eventdat)
   }
   # convert to cartesian
-  if (odenet$coordtype == "polar") {
-    stop("Nope")
+  if (!is.null(eventdat) && odenet$coordtype == "polar") {
+    if (odenet$events$type != "linear")
+      warning("Dirac and constant Events are not converted.")
+    stop("TODO: not ready")
   }
   # create events structure from events data
   odenet <- createEvents(odenet)
