@@ -54,60 +54,6 @@ setEvents.ODEnetwork <- function(odenet, events, type="dirac") {
   odenet$events$type <- type
   # set data.frame
   odenet$events$data <- events
-  
-  if (type == "constant") {
-    # add function to know when the oscillator can move free
-    strFun <- ""
-    for (strVar in levels(events$var)) {
-      strFun <- paste(strFun, "if (cState == \"", strVar, "\") {", sep = "")
-      cTemp <- range(subset(events, var == strVar)$time)
-      strFun <- paste(strFun, "ifelse (cTime < ", cTemp[1], " || cTime > ", cTemp[2], ", FALSE, TRUE)" , sep = "")
-      strFun <- paste(strFun, "} else ", sep = "")
-    }
-    strFun <- paste(strFun, "{ NA }", sep = "")
-    # leere Funktion erstellen
-    fktDerivZero <- function() {}
-    # Eingabeparameter einstellen
-    formals(fktDerivZero) <- alist(cState=, cTime=0)
-    # Funktionstext in Funktion verpacken
-    expstrFunktion <- parse(text = strFun)
-    # Funktion in den K?rper der leeren Funktion packen
-    body(fktDerivZero) <- as.call(c(as.name("{"), expstrFunktion))
-    # save in odenet
-    odenet$events$zeroderiv <- fktDerivZero
-  } else {
-    # true for dirac and linear
-    odenet$events$zeroderiv <- NULL
-  }
-  
-  if (type == "linear") {
-    # create empty function
-    fktLinInter <- function() {}
-    # initialise this part to make it accessable for odenet$events$linear[[strVar]]
-    odenet$events$linear$complete <- fktLinInter
-    # add linear interpolated function (forcings)
-    strFun <- "switch(cState"
-    for (strVar in levels(events$var)) {
-      # no interpolation with one point
-      if (table(events$var)[strVar] == 1)
-        next
-      # create function
-      odenet$events$linear[[strVar]] <- approxfun(subset(events, var == strVar)[, c("time", "value")])
-      # add link to switch statement
-      strFun <- paste(strFun, ", ", strVar, " = odenet$events$linear$", strVar, "(cTime)", sep = "")
-    }
-    strFun <- paste(strFun, ")", sep = "")
-    # add parameters
-    formals(fktLinInter) <- alist(cState=, cTime=0)
-    # parse function text to build a function
-    expstrFunktion <- parse(text = strFun)
-    # add function text to body
-    body(fktLinInter) <- as.call(c(as.name("{"), expstrFunktion))
-    # save in odenet
-    odenet$events$linear$complete <- fktLinInter
-  } else {
-    odenet$events$linear <- NULL
-  }
-  
+
   return(odenet)
 }

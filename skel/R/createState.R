@@ -1,4 +1,3 @@
-
 #' Creates starting State Vector
 #' 
 #' Creates a vector with the starting state of the given \code{\link{ODEnetwork}}.
@@ -23,7 +22,7 @@ createState <- function(odenet) {
 #' @S3method createState ODEnetwork
 createState.ODEnetwork <- function(odenet) {
   # convert from polar to euclidian
-  if (odenet$statetype == "polar") {
+  if (odenet$coordtype == "polar") {
     stop("Missing convert to euclidian coordinates")
   } else {
     cPos <- odenet$state[, "state1"]

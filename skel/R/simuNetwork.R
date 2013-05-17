@@ -44,13 +44,18 @@ simuNetwork.ODEnetwork <- function(odenet, times, ...) {
     # switch to format for events in ode
     eventdat <- list(data = eventdat)
   }
+  # convert to cartesian
+  if (odenet$coordtype == "polar") {
+    stop("Nope")
+  }
+  # create events structure from events data
+  odenet <- createEvents(odenet)
   # DGLs nummerisch lösen
   mResOde <- ode(  y = createState(odenet)		# starting state
                  , times = times     # time vector
                  , func = createOscillators(odenet) # function of all differential equations
                  , parms = createParamVec(odenet)  # create parmeter vector from masses, springs and dampers
                  , events = eventdat
-#                  , method = "rk4"
                  , ...
   )
   # extend the ODEnetwork object
@@ -73,7 +78,7 @@ simuNetwork.ODEnetwork <- function(odenet, times, ...) {
     attr(mResOde, "class") <- c("deSolve", "matrix")
   }
   # convert to polar coordinates
-  if (odenet$statetype == "polar") {
+  if (odenet$coordtype == "polar") {
     strNames <- c("a", "m")
     n <- length(odenet$masses)
     colnames(mResOde) <- c(colnames(mResOde)[1], paste(rep(strNames, n), rep(1:n, each=2), sep="."))

@@ -25,6 +25,6 @@ test_that("createState", {
   
   expect_equal(cState, c(x.1=3, v.1=2, x.2=5, v.2=0))
 
-  odenet <- setState(odenet, c(3, 5), c(2, 0), FALSE)
+  odenet <- ODEnetwork(masses, dampers, springs, FALSE)
   expect_error(createState(odenet), "Missing convert to euclidian coordinates")
 })

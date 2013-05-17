@@ -12,6 +12,7 @@ test_that("ODEnetwork", {
   
   masses <- c(1:3)
   odenet <- ODEnetwork(masses, dampers, springs)
+  expect_equal(odenet$coordtype, "euclidian")
   expect_equal(odenet$masses, masses)
   
   dampers2 <- dampers
@@ -34,8 +35,9 @@ test_that("ODEnetwork", {
   mass <- 2
   damper <- as.matrix(1)
   spring <- as.matrix(1)
-  odenet <- ODEnetwork(mass, damper, spring)
-  odetest <- list(masses=mass, dampers=damper, springs=spring)
+  odenet <- ODEnetwork(mass, damper, spring, FALSE)
+  expect_equal(odenet$coordtype, "polar")
+  odetest <- list(masses=mass, dampers=damper, springs=spring, coordtype="polar")
   class(odetest) <- "ODEnetwork"
   expect_equal(odenet, odetest)
 })
