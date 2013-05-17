@@ -14,6 +14,7 @@ dampers <- as.matrix(1.5)
 springs <- as.matrix(4)
 
 odenet <- ODEnetwork(masses, dampers, springs)
+
 odenet <- setState(odenet, 3, 0)
 odenet <- simuNetwork(odenet, seq(0, 10, by = 0.1))
 plot(odenet)
@@ -30,12 +31,13 @@ odenet <- setEvents(odenet, eventdata, type = "constant")
 odenet <- simuNetwork(odenet, seq(0, 10, by = 0.1))
 plot(odenet)
 
+odenet <- setState(odenet, 0, 0)
 eventdata <- data.frame(  var = c("x.1", "x.1", "v.1", "v.1")
                           , time = c(1, 2, 3, 4)
                           , value = c(0, 3, 4, 2)
 )
 eventdata <- data.frame(  var = c("x.1", "x.1", "x.1")
-                          , time = c(1, 2, 4)
+                          , time = c(1, 2, 10)
                           , value = c(0, 3, 3)
 )
 odenet <- setEvents(odenet, eventdata, type = "linear")
@@ -45,11 +47,6 @@ plot(odenet)
 plot(odenet, select = "state1")
 plot(odenet, select = "state2")
 plot(odenet, select = "state1vs2")
-
-# Testweise
-createState(odenet)
-createOscillators(odenet)
-createParamVec(odenet)
 
 #########################
 # 2d Beispiel
@@ -61,7 +58,13 @@ springs <- diag(c(4, 0))
 springs[1, 2] <- 6
 
 odenet <- ODEnetwork(masses, dampers, springs)
-odenet <- setState(odenet, c(1, 3), c(0, 0))
+odenet <- setState(odenet, c(0, 0), c(0, 0))
+
+eventdata <- data.frame(var = c("x.1", "x.1", "x.1")
+                        , time = c(1, 4, 5)
+                        , value = c(0, 5, 5)
+                        )
+odenet <- setEvents(odenet, eventdata, type = "linear")
 odenet <- simuNetwork(odenet, seq(0, 10, by = 0.05))
 
 plot(odenet)
@@ -69,5 +72,9 @@ plot(odenet, select = "state1")
 plot(odenet, select = "state2")
 plot(odenet, select = "state1vs2")
 
-createParamVec(odenet)
+#########################
+# Tests
+#########################
 createState(odenet)
+createOscillators(odenet)
+createParamVec(odenet)
