@@ -28,4 +28,8 @@ test_that("createState", {
   odenet <- setState(odenet, c(3, 5), c(2, 0))
   cState <- createState(odenet)
   expect_equal(cState, c(x.1=3*cos(2), v.1=3*sin(2), x.2=5, v.2=0))
+
+  odenet <- ODEnetwork(masses, dampers, springs, FALSE)
+  cState <- createState(odenet)
+  expect_equal(cState, c(x.1=0, v.1=0, x.2=0, v.2=0))
 })
