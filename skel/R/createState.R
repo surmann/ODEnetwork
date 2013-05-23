@@ -23,17 +23,16 @@ createState <- function(odenet) {
 createState.ODEnetwork <- function(odenet) {
   # convert from polar to euclidian
   if (odenet$coordtype == "polar") {
-    stop("Missing convert to euclidian coordinates")
+    mState <- convertCoordinates(odenet$state)
   } else {
-    cPos <- odenet$state[, "state1"]
-    cVel <- odenet$state[, "state2"]
+    mState <- odenet$state
   }
   # create vector for state
   strState <- "c("
   for (i in 1:length(odenet$masses)) {
     # Startauslenkung und -geschwindigkeit der Massen
-    strState <- paste(strState, "x.", i, " = ", cPos[i], ", ", sep = "")
-    strState <- paste(strState, "v.", i, " = ", cVel[i], sep = "")
+    strState <- paste(strState, "x.", i, " = ", mState[i, 1], ", ", sep = "")
+    strState <- paste(strState, "v.", i, " = ", mState[i, 2], sep = "")
     # Komma oder Abschluss
     if (i < length(odenet$masses)) {
       strState <- paste(strState, ",")
