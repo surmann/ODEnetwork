@@ -60,17 +60,40 @@ plot.ODEnetwork <- function(x, ..., select = "state12") {
            # calculate plot size
            intVars <- ncol(mRes)-1
            intRows <- intCols <- floor(sqrt(intVars/2))
-           intCols <- intCols + 1
-           if (intCols*intRows < intVars/2)
-             intRows <- intRows + 1
+           if (intCols*intRows < intVars/2) {
+             intCols <- intCols + 1
+             if (intCols*intRows < intVars/2)
+               intRows <- intRows + 1
+           }
 
            op <- par(mfrow = c(intRows, intCols))
-           for(intVar in seq(2, intVars, by=2)) {
-             # plot x vs. v
-             plot(  mRes[, intVar], mRes[, intVar+1], type = "l"
-                  , xlab = colnames(mRes)[intVar], ylab = colnames(mRes)[intVar+1], ...)
-             # plot starting point
-             points(mRes[1, intVar], mRes[1, intVar+1], col = "red", pch = 13)
+           if (odenet$coordtype == "cartesian") {
+             for(intVar in seq(2, intVars, by=2)) {
+               # plot x vs. v
+               plot(  mRes[, intVar], mRes[, intVar+1], type = "l"
+                    , xlab = colnames(mRes)[intVar], ylab = colnames(mRes)[intVar+1], ...)
+               # plot starting point
+               points(mRes[1, intVar], mRes[1, intVar+1], col = "red", pch = 13)
+             }
+           } else {
+             for(intVar in seq(2, intVars, by=2)) {
+               # plot m(agnitude) vs. a(ngle)
+               radial.plot(  mRes[, intVar], mRes[, intVar+1]
+                           , rp.type = "p", xlab = paste("Oscillator", intVar/2)
+#                            , labels = expression(0, frac(1,2)*pi, pi, frac(3,2)*pi)
+                           , labels = c("0", "1/2*pi", "pi", "3/2*pi")
+                           , label.pos = c(0, pi/2, pi, 3/2*pi)
+                           , show.grid.labels = 3
+                           , radial.lim = c(0, max(mRes[, intVar]))
+                           , grid.col = "lightgray"
+                           , point.symbols = 13, point.col = "red", poly.col = "NA"
+                           , ...)
+               radial.plot(  mRes[1, intVar], mRes[1, intVar+1]
+                           , rp.type = "s"
+                           , radial.lim = c(0, max(mRes[, intVar]))
+                           , point.symbols = 13, point.col = "red", poly.col = "NA"
+                           , add = TRUE)
+             }
            }
            par(op)
          }
