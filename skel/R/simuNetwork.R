@@ -47,8 +47,8 @@ simuNetwork.ODEnetwork <- function(odenet, times, ...) {
   # convert to cartesian
   if (!is.null(eventdat) && odenet$coordtype == "polar") {
     if (odenet$events$type != "linear")
-      warning("Dirac and constant Events are not converted.")
-    stop("TODO: not ready")
+      warning("Dirac and constant Events are not converted from polar to cartesian.")
+#     stop("TODO: not ready")
   }
   # create events structure from events data
   odenet <- createEvents(odenet)
@@ -62,7 +62,7 @@ simuNetwork.ODEnetwork <- function(odenet, times, ...) {
   )
   # extend the ODEnetwork object
   odenet$simulation$method <- attr(mResOde, "type")
-  # write forcings over calculations
+  # overwrite calculations with forcings
   if (!is.null(odenet$events) && odenet$events$type == "linear") {
     # add return of forcings
     for (i in 1:length(odenet$masses)) {
@@ -81,8 +81,12 @@ simuNetwork.ODEnetwork <- function(odenet, times, ...) {
   }
   # convert to polar coordinates
   if (odenet$coordtype == "polar") {
-    strNames <- c("a", "m")
+    # m(agnitude) and a(ngle) instead of x and y
+    strNames <- c("m", "a")
     n <- length(odenet$masses)
+    for (i in 1:n*2) {
+      mResOde[, c(i, i+1)] <- convertCoordinates(mResOde[, c(i, i+1)], "polar")
+    }
     colnames(mResOde) <- c(colnames(mResOde)[1], paste(rep(strNames, n), rep(1:n, each=2), sep="."))
   }
   
