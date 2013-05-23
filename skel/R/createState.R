@@ -21,11 +21,15 @@ createState <- function(odenet) {
 
 #' @S3method createState ODEnetwork
 createState.ODEnetwork <- function(odenet) {
-  # convert from polar to euclidian
-  if (odenet$coordtype == "polar") {
-    mState <- convertCoordinates(odenet$state)
+  if (is.null(odenet$state)) {
+    mState <- matrix(0, ncol = 2, nrow = length(odenet$masses))
   } else {
-    mState <- odenet$state
+    # convert from polar to euclidian
+    if (odenet$coordtype == "polar") {
+      mState <- convertCoordinates(odenet$state)
+    } else {
+      mState <- odenet$state
+    }
   }
   # create vector for state
   strState <- "c("
