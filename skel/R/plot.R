@@ -115,7 +115,7 @@ plot.ODEnetwork <- function(x, ..., select = "state12") {
                 text(coordpair[1]*1.1, coordpair[2]*1.1, axlab[i], xpd = TRUE)
               }
               # plot data
-              lines(mCartesian)
+              lines(mCartesian, ...)
               # plot starting point
               points(mCartesian[1, 1], mCartesian[1, 2], col = "red", pch = 13)
             }
