@@ -44,12 +44,10 @@ simuNetwork.ODEnetwork <- function(odenet, times, ...) {
     # switch to format for events in ode
     eventdat <- list(data = eventdat)
   }
-  # convert to cartesian
-  if (!is.null(eventdat) && odenet$coordtype == "polar") {
-    if (odenet$events$type != "linear")
-      warning("Dirac and constant Events are not converted from polar to cartesian.")
-#     stop("TODO: not ready")
-  }
+  # throw warning
+  if (!is.null(eventdat) && odenet$coordtype == "polar" && odenet$events$type != "linear")
+      warning("Dirac and constant events are not converted from polar to cartesian.")
+  
   # create events structure from events data
   odenet <- createEvents(odenet)
   # DGLs nummerisch lösen
@@ -84,8 +82,8 @@ simuNetwork.ODEnetwork <- function(odenet, times, ...) {
     # m(agnitude) and a(ngle) instead of x and y
     strNames <- c("m", "a")
     n <- length(odenet$masses)
-    for (i in 1:n*2) {
-      mResOde[, c(i, i+1)] <- convertCoordinates(mResOde[, c(i, i+1)], "polar")
+    for (i in 1:n) {
+      mResOde[, c(2*i, 2*i+1)] <- convertCoordinates(mResOde[, c(2*i, 2*i+1)], "polar")
     }
     colnames(mResOde) <- c(colnames(mResOde)[1], paste(rep(strNames, n), rep(1:n, each=2), sep="."))
   }
