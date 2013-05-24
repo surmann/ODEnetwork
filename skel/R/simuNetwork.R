@@ -29,6 +29,9 @@ simuNetwork.ODEnetwork <- function(odenet, times, ...) {
   checkArg(times, "numeric", na.ok=FALSE)
   checkArg(times, "vector", na.ok=FALSE)
   
+  # create events structure from events data
+  odenet <- createEvents(odenet)
+  # read events and update them if necessary
   if (is.null(odenet$events)) {
     eventdat <- NULL
   } else if (odenet$events$type == "dirac" || odenet$events$type == "constant") {
@@ -41,15 +44,22 @@ simuNetwork.ODEnetwork <- function(odenet, times, ...) {
     cLab <- eventdat$var[cOrder <- order(eventdat$time)]
     blnLast <- !duplicated(cLab, fromLast = TRUE) # it finds last (max) occurrence of label
     eventdat <- eventdat[seq_len(nrow(eventdat))[cOrder][blnLast], ]
+    # convert to cartesian
+    if (odenet$coordtype == "polar") {
+      for (i in 1:length(odenet$masses)) {
+        strSubs <- paste(c("m", "a"), i, sep = ".")
+        if (prod(strSubs %in% levels(eventdat$var))) {
+          eventdat$value[eventdat$var == strSubs] <- convertCoordinates(matrix(eventdat$value[eventdat$var == strSubs], ncol = 2))
+        }
+        # replace "m" with "x" and "a" with "v"
+        levels(eventdat$var) <- gsub("m", "x", levels(eventdat$var))
+        levels(eventdat$var) <- gsub("a", "v", levels(eventdat$var))
+      }
+    }
     # switch to format for events in ode
     eventdat <- list(data = eventdat)
   }
-  # throw warning
-  if (!is.null(eventdat) && odenet$coordtype == "polar" && odenet$events$type != "linear")
-      warning("Dirac and constant events are not converted from polar to cartesian.")
   
-  # create events structure from events data
-  odenet <- createEvents(odenet)
   # DGLs nummerisch lösen
   mResOde <- ode(  y = createState(odenet)		# starting state
                  , times = times     # time vector

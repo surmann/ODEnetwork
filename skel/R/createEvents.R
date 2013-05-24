@@ -31,6 +31,9 @@ createEvents.ODEnetwork <- function(odenet) {
   
   # read events data
   dfEvents <- odenet$events$data
+  # throw warning
+  if (odenet$coordtype == "polar" && odenet$events$type != "linear")
+    warning("Dirac and constant events are not converted from polar to cartesian.")
   # calc events or forcings
   if (odenet$events$type == "constant") {
     # add function to know when the oscillator can move free
@@ -83,9 +86,9 @@ createEvents.ODEnetwork <- function(odenet) {
       # reshape and order to origin format
       dfEvents <- reshape(dfEventsR, direction = "long")
       dfEvents <- dfEvents[, c("var", "time", "value", "method")]
-      # replace "m" with "x" and "a" with "y"
+      # replace "m" with "x" and "a" with "v"
       levels(dfEvents$var) <- gsub("m", "x", levels(dfEvents$var))
-      levels(dfEvents$var) <- gsub("a", "y", levels(dfEvents$var))
+      levels(dfEvents$var) <- gsub("a", "v", levels(dfEvents$var))
     }    
     # create empty function
     fktLinInter <- function() {}

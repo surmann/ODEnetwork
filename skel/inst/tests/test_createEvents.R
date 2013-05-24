@@ -63,5 +63,5 @@ test_that("createEvents", {
   odenet <- setEvents(odenet, eventdata, type = "linear")
   odenet <- createEvents(odenet)
   expect_false(is.null(odenet$events$linear$x.1))
-  expect_false(is.null(odenet$events$linear$y.1))
+  expect_false(is.null(odenet$events$linear$v.1))
 })
