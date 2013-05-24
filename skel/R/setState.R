@@ -18,7 +18,7 @@
 #' position <- rep(10, 3)
 #' velocity <- rep(0, 3)
 #' odenet <- setState(odenet, position, velocity)
-setState <- function(odenet, state1, state2, euclidian) {
+setState <- function(odenet, state1, state2) {
   UseMethod("setState")
 }
 

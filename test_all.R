@@ -4,7 +4,6 @@ library(testthat)
 
 library(BBmisc)
 library(deSolve)
-library(plotrix)
 
 if (interactive()) {
   load_all("skel", reset = TRUE)

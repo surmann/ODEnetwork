@@ -12,7 +12,7 @@ test_that("ODEnetwork", {
   
   masses <- c(1:3)
   odenet <- ODEnetwork(masses, dampers, springs)
-  expect_equal(odenet$coordtype, "euclidian")
+  expect_equal(odenet$coordtype, "cartesian")
   expect_equal(odenet$masses, masses)
   
   dampers2 <- dampers

@@ -24,7 +24,7 @@ createState.ODEnetwork <- function(odenet) {
   if (is.null(odenet$state)) {
     mState <- matrix(0, ncol = 2, nrow = length(odenet$masses))
   } else {
-    # convert from polar to euclidian
+    # convert from polar to cartesian
     if (odenet$coordtype == "polar") {
       mState <- convertCoordinates(odenet$state)
     } else {
