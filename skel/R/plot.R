@@ -77,6 +77,7 @@ plot.ODEnetwork <- function(x, ..., select = "state12") {
               points(mRes[1, intVar], mRes[1, intVar+1], col = "red", pch = 13)
             }
           } else {
+            crclSteps <- seq(0, 2*pi, length.out = 400)
             for(intVar in seq(2, intVars, by=2)) {
               circles <- pretty(c(0, max(mRes[, intVar])))
               plotrange <- c(-max(circles), max(circles))
@@ -96,12 +97,11 @@ plot.ODEnetwork <- function(x, ..., select = "state12") {
               text(-1.22 * max(circles), sort(union(-circles, circles))
                    , labels = sort(union(-circles, circles))
                    , xpd = TRUE, pos = 2)
-#               text(-1.45 * max(circles), 0, labels = "Magnitude", xpd = TRUE, srt = 90)
+              text(1.22 * max(circles), 0, labels = "Magnitude", xpd = TRUE, srt = 270)
               # draw circle lines
               for (i in circles) {
-                lines(circle(0, 0, i), col = gray(0.9))
+                lines(i*cbind(cos(crclSteps), sin(crclSteps)), col = gray(0.9))
               }
-              
               # add grid
               axpos <- c(0, pi/2, pi, 3/2*pi)
               axlab <- expression(0

@@ -10,4 +10,10 @@ test_that("plot", {
   
   odenet <- setState(odenet, 0, -3)
   expect_error(plot(odenet))
+
+  odenet <- ODEnetwork(masses, dampers, springs, FALSE)
+  odenet <- setState(odenet, -3, 0.5*pi)
+  odenet <- simuNetwork(odenet, seq(0, 10, by = 0.1))
+  # test not applicable, because a graph is plotted
+#   plot(odenet, select = "state1vs2")
 })
