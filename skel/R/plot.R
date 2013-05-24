@@ -87,15 +87,16 @@ plot.ODEnetwork <- function(x, ..., select = "state12") {
                    , xlab = paste("Oscillator", intVar/2), ylab = ""
                    , axes = FALSE, frame.plot = FALSE, asp = 1
               )
-              # add axis
+              # add axis and label
               axis(2
                    , at = sort(union(-circles, circles))
-                   , labels = NA
+                   , labels = FALSE
                    , pos = -1.2 * max(circles)
                    )
               text(-1.22 * max(circles), sort(union(-circles, circles))
                    , labels = sort(union(-circles, circles))
                    , xpd = TRUE, pos = 2)
+#               text(-1.45 * max(circles), 0, labels = "Magnitude", xpd = TRUE, srt = 90)
               # draw circle lines
               for (i in circles) {
                 lines(circle(0, 0, i), col = gray(0.9))
