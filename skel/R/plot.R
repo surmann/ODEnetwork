@@ -68,7 +68,7 @@ plot.ODEnetwork <- function(x, ..., select = "state12") {
           }
           
           op <- par(mfrow = c(intRows, intCols))
-          if (odenet$coordtype == "cartesian") {
+          if (x$coordtype == "cartesian") {
             for(intVar in seq(2, intVars, by=2)) {
               # plot x vs. v
               plot(  mRes[, intVar], mRes[, intVar+1], type = "l"
