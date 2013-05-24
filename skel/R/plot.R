@@ -29,74 +29,97 @@
 #' plot(odenet, select = "state1vs2")
 plot.ODEnetwork <- function(x, ..., select = "state12") {
   checkArg(select, "character", len=1, na.ok=FALSE)
+  checkArg(select, subset = c("state12", "state1", "state2", "state1vs2"))
   # Check ode result
   if (is.null(x$simulation$results))
     stop("Simulation results missing!")
   # Read ode result
   mRes <- x$simulation$results
   switch(select
-         , "state12" = {
-           op <- par(no.readonly = TRUE)
-           plot(mRes, ...)
-           par(op)
-         }
-         , "state1" = {
-           classes <- class(mRes)
-           mRes <- mRes[, c(1, seq(2, ncol(mRes), by=2))]
-           attr(mRes, "class") <- classes
-           op <- par(no.readonly = TRUE)
-           plot(mRes, ...)
-           par(op)
-         }
-         , "state2" = {
-           classes <- class(mRes)
-           mRes <- mRes[, c(1, seq(3, ncol(mRes), by=2))]
-           attr(mRes, "class") <- classes
-           op <- par(no.readonly = TRUE)
-           plot(mRes, ...)
-           par(op)
-         }
-         , "state1vs2" = {
-           # calculate plot size
-           intVars <- ncol(mRes)-1
-           intRows <- intCols <- floor(sqrt(intVars/2))
-           if (intCols*intRows < intVars/2) {
-             intCols <- intCols + 1
-             if (intCols*intRows < intVars/2)
-               intRows <- intRows + 1
-           }
-
-           op <- par(mfrow = c(intRows, intCols))
-           if (odenet$coordtype == "cartesian") {
-             for(intVar in seq(2, intVars, by=2)) {
-               # plot x vs. v
-               plot(  mRes[, intVar], mRes[, intVar+1], type = "l"
-                    , xlab = colnames(mRes)[intVar], ylab = colnames(mRes)[intVar+1], ...)
-               # plot starting point
-               points(mRes[1, intVar], mRes[1, intVar+1], col = "red", pch = 13)
-             }
-           } else {
-             for(intVar in seq(2, intVars, by=2)) {
-               # plot m(agnitude) vs. a(ngle)
-               radial.plot(  mRes[, intVar], mRes[, intVar+1]
-                           , rp.type = "p", xlab = paste("Oscillator", intVar/2)
-#                            , labels = expression(0, frac(1,2)*pi, pi, frac(3,2)*pi)
-                           , labels = c("0", "1/2*pi", "pi", "3/2*pi")
-                           , label.pos = c(0, pi/2, pi, 3/2*pi)
-                           , show.grid.labels = 3
-                           , radial.lim = c(0, max(mRes[, intVar]))
-                           , grid.col = "lightgray"
-                           , point.symbols = 13, point.col = "red", poly.col = "NA"
-                           , ...)
-               radial.plot(  mRes[1, intVar], mRes[1, intVar+1]
-                           , rp.type = "s"
-                           , radial.lim = c(0, max(mRes[, intVar]))
-                           , point.symbols = 13, point.col = "red", poly.col = "NA"
-                           , add = TRUE)
-             }
-           }
-           par(op)
-         }
-         , stop("Wrong option of argument 'select'!")
+        , "state12" = {
+          op <- par(no.readonly = TRUE)
+          plot(mRes, ...)
+          par(op)
+        }
+        , "state1" = {
+          classes <- class(mRes)
+          mRes <- mRes[, c(1, seq(2, ncol(mRes), by=2))]
+          attr(mRes, "class") <- classes
+          op <- par(no.readonly = TRUE)
+          plot(mRes, ...)
+          par(op)
+        }
+        , "state2" = {
+          classes <- class(mRes)
+          mRes <- mRes[, c(1, seq(3, ncol(mRes), by=2))]
+          attr(mRes, "class") <- classes
+          op <- par(no.readonly = TRUE)
+          plot(mRes, ...)
+          par(op)
+        }
+        , "state1vs2" = {
+          # calculate plot size
+          intVars <- ncol(mRes)-1
+          intRows <- intCols <- floor(sqrt(intVars/2))
+          if (intCols*intRows < intVars/2) {
+            intCols <- intCols + 1
+            if (intCols*intRows < intVars/2)
+              intRows <- intRows + 1
+          }
+          
+          op <- par(mfrow = c(intRows, intCols))
+          if (odenet$coordtype == "cartesian") {
+            for(intVar in seq(2, intVars, by=2)) {
+              # plot x vs. v
+              plot(  mRes[, intVar], mRes[, intVar+1], type = "l"
+                   , xlab = colnames(mRes)[intVar], ylab = colnames(mRes)[intVar+1], ...)
+              # plot starting point
+              points(mRes[1, intVar], mRes[1, intVar+1], col = "red", pch = 13)
+            }
+          } else {
+            for(intVar in seq(2, intVars, by=2)) {
+              circles <- pretty(c(0, max(mRes[, intVar])))
+              plotrange <- c(-max(circles), max(circles))
+              mCartesian <- convertCoordinates(mRes[, c(intVar, intVar+1)])
+              # plot area
+              plot(1, type = "n"
+                   , xlim = plotrange, ylim = plotrange
+                   , xlab = paste("Oscillator", intVar/2), ylab = ""
+                   , axes = FALSE, frame.plot = FALSE, asp = 1
+              )
+              # add axis
+              axis(2
+                   , at = sort(union(-circles, circles))
+                   , labels = NA
+                   , pos = -1.2 * max(circles)
+                   )
+              text(-1.22 * max(circles), sort(union(-circles, circles))
+                   , labels = sort(union(-circles, circles))
+                   , xpd = TRUE, pos = 2)
+              # draw circle lines
+              for (i in circles) {
+                lines(circle(0, 0, i), col = gray(0.9))
+              }
+              
+              # add grid
+              axpos <- c(0, pi/2, pi, 3/2*pi)
+              axlab <- expression(0
+                                  , textstyle(frac(1,2))*pi
+                                  , pi
+                                  , textstyle(frac(3,2))*pi)
+              for (i in 1:length(axpos)) {
+                coordpair <- matrix(c(max(circles), axpos[i]), ncol = 2)
+                coordpair <- as.vector(convertCoordinates(coordpair))
+                segments(0, 0, coordpair[1], coordpair[2], col = gray(0.9))
+                text(coordpair[1]*1.1, coordpair[2]*1.1, axlab[i], xpd = TRUE)
+              }
+              # plot data
+              lines(mCartesian)
+              # plot starting point
+              points(mCartesian[1, 1], mCartesian[1, 2], col = "red", pch = 13)
+            }
+          }
+          par(op)
+        }
   )
 }
