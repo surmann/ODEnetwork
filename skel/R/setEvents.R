@@ -48,6 +48,16 @@ setEvents.ODEnetwork <- function(odenet, events, type="dirac") {
   if (ncol(events) < 3 || ncol(events) > 4)
     stop ("The events data.frame must have 3 or 4 columns.")
   
+  # test levels
+  if (odenet$coordtype == "cartesian") {
+    cNames <- c("x", "v")
+  } else {
+    cNames <- c("m", "a")
+  }
+  # check available events
+  if (!prod(levels(events$var) %in% paste(cNames, rep(1:length(odenet$masses), each=2), sep = ".")))
+    stop("Wrong event names or more events than oscillators defined.")
+  
   if (ncol(events) == 3)
     events <- cbind(events, method = rep("rep", nrow(events)))
   # set event type

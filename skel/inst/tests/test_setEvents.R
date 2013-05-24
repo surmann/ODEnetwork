@@ -39,4 +39,10 @@ test_that("setEvents", {
   expect_false(is.null(odenet$events$data))
   expect_true(is.null(odenet$events$zeroderiv))
   expect_true(is.null(odenet$events$linear$complete))
+  
+  eventdata <- data.frame(  var = c("x.1", "x.1", "x.2")
+                            , time = c(1, 2, 10)
+                            , value = c(0, 3, 3)
+  )
+  expect_error(setEvents(odenet, eventdata))
 })
