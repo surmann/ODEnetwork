@@ -28,18 +28,16 @@ createEvents <- function(odenet) {
 createEvents.ODEnetwork <- function(odenet) {
   if (is.null(odenet$events))
     return(odenet)
+  
   # read events data
-  events <- odenet$events$data
-  if (odenet$coordtype == "polar") {
-    stop("bitte einbauen")
-  }
+  dfEvents <- odenet$events$data
   # calc events or forcings
   if (odenet$events$type == "constant") {
     # add function to know when the oscillator can move free
     strFun <- ""
-    for (strVar in levels(events$var)) {
+    for (strVar in levels(dfEvents$var)) {
       strFun <- paste(strFun, "if (cState == \"", strVar, "\") {", sep = "")
-      cTemp <- range(subset(events, var == strVar)$time)
+      cTemp <- range(subset(dfEvents, var == strVar)$time)
       strFun <- paste(strFun, "ifelse (cTime < ", cTemp[1], " || cTime > ", cTemp[2], ", FALSE, TRUE)" , sep = "")
       strFun <- paste(strFun, "} else ", sep = "")
     }
@@ -60,18 +58,47 @@ createEvents.ODEnetwork <- function(odenet) {
   }
   
   if (odenet$events$type == "linear") {
+    if (odenet$coordtype == "polar") {
+      # pairwise polar coordinates are necessary, delete other variable columns
+      dfEventsR <- reshape(dfEvents, v.names = "value", idvar = "time", timevar = "var", direction = "wide")
+      # pairwise check
+      for (i in 1:length(odenet$masses)) {
+        strSubs <- paste(c("value.m", "value.a"), i, sep = ".")
+        # check pairwise variables available
+        switch(sum(strSubs %in% colnames(dfEventsR))+1
+               , next
+               , stop(paste("Cannot convert: The linear events for oscillator", i, "are not pairwise."))
+               )
+        # check pairwise coordinates within the current vector
+        # (NA, NA) and (5, 6) coordinates are ok, NAs are inherited by reshape
+        # => xor(col1, col2) should all be false
+        # this is checked by prod(!xor())
+        if (!prod(!xor(is.na(dfEventsR[, strSubs[1]]), is.na(dfEventsR[, strSubs[2]])))) {
+          stop(paste("Connot convert: Coordinates for oscillator", i, "are not completely pairwise."))
+        }
+        # convert to cartesian coordinates
+        blnNA <- is.na(dfEventsR[, strSubs[1]])
+        dfEventsR[!blnNA, strSubs] <- convertCoordinates(as.matrix(dfEventsR[!blnNA, strSubs]))
+      }
+      # reshape and order to origin format
+      dfEvents <- reshape(dfEventsR, direction = "long")
+      dfEvents <- dfEvents[, c("var", "time", "value", "method")]
+      # replace "m" with "x" and "a" with "y"
+      levels(dfEvents$var) <- gsub("m", "x", levels(dfEvents$var))
+      levels(dfEvents$var) <- gsub("a", "y", levels(dfEvents$var))
+    }    
     # create empty function
     fktLinInter <- function() {}
     # initialise this part to make it accessable for odenet$events$linear[[strVar]]
     odenet$events$linear$complete <- fktLinInter
     # add linear interpolated function (forcings)
     strFun <- "switch(cState"
-    for (strVar in levels(events$var)) {
+    for (strVar in levels(dfEvents$var)) {
       # no interpolation with one point
-      if (table(events$var)[strVar] == 1)
+      if (table(dfEvents$var)[strVar] == 1)
         next
       # create function
-      odenet$events$linear[[strVar]] <- approxfun(subset(events, var == strVar)[, c("time", "value")])
+      odenet$events$linear[[strVar]] <- approxfun(subset(dfEvents, var == strVar)[, c("time", "value")])
       # add link to switch statement
       strFun <- paste(strFun, ", ", strVar, " = odenet$events$linear$", strVar, "(cTime)", sep = "")
     }
