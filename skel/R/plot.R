@@ -92,12 +92,12 @@ plot.ODEnetwork <- function(x, ..., select = "state12") {
               axis(2
                    , at = sort(union(-circles, circles))
                    , labels = FALSE
-                   , pos = -1.2 * max(circles)
+                   , pos = -1.22 * max(circles)
                    )
-              text(-1.22 * max(circles), sort(union(-circles, circles))
+              text(-1.25 * max(circles), sort(union(-circles, circles))
                    , labels = sort(union(-circles, circles))
                    , xpd = TRUE, pos = 2)
-              text(1.22 * max(circles), 0, labels = "Magnitude", xpd = TRUE, srt = 270)
+              text(1.3 * max(circles), 0, labels = "Magnitude", xpd = TRUE, srt = 270)
               # draw circle lines
               for (i in circles) {
                 lines(i*cbind(cos(crclSteps), sin(crclSteps)), col = gray(0.9))
@@ -112,7 +112,7 @@ plot.ODEnetwork <- function(x, ..., select = "state12") {
                 coordpair <- matrix(c(max(circles), axpos[i]), ncol = 2)
                 coordpair <- as.vector(convertCoordinates(coordpair))
                 segments(0, 0, coordpair[1], coordpair[2], col = gray(0.9))
-                text(coordpair[1]*1.1, coordpair[2]*1.1, axlab[i], xpd = TRUE)
+                text(coordpair[1]*1.12, coordpair[2]*1.12, axlab[i], xpd = TRUE)
               }
               # plot data
               lines(mCartesian, ...)
