@@ -111,7 +111,6 @@ dampers[1, 2] <- 0.5
 springs <- diag(c(4, 0))
 springs[1, 2] <- 6
 
-odenet <- ODEnetwork(masses, dampers, springs, FALSE)
 eventdata <- data.frame(  var = "m.1"
                           , time = seq(0, 5, length.out = 100)
                           , value = seq(2, 2, length.out = 100)
@@ -122,10 +121,32 @@ eventdata <- rbind(eventdata,
                                 , value = seq(0, -9/5*pi, length.out = 100)
                    )
 )
+odenet <- ODEnetwork(masses, dampers, springs, FALSE)
 odenet <- setEvents(odenet, eventdata, type = "linear")
 odenet <- simuNetwork(odenet, seq(0, 10, by = 0.1))
 plot(odenet, select = "state1vs2")
 plot(odenet)
+
+#########################
+# 10d Beispiel
+#########################
+masses <- rep(1, 10)
+dampers <- diag(masses)
+for (i in 1:(length(masses)-1)) {dampers[i, i+1] <- 1}
+springs <- dampers
+
+# State
+odenet <- ODEnetwork(masses, dampers, springs, FALSE)
+odenet <- setState(odenet, c(1, rep(0, 9)), rep(0, 10))
+odenet <- simuNetwork(odenet, seq(0, 20, by = 0.1))
+plot(odenet, select = "state1vs2")
+
+# Events
+eventdata <- data.frame(var = c("m.1", "m.1"), time = c(1, 2), value = c(0, 2))
+odenet <- ODEnetwork(masses, dampers, springs, FALSE)
+odenet <- setEvents(odenet, eventdata, type = "dirac")
+odenet <- simuNetwork(odenet, seq(0, 20, by = 0.1))
+plot(odenet, select = "state1vs2")
 
 #########################
 # Tests

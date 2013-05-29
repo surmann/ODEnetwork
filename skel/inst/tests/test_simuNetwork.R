@@ -35,4 +35,9 @@ test_that("simuNetwork", {
   attr(mResManual, "class") <- c("deSolve", "matrix")
   attr(mResManual, "type") <- "lsoda"
   expect_equal(mRes, mResManual)
+
+  odenet <- ODEnetwork(masses, dampers, springs, FALSE)
+  eventdata <- data.frame(var = c("m.1", "m.1"), time = c(1, 2), value = c(5, 2))
+  odenet <- setEvents(odenet, eventdata, type = "dirac")
+  expect_warning(odenet <- simuNetwork(odenet, seq(0, 4, by = 1)))
 })

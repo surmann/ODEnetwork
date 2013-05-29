@@ -35,7 +35,13 @@ simuNetwork.ODEnetwork <- function(odenet, times, ...) {
   if (is.null(odenet$events)) {
     eventdat <- NULL
   } else if (odenet$events$type == "dirac" || odenet$events$type == "constant") {
-    eventdat <- list(data = odenet$events$data)
+    eventdat <- odenet$events$data
+    if (odenet$coordtype == "polar") {
+      # replace "m" with "x" and "a" with "v"
+      levels(eventdat$var) <- gsub("m", "x", levels(eventdat$var))
+      levels(eventdat$var) <- gsub("a", "v", levels(eventdat$var))
+    }
+    eventdat <- list(data = eventdat)
   } else if (odenet$events$type == "linear") {
     # get maximum from eventdata, to generate an event that sets the state to the correct value
     # when forcing ends
