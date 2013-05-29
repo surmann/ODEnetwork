@@ -48,7 +48,10 @@ setEvents.ODEnetwork <- function(odenet, events, type="dirac") {
   if (ncol(events) < 3 || ncol(events) > 4)
     stop ("The events data.frame must have 3 or 4 columns.")
   
-  # test levels
+  # convert variable-name to factor
+  if (!is.factor(events$var))
+    events$var <- as.factor(events$var)
+  # get correct variable prefix
   if (odenet$coordtype == "cartesian") {
     cNames <- c("x", "v")
   } else {
