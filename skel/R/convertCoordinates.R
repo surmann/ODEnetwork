@@ -4,13 +4,14 @@
 #'
 #' @param coords [\code{matrix}]\cr
 #'   Matrix with two columns.
-#'   Each row contains the pair (x, y) in cartesian coordinates and
+#'   Each row contains the pair (x, y) in cartesian coordinates or
 #'   (radius, angle) in polar coordinates. The angle is given in radian [0, 2*pi]
 #' @param convertto [\code{character}]\cr
 #'   Defines the target coordinate system for conversion.
 #'   Options are "cartesian" and "polar".
 #'   Default: "cartesian"
 #' @return a matrix with converted coordinates
+#' @export
 #' @examples
 #' if (interactive()) {
 #'   coordsK <- rbind(c(3, 0), c(1, 3), c(0, 2), c(-3, 1), c(-1, 0), c(-1, -3), c(0, -2), c(2, -3))
