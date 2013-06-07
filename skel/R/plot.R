@@ -5,13 +5,15 @@
 #'
 #' @param x [\code{ODEnetwork}]\cr
 #'    List of class \code{\link{ODEnetwork}}.
-#' @param select [\code{character}]\cr
+#' @param state [\code{character}]\cr
 #'    The type of result, that is plotted.
 #'    If \code{state1}, only state1 (position or angle) is plotted over time.
 #'    If \code{state2}, only state2 (velocity or magnitude) is plotted over time.
 #'    If \code{state12}, state1 and state2 are plotted over time.
 #'    If \code{state1vs2}, state2 is plotted over state1.
 #'    Default is \code{state12}
+#' @param var [\code{numeric(n)}]\cr
+#'    Subset of variables to plot. Default is \code{NULL}, which plots all variables.
 #' @param ... Additional arguments.
 #' @export
 #' @examples
@@ -24,24 +26,33 @@
 #' odenet <- setState(odenet, c(1, 3), c(0, 0))
 #' odenet <- simuNetwork(odenet, seq(0, 10, by = 0.05))
 #' plot(odenet)
-#' plot(odenet, select = "state1")
-#' plot(odenet, select = "state2")
-#' plot(odenet, select = "state1vs2")
-plot.ODEnetwork <- function(x, ..., select = "state12") {
-  checkArg(select, "character", len=1, na.ok=FALSE)
-  checkArg(select, subset = c("state12", "state1", "state2", "state1vs2"))
+#' plot(odenet, var = 2)
+#' plot(odenet, state = "1")
+#' plot(odenet, state = "2")
+#' plot(odenet, state = "1vs2")
+plot.ODEnetwork <- function(x, ..., state = "12", var = NULL) {
+  checkArg(state, "character", len=1, na.ok=FALSE)
+  checkArg(state, subset = c("12", "1", "2", "1vs2"))
+  if (!is.null(var))
+    checkArg(var, "numeric", lower = 1, upper = length(x$masses), na.ok = FALSE)
   # Check ode result
   if (is.null(x$simulation$results))
     stop("Simulation results missing!")
   # Read ode result
-  mRes <- x$simulation$results
-  switch(select
-        , "state12" = {
+  if (is.null(var)) {
+    mRes <- x$simulation$results
+  } else {
+    var <- unique(sort(c(2*var-1, 2*var))) + 1
+    mRes <- x$simulation$results[, c(1, var)]
+    attr(mRes, "class") <- class(x$simulation$results)
+  }
+  switch(state
+        , "12" = {
           op <- par(no.readonly = TRUE)
           plot(mRes, ...)
           par(op)
         }
-        , "state1" = {
+        , "1" = {
           classes <- class(mRes)
           mRes <- mRes[, c(1, seq(2, ncol(mRes), by=2))]
           attr(mRes, "class") <- classes
@@ -49,7 +60,7 @@ plot.ODEnetwork <- function(x, ..., select = "state12") {
           plot(mRes, ...)
           par(op)
         }
-        , "state2" = {
+        , "2" = {
           classes <- class(mRes)
           mRes <- mRes[, c(1, seq(3, ncol(mRes), by=2))]
           attr(mRes, "class") <- classes
@@ -57,7 +68,7 @@ plot.ODEnetwork <- function(x, ..., select = "state12") {
           plot(mRes, ...)
           par(op)
         }
-        , "state1vs2" = {
+        , "1vs2" = {
           # calculate plot size
           intVars <- ncol(mRes)-1
           intRows <- intCols <- floor(sqrt(intVars/2))
@@ -85,7 +96,8 @@ plot.ODEnetwork <- function(x, ..., select = "state12") {
               # plot area
               plot(1, type = "n"
                    , xlim = plotrange, ylim = plotrange
-                   , xlab = paste("Oscillator", intVar/2), ylab = ""
+                   , xlab = paste("Oscillator", as.numeric(gsub("\\D", "", colnames(mRes)[intVar])))
+                   , ylab = ""
                    , axes = FALSE, frame.plot = FALSE, asp = 1
               )
               # add axis and label

@@ -19,7 +19,7 @@ odenet <- ODEnetwork(masses, dampers, springs)
 odenet <- setState(odenet, 3, 0)
 odenet <- simuNetwork(odenet, seq(0, 10, by = 0.1))
 plot(odenet)
-plot(odenet, select = "state1vs2")
+plot(odenet, state = "1vs2")
 
 # events
 eventdata <- data.frame(  var = c("x.1", "x.1", "v.1")
@@ -62,7 +62,7 @@ eventdata <- rbind(eventdata,
 )
 odenet <- setEvents(odenet, eventdata, type = "linear")
 odenet <- simuNetwork(odenet, seq(0, 10, by = 0.1))
-plot(odenet, select = "state1vs2")
+plot(odenet, state = "1vs2")
 plot(odenet)
 
 #########################
@@ -81,9 +81,9 @@ odenet <- setState(odenet, c(1, 1), c(0, 0))
 odenet <- simuNetwork(odenet, seq(0, 10, by = 0.05))
 odenet$state
 plot(odenet)
-plot(odenet, select = "state1")
-plot(odenet, select = "state2")
-plot(odenet, select = "state1vs2")
+plot(odenet, state = "1")
+plot(odenet, state = "2")
+plot(odenet, state = "1vs2")
 
 # events
 eventdata <- data.frame(var = c("x.1", "x.1", "x.1")
@@ -98,9 +98,9 @@ eventdata <- data.frame(var = c("m.2", "m.1", "m.1", "a.1", "m.1", "m.2")
 odenet <- setEvents(odenet, eventdata, type = "linear")
 odenet <- simuNetwork(odenet, seq(0, 10, by = 0.05))
 plot(odenet)
-plot(odenet, select = "state1")
-plot(odenet, select = "state2")
-plot(odenet, select = "state1vs2")
+plot(odenet, state = "1")
+plot(odenet, state = "2")
+plot(odenet, state = "1vs2")
 
 #########################
 # 2d Beispiel: Polar
@@ -124,8 +124,8 @@ eventdata <- rbind(eventdata,
 odenet <- ODEnetwork(masses, dampers, springs, FALSE)
 odenet <- setEvents(odenet, eventdata, type = "linear")
 odenet <- simuNetwork(odenet, seq(0, 10, by = 0.1))
-plot(odenet, select = "state1vs2")
-plot(odenet)
+plot(odenet, state = "1vs2", var = 1)
+plot(odenet, var = 1)
 
 #########################
 # 10d Beispiel
@@ -139,14 +139,15 @@ springs <- dampers
 odenet <- ODEnetwork(masses, dampers, springs, FALSE)
 odenet <- setState(odenet, c(1, rep(0, 9)), rep(0, 10))
 odenet <- simuNetwork(odenet, seq(0, 20, by = 0.1))
-plot(odenet, select = "state1vs2")
+plot(odenet, state = "1vs2")
 
 # Events
 eventdata <- data.frame(var = c("m.1", "m.1"), time = c(1, 2), value = c(0, 2))
 odenet <- ODEnetwork(masses, dampers, springs, FALSE)
 odenet <- setEvents(odenet, eventdata, type = "dirac")
 odenet <- simuNetwork(odenet, seq(0, 20, by = 0.1))
-plot(odenet, select = "state1vs2")
+plot(odenet, state = "1vs2")
+plot(odenet, state = "1vs2", var = c(5, -7, 2))
 
 #########################
 # Tests
