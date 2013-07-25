@@ -45,4 +45,18 @@ test_that("ODEnetwork", {
   odetest <- list(masses=mass, dampers=damper, springs=spring, coordtype="polar")
   class(odetest) <- "ODEnetwork"
   expect_equal(odenet, odetest)
+  
+  # Bigger network: test copy of triangle
+  masses <- 1:6
+  dampers <- diag(11:16)
+  for (i in 1:(length(masses)-1)) {
+    dampers[i, i+1] <- 15+i
+    dampers[i+1, i] <- 15+i
+  }
+  springs <- dampers + 10
+  odenet <- ODEnetwork(masses, dampers, springs)
+  expect_true(isSymmetric(odenet$dampers))
+  expect_equal(odenet$dampers, dampers)
+  expect_true(isSymmetric(odenet$springs))
+  expect_equal(odenet$springs, springs)
 })

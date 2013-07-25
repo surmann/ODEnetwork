@@ -1,7 +1,6 @@
 #' Creates Parameter Vector
 #' 
 #' Creates a vector with assigned parameters of the given \code{\link{ODEnetwork}}.
-#' ACHTUNG: Soll nicht exportiert werden
 #'
 #' @param odenet [\code{ODEnetwork}]\cr
 #'   List of class \code{\link{ODEnetwork}}.

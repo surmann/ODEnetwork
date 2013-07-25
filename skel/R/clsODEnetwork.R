@@ -54,9 +54,9 @@ ODEnetwork <- function(masses, dampers, springs, cartesian=TRUE) {
     coordtype <- "cartesian"
   else
     coordtype <- "polar"
-  # copy upper triangonal to lower triangonal => symmetric matrix
-  dampers[lower.tri(dampers)] <- dampers[upper.tri(dampers)]
-  springs[lower.tri(springs)] <- springs[upper.tri(springs)]
+  # copy upper triangle to lower triangle => symmetric matrix
+  dampers[lower.tri(dampers)] <- t(dampers)[lower.tri(dampers)]
+  springs[lower.tri(springs)] <- t(springs)[lower.tri(springs)]
   setClasses(list(masses = masses
                   , dampers = dampers
                   , springs = springs
