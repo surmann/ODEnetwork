@@ -1,9 +1,14 @@
 context("construction of ode network class")
 
 test_that("ODEnetwork", {
+  masses <- c(1:3)
   dampers <- diag(rep(1, 3))
-  dampers[1, 2] <- 3
   springs <- diag(rep(1, 3))
+  dampers[1, 2] <- -3
+  expect_error(ODEnetwork(masses, dampers, springs))
+  dampers[1, 2] <- 3
+  springs[2, 3] <- -5
+  expect_error(ODEnetwork(masses, dampers, springs))
   springs[2, 3] <- 5
   masses <- c(0:2)
   expect_error(ODEnetwork(masses, dampers, springs))

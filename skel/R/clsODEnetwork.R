@@ -41,8 +41,14 @@ ODEnetwork <- function(masses, dampers, springs, cartesian=TRUE) {
     stop("All parameter have be of the same length or size!")
   # mass has to be positive
   if (sum(masses <= 0) > 0)
-    stop("All masses have to be positive!")
-
+    stop("All masses have to be positive.")
+  # positive damping
+  if (sum(dampers < 0) > 0)
+    stop("Damping must be nonzero.")
+  # positive springs
+  if (sum(springs < 0) > 0)
+    stop("Springs must be nonzero.")
+  
   # set state type
   if (cartesian)
     coordtype <- "cartesian"
