@@ -30,25 +30,24 @@ createParamVec.ODEnetwork <- function(odenet) {
     # Daempfer
     strParams <- paste(strParams, "d.", i, " = ", diag(odenet$dampers)[i], ", ", sep = "")
     # Feder
-    strParams <- paste(strParams, "k.", i, " = ", diag(odenet$springs)[i], sep = "")
+    strParams <- paste(strParams, "k.", i, " = ", diag(odenet$springs)[i], ", ", sep = "")
     # Daempfer und Feder zu den verknuepften Massen
     for (j in 1:length(odenet$masses)) {
-      # Aktuellen Knoten ueberspringen
+      # Knoten auf Diagonale ueberspringen
       if (j == i)
         next
       if (odenet$dampers[i, j] != 0) {
-        strParams <- paste(strParams, ", d.", i, ".", j, " = ", odenet$dampers[i, j], ", ", sep = "")
+        strParams <- paste(strParams, "d.", i, ".", j, " = ", odenet$dampers[i, j], ", ", sep = "")
       }
       if (odenet$springs[i, j] != 0) {
-        strParams <- paste(strParams, "k.", i, ".", j, " = ", odenet$springs[i, j], sep = "")
+        strParams <- paste(strParams, "k.", i, ".", j, " = ", odenet$springs[i, j], ", ", sep = "")
       }
     }
-    # Komma oder Abschluss
-    if (i < length(odenet$masses))
-      strParams <- paste(strParams, ",")
-    else
-      strParams <- paste(strParams, ")", sep = "")
-  }	
+  }
+  # letztes Komma löschen
+  strParams <- sub(", $", "", strParams)
+  # Abschluss
+  strParams <- paste(strParams, ")", sep = "")
   # Rueckgabe
   return(eval(parse(text = strParams)))
 }
