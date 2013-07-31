@@ -118,9 +118,6 @@ updateOscillators.ODEnetwork <- function(odenet, ParamVec=NA, masses=NA, dampers
   if (sum(!is.na(dampers)) > 0) {
     checkArg(dampers, "numeric", len=cLen^2, na.ok=FALSE)
     checkArg(dampers, "matrix", na.ok=FALSE)
-    # positive damping
-    if (sum(dampers < 0) > 0)
-      stop("Damping must be nonzero.")
     # copy upper triangle to lower triangle => symmetric matrix
     dampers[lower.tri(dampers)] <- t(dampers)[lower.tri(dampers)]
     odenet$dampers <- dampers

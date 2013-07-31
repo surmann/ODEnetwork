@@ -2,17 +2,17 @@ context("update oscillator parameters")
 
 test_that("updateOscillators", {
   masses <- c(1:5)
-  dampers <- diag(11:15)
+  dampers <- diag(-15:-11)
   springs <- diag(21:25)
   odenet <- ODEnetwork(masses, dampers, springs)
   
+  # errors in matrix update because of different lenght and sizes
   expect_error(updateOscillators(odenet, masses = c(1:4)))
   expect_error(updateOscillators(odenet, masses = c(1:6)))
   expect_error(updateOscillators(odenet, masses = c(0:4)))
 
   expect_error(updateOscillators(odenet, dampers = diag(10:15)))
   expect_error(updateOscillators(odenet, dampers = diag(12:15)))
-  expect_error(updateOscillators(odenet, dampers = diag(-15:-11)))
   
   expect_error(updateOscillators(odenet, springs = diag(10:15)))
   expect_error(updateOscillators(odenet, springs = diag(12:15)))
