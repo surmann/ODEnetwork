@@ -18,6 +18,9 @@ test_that("updateOscillators", {
   expect_error(updateOscillators(odenet, springs = diag(12:15)))
   expect_error(updateOscillators(odenet, springs = diag(-15:-11)))
   
+  expect_error(updateOscillators(odenet, state1 = rep(10, 4)))
+  expect_error(updateOscillators(odenet, state2 = rep(7, 6)))
+
   odenet1 <- updateOscillators(odenet, c(m.2 = 32))
   expect_equal(odenet1$masses[2], 32)
   
@@ -38,8 +41,14 @@ test_that("updateOscillators", {
   expect_true(isSymmetric(odenet$dampers))
   expect_equal(odenet$dampers[3, 4], 102)
   expect_equal(odenet$dampers[4, 3], 102)
+  
   odenet <- updateOscillators(odenet, c(k.1.2 = 201, k.3.5 = 202))
   expect_true(isSymmetric(odenet$springs))
   expect_equal(odenet$springs[3, 5], 202)
   expect_equal(odenet$springs[5, 3], 202)
+  
+  # update states
+  odenet <- updateOscillators(odenet, c(st1.2 = 11, st2.4 = 8))
+  expect_equal(as.numeric(odenet$state[2, "state1"]), 11)
+  expect_equal(as.numeric(odenet$state[4, "state2"]), 8)
 })
