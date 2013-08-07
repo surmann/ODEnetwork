@@ -43,7 +43,8 @@ test_that("ODEnetwork", {
   spring <- as.matrix(1)
   odenet <- ODEnetwork(mass, damper, spring, FALSE)
   expect_equal(odenet$coordtype, "polar")
-  odetest <- list(masses=mass, dampers=damper, springs=spring, coordtype="polar")
+  odetest <- list(masses=mass, dampers=damper, springs=spring, coordtype="polar"
+                  , state=cbind(state1=0, state2=0))
   class(odetest) <- "ODEnetwork"
   expect_equal(odenet, odetest)
   

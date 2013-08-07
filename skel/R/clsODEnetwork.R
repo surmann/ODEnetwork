@@ -46,17 +46,24 @@ ODEnetwork <- function(masses, dampers, springs, cartesian=TRUE) {
   if (sum(springs < 0) > 0)
     stop("Springs must be nonzero.")
   
+  # copy upper triangle to lower triangle => symmetric matrix
+  dampers[lower.tri(dampers)] <- t(dampers)[lower.tri(dampers)]
+  springs[lower.tri(springs)] <- t(springs)[lower.tri(springs)]
+
   # set state type
   if (cartesian)
     coordtype <- "cartesian"
   else
     coordtype <- "polar"
-  # copy upper triangle to lower triangle => symmetric matrix
-  dampers[lower.tri(dampers)] <- t(dampers)[lower.tri(dampers)]
-  springs[lower.tri(springs)] <- t(springs)[lower.tri(springs)]
+  
+  # add empty states
+  states <- cbind(state1 = rep(0, length(masses)), state2 = rep(0, length(masses)))
+  
+  # return network
   setClasses(list(masses = masses
                   , dampers = dampers
                   , springs = springs
-                  , coordtype = coordtype)
+                  , coordtype = coordtype
+                  , state = states)
              , "ODEnetwork")
 }
