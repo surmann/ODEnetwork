@@ -66,14 +66,53 @@ simuNetwork.ODEnetwork <- function(odenet, times, ...) {
     eventdat <- list(data = eventdat)
   }
   
-  # DGLs nummerisch lösen
-  mResOde <- ode(  y = createState(odenet)		# starting state
-                 , times = times     # time vector
-                 , func = createOscillators(odenet) # function of all differential equations
-                 , parms = createParamVec(odenet)  # create parmeter vector from masses, springs and dampers
-                 , events = eventdat
-                 , ...
-  )
+  if (is.null(eventdat)) {
+    # solve ODEs analytically
+    cN <- length(odenet$masses)
+    # derive My'' + Dy' + Ky = 0
+    mMinv <- diag(1/odenet$masses)
+    mD <- odenet$dampers
+    diag(mD) <- -rowSums(mD)
+    mD <- -mD
+    mK <- odenet$springs
+    diag(mK) <- -rowSums(mK)
+    mK <- -mK
+    # switch to ODEs of first order with x' = C * x
+    # C = rbind( (0, I), (-M^-1*K,-M^-1*D))
+    mC <- rbind(cbind(diag(0, cN), diag(1, cN)), cbind(-mMinv%*%mK, -mMinv%*%mD))
+    # eigenvalues and -vectors of C
+    lstEigen <- eigen(mC)
+    # constants from starting values
+    cConstants <- solve(lstEigen$vectors, matrix(odenet$state))
+    # create solution x = exp(t*c)*x0 by eigenvalues etc
+    # empty function
+    funODEs <- function() {}
+    # time as parameter
+    formals(funODEs) <- alist(t = 0)
+    # create function text
+    # correct parsing of complex numbers
+    strTemp <- paste("complex(real=", Re(lstEigen$values), ", imaginary=", Im(lstEigen$values), ")", sep = "")
+#     strFun <- paste("exp(t*(", lstEigen$values, "))", sep = "")
+    strFun <- paste("exp(t*", strTemp, ")", sep = "")
+    strTemp <- paste("complex(real=", Re(cConstants), ", imaginary=", Im(cConstants), ")", sep = "")
+#     strFun <- paste("(", cConstants, ")*", strFun, sep = "")
+    strFun <- paste(strTemp, "*", strFun, sep = "")
+    strTemp <- apply(lstEigen$vectors, 2, paste, collapse = ", ")
+    strFun <- paste(strFun, "*c(", strTemp, ")", sep = "")
+    strFun <- paste(strFun, collapse = " + ")
+    # parse string and add to body
+    body(funODEs) <- as.call(c(as.name("{"), parse(text = strFun)))
+    
+  } else {
+    # solve ODEs nummerically
+    mResOde <- ode(  y = createState(odenet)		# starting state
+                   , times = times     # time vector
+                   , func = createOscillators(odenet) # function of all differential equations
+                   , parms = createParamVec(odenet)  # create parmeter vector from masses, springs and dampers
+                   , events = eventdat
+                   , ...
+    )
+  }
   # extend the ODEnetwork object
   odenet$simulation$method <- attr(mResOde, "type")
   # overwrite calculations with forcings
