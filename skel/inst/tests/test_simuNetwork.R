@@ -40,6 +40,14 @@ test_that("simuNetwork", {
   
   # compare analytic to numeric results
   tol = .Machine$double.eps ^ 0.5 * 10^2
+  # 1 node
+  masses <- 0.1
+  dampers <- as.matrix(0)
+  springs <- as.matrix(4)
+  odenet <- ODEnetwork(masses, dampers, springs)
+  odenet <- setState(odenet, 1, 0)
+  odenet <- simuNetwork(odenet, seq(0, 10, by = 0.1))
+  
   # 2 nodes
   masses <- c(1, 2)
   dampers <- diag(c(0.02, 0.1))

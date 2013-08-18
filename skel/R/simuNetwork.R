@@ -70,7 +70,7 @@ simuNetwork.ODEnetwork <- function(odenet, times, ...) {
     # solve ODEs analytically
     cN <- length(odenet$masses)
     # derive My'' + Dy' + Ky = 0
-    mMinv <- diag(1/odenet$masses)
+    mMinv <- diag(1/odenet$masses, cN)
     mD <- odenet$dampers
     diag(mD) <- -rowSums(mD)
     mD <- -mD
