@@ -78,7 +78,7 @@ odenet <- ODEnetwork(masses, dampers, springs)
 
 # state only
 odenet <- setState(odenet, c(1, 1), c(0, 0))
-odenet <- simuNetwork(odenet, seq(0, 40, by = 0.05))
+odenet <- simuNetwork(odenet, seq(0, 40, by = 1))
 calcResonances(odenet)
 odenet$state
 plot(odenet)
@@ -87,6 +87,11 @@ plot(odenet, state = "2")
 plot(odenet, state = "1vs2")
 
 # events
+eventdata <- data.frame(var = c("v.1")
+                        , time = c(0)
+                        , value = c(0)
+)
+
 eventdata <- data.frame(var = c("x.1", "x.1", "x.1")
                         , time = c(1, 4, 5)
                         , value = c(0, 5, 5)
@@ -97,7 +102,7 @@ eventdata <- data.frame(var = c("m.2", "m.1", "m.1", "a.1", "m.1", "m.2")
 )
 
 odenet <- setEvents(odenet, eventdata, type = "linear")
-odenet <- simuNetwork(odenet, seq(0, 10, by = 0.05))
+odenet <- simuNetwork(odenet, seq(0, 40, by = 1))
 plot(odenet)
 plot(odenet, state = "1")
 plot(odenet, state = "2")
@@ -132,13 +137,16 @@ plot(odenet, var = 1)
 # 5d Beispiel
 #########################
 masses <- 1:5
-dampers <- diag(11:15)
-for (i in 1:(length(masses)-1)) {dampers[i, i+1] <- 15+i}
-dampers[2, 4] <- 16.5
-springs <- diag(21:25)
-for (i in 1:(length(masses)-1)) {springs[i, i+1] <- 25+i}
-springs[3, 5] <- 23.5
+dampers <- diag(rep(1, 5))
+for (i in 1:(length(masses)-1)) {dampers[i, i+1] <- 2+i}
+dampers[2, 4] <- 1.5
+springs <- diag(11:15)
+for (i in 1:(length(masses)-1)) {springs[i, i+1] <- 15+i}
+springs[3, 5] <- 13.5
 odenet <- ODEnetwork(masses, dampers, springs)
+odenet <- setState(odenet, c(rep(0, 4), 5), c(rep(0, 4), 5))
+odenet <- simuNetwork(odenet, seq(0, 10, by = 0.1))
+plot(odenet)
 
 #########################
 # 10d Beispiel

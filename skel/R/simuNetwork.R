@@ -91,18 +91,28 @@ simuNetwork.ODEnetwork <- function(odenet, times, ...) {
     formals(funODEs) <- alist(t = 0)
     # create function text
     # correct parsing of complex numbers
-    strTemp <- paste("complex(real=", Re(lstEigen$values), ", imaginary=", Im(lstEigen$values), ")", sep = "")
-#     strFun <- paste("exp(t*(", lstEigen$values, "))", sep = "")
-    strFun <- paste("exp(t*", strTemp, ")", sep = "")
-    strTemp <- paste("complex(real=", Re(cConstants), ", imaginary=", Im(cConstants), ")", sep = "")
-#     strFun <- paste("(", cConstants, ")*", strFun, sep = "")
-    strFun <- paste(strTemp, "*", strFun, sep = "")
+#     strTemp <- paste("complex(real=", Re(lstEigen$values), ", imaginary=", Im(lstEigen$values), ")", sep = "")
+#     strFun <- paste("exp(t*", strTemp, ")", sep = "")
+    strFun <- paste("exp(t*(", lstEigen$values, "))", sep = "")
+#     strTemp <- paste("complex(real=", Re(cConstants), ", imaginary=", Im(cConstants), ")", sep = "")
+#     strFun <- paste(strTemp, "*", strFun, sep = "")
+    strFun <- paste("(", cConstants, ")*", strFun, sep = "")
     strTemp <- apply(lstEigen$vectors, 2, paste, collapse = ", ")
     strFun <- paste(strFun, "*c(", strTemp, ")", sep = "")
     strFun <- paste(strFun, collapse = " + ")
     # parse string and add to body
+    # function returns a vector of length 2n,
+    # the first n values are the positions, followed by the velocity
     body(funODEs) <- as.call(c(as.name("{"), parse(text = strFun)))
-    
+    mResult <- vapply(times, funODEs, rep(1i, 2*cN))
+    # sort to (time, x.1, v.1, x.2, v.2, ..., x.n, v.n)
+    mResOde <- cbind(time = times, t(Re(mResult[rep(1:cN, each = 2) + c(0, cN), ])))
+    # set correct names
+    colnames(mResOde)[2:ncol(mResOde)] <- paste(c("x", "v"), rep(1:cN, each=2), sep = ".")
+    # extend the ODEnetwork object
+    odenet$simulation$method <- "analytic"
+    # add necessary deSolve class attributes
+    attr(mResOde, "class") <- c("deSolve", "matrix")
   } else {
     # solve ODEs nummerically
     mResOde <- ode(  y = createState(odenet)		# starting state
@@ -112,25 +122,25 @@ simuNetwork.ODEnetwork <- function(odenet, times, ...) {
                    , events = eventdat
                    , ...
     )
-  }
-  # extend the ODEnetwork object
-  odenet$simulation$method <- attr(mResOde, "type")
-  # overwrite calculations with forcings
-  if (!is.null(odenet$events) && odenet$events$type == "linear") {
-    # add return of forcings
-    for (i in 1:length(odenet$masses)) {
-      for (strVar in c("x.", "v.")) {
-        if (!is.null(odenet$events$linear[[paste(strVar, i, sep = "")]])) {
-          state <- paste(strVar, i, sep = "")
-          stateF <- paste(strVar, i, "Force", sep = "")
-          # replace non-forcing with forcing, where forcings are not NA
-          mResOde[!is.na(mResOde[, stateF]), state] <- mResOde[!is.na(mResOde[, stateF]), stateF]
-          mResOde <- mResOde[, colnames(mResOde) %nin% stateF]
+    # extend the ODEnetwork object
+    odenet$simulation$method <- attr(mResOde, "type")
+    # overwrite calculations with forcings
+    if (!is.null(odenet$events) && odenet$events$type == "linear") {
+      # add return of forcings
+      for (i in 1:length(odenet$masses)) {
+        for (strVar in c("x.", "v.")) {
+          if (!is.null(odenet$events$linear[[paste(strVar, i, sep = "")]])) {
+            state <- paste(strVar, i, sep = "")
+            stateF <- paste(strVar, i, "Force", sep = "")
+            # replace non-forcing with forcing, where forcings are not NA
+            mResOde[!is.na(mResOde[, stateF]), state] <- mResOde[!is.na(mResOde[, stateF]), stateF]
+            mResOde <- mResOde[, colnames(mResOde) %nin% stateF]
+          }
         }
       }
+      # add necessary deSolve class attributes
+      attr(mResOde, "class") <- c("deSolve", "matrix")
     }
-    # add necessary deSolve class attributes
-    attr(mResOde, "class") <- c("deSolve", "matrix")
   }
   # convert to polar coordinates
   if (odenet$coordtype == "polar") {
@@ -140,7 +150,7 @@ simuNetwork.ODEnetwork <- function(odenet, times, ...) {
     for (i in 1:n) {
       mResOde[, c(2*i, 2*i+1)] <- convertCoordinates(mResOde[, c(2*i, 2*i+1)], "polar")
     }
-    colnames(mResOde) <- c(colnames(mResOde)[1], paste(rep(strNames, n), rep(1:n, each=2), sep="."))
+    colnames(mResOde) <- c(colnames(mResOde)[1], paste(strNames, rep(1:n, each=2), sep="."))
   }
   
   # extend the ODEnetwork object
