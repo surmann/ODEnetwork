@@ -34,8 +34,8 @@ createJacobian <- function(odenet, ParamVec=NA) {
 
 #' @S3method createJacobian ODEnetwork
 createJacobian.ODEnetwork <- function(odenet, ParamVec=NA) {
-  if (!is.na(ParamVec)) {
-    odenet <- ODEnetwork::updateParamVec(odenet, ParamVec)
+  if (sum(!is.na(ParamVec)) > 0) {
+    odenet <- ODEnetwork::updateOscillators(odenet, ParamVec)
   }
   
   # get parameters from the odenet
@@ -53,9 +53,9 @@ createJacobian.ODEnetwork <- function(odenet, ParamVec=NA) {
   # C = rbind( (0, I), (-M^-1*K,-M^-1*D))
   mC <- rbind(cbind(diag(0, cN), diag(1, cN)), cbind(-mMinv%*%mK, -mMinv%*%mD))
   # derivative with respect to d_ii
-  mDerivDii <- rbind(diag(0, cN), -mMinv %*% diag(odenet$state[, "state2"]))
+  mDerivDii <- rbind(diag(0, cN), -mMinv %*% diag(odenet$state[, "state2"], cN))
   # derivative with respect to d_ii
-  mDerivKii <- rbind(diag(0, cN), -mMinv %*% diag(odenet$state[, "state1"]))
+  mDerivKii <- rbind(diag(0, cN), -mMinv %*% diag(odenet$state[, "state1"], cN))
   
   # jacobian
   return(cbind(mDerivDii, mDerivKii, mC))
