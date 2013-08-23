@@ -145,6 +145,7 @@ for (i in 1:(length(masses)-1)) {springs[i, i+1] <- 15+i}
 springs[3, 5] <- 13.5
 odenet <- ODEnetwork(masses, dampers, springs)
 odenet <- setState(odenet, c(rep(0, 4), 5), c(rep(0, 4), 5))
+odenet <- setState(odenet, seq(3, 5, length.out=5), seq(1, 3, length.out=5))
 odenet <- simuNetwork(odenet, seq(0, 10, by = 0.1))
 plot(odenet)
 
