@@ -90,19 +90,15 @@ simuNetwork.ODEnetwork <- function(odenet, times, ...) {
     # time as parameter
     formals(funODEs) <- alist(t = 0)
     # create function text
-    # correct parsing of complex numbers
-#     strTemp <- paste("complex(real=", Re(lstEigen$values), ", imaginary=", Im(lstEigen$values), ")", sep = "")
-#     strFun <- paste("exp(t*", strTemp, ")", sep = "")
+    # sum(c_i * exp(t*lambda_i) * eigenv_i)
     strFun <- paste("exp(t*(", lstEigen$values, "))", sep = "")
-#     strTemp <- paste("complex(real=", Re(cConstants), ", imaginary=", Im(cConstants), ")", sep = "")
-#     strFun <- paste(strTemp, "*", strFun, sep = "")
     strFun <- paste("(", cConstants, ")*", strFun, sep = "")
     strTemp <- apply(lstEigen$vectors, 2, paste, collapse = ", ")
     strFun <- paste(strFun, "*c(", strTemp, ")", sep = "")
     strFun <- paste(strFun, collapse = " + ")
     # parse string and add to body
     # function returns a vector of length 2n,
-    # the first n values are the positions, followed by the velocity
+    # the first n values are the positions, followed by the velocities
     body(funODEs) <- as.call(c(as.name("{"), parse(text = strFun)))
     mResult <- vapply(times, funODEs, rep(1i, 2*cN))
     # sort to (time, x.1, v.1, x.2, v.2, ..., x.n, v.n)
