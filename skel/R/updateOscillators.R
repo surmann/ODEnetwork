@@ -41,7 +41,7 @@
 #' odenet <- updateOscillators(odenet, c(k.1.2 = 201, k.3.5 = 202))
 #' # Warning: Following value is ignored, because it is on the lower triangle
 #' odenet <- updateOscillators(odenet, c(d.2.1 = 101))
-updateOscillators <- function(odenet, ParamVec, masses, dampers, springs, state1, state2) {
+updateOscillators <- function(odenet, ParamVec=NA, masses=NA, dampers=NA, springs=NA, state1=NA, state2=NA) {
   UseMethod("updateOscillators")
 }
 

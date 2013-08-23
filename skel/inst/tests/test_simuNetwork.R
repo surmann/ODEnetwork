@@ -12,14 +12,14 @@ test_that("simuNetwork", {
   odenet <- simuNetwork(odenet, seq(0, 4, by = 1))
   mRes <- odenet$simulation$results
   mResManual <- cbind(time=0:4, x.1=rep(0, 5), v.1=rep(0, 5))
-  attr(mResManual, "class") <- c("deSolve", "matrix")
+  mostattributes(mResManual) <- attributes(mRes)
   expect_equal(mRes, mResManual, check.attributes = FALSE)
   expect_equal(odenet$simulation$method, "lsoda")
 
   odenet <- simuNetwork(odenet, 0:4, method = "rk4")
   mRes <- odenet$simulation$results
   mResManual <- cbind(time=seq(0, 4, by = 1), x.1=rep(0, 5), v.1=rep(0, 5))
-  attr(mResManual, "class") <- c("deSolve", "matrix")
+  mostattributes(mResManual) <- attributes(mRes)
   expect_equal(mRes, mResManual, check.attributes = FALSE)
   expect_equal(odenet$simulation$method, "rk")
   
@@ -29,7 +29,7 @@ test_that("simuNetwork", {
   odenet <- simuNetwork(odenet, seq(0, 4, by = 1))
   mRes <- odenet$simulation$results
   mResManual <- cbind(time=0:4, m.1=rep(0, 5), a.1=rep(0, 5))
-  attr(mResManual, "class") <- c("deSolve", "matrix")
+  mostattributes(mResManual) <- attributes(mRes)
   expect_equal(mRes, mResManual, check.attributes = FALSE)
   expect_equal(odenet$simulation$method, "lsoda")
 
