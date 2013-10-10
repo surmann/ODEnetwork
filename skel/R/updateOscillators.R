@@ -26,6 +26,8 @@
 #'   (Will be copied automatically to create a symmetric matrix.)
 #' @param springs [\code{matrix}] quadratic of size n\cr
 #'   The springs are defined in the network like matrix of dampers.
+#' @param distances [\code{matrix}] quadratic of size n\cr
+#'   The distances are defined in the network like matrix of dampers.
 #' @param state1 [\code{vector}] of length n\cr
 #'   Starting values of state 1 (position or angle).
 #' @param state2 [\code{vector}] of length n\cr
@@ -38,16 +40,19 @@
 #' springs <- diag(21:25)
 #' odenet <- ODEnetwork(masses, dampers, springs)
 #' odenet <- updateOscillators(odenet, masses = c(3:7))
-#' odenet <- updateOscillators(odenet, c(k.1.2 = 201, k.3.5 = 202))
+#' odenet <- updateOscillators(odenet, c(k.1.2 = 201, k.3.5 = 202, r.1 = 2))
 #' # Warning: Following value is ignored, because it is on the lower triangle
 #' odenet <- updateOscillators(odenet, c(d.2.1 = 101))
-updateOscillators <- function(odenet, ParamVec=NA, masses=NA, dampers=NA, springs=NA, state1=NA, state2=NA) {
+updateOscillators <- function(odenet, ParamVec=NA
+                              , masses=NA, dampers=NA, springs=NA, distances=NA
+                              , state1=NA, state2=NA) {
   UseMethod("updateOscillators")
 }
 
 #' @S3method updateOscillators ODEnetwork
 updateOscillators.ODEnetwork <- function(odenet, ParamVec=NA
-                                         , masses=NA, dampers=NA, springs=NA, state1=NA, state2=NA) {
+                                         , masses=NA, dampers=NA, springs=NA, distances=NA
+                                         , state1=NA, state2=NA) {
   cLen <- length(odenet$masses)
   if (sum(!is.na(ParamVec)) > 0) {
     # checking arguments
@@ -57,6 +62,7 @@ updateOscillators.ODEnetwork <- function(odenet, ParamVec=NA
     masses <- NA
     dampers <- NA
     springs <- NA
+    distances <- NA
     
     # extract parameter settings from the vector to change odenet parameters
     # masses
@@ -117,6 +123,31 @@ updateOscillators.ODEnetwork <- function(odenet, ParamVec=NA
       }
     }
     
+    # distances
+    # diagonal elements r.2
+    cPosSource <- grep("^r\\.\\d+$", names(ParamVec))
+    if (length(cPosSource) > 0) {
+      distances <- odenet$distances
+      cPosTarget <- as.numeric(gsub("\\D", "", names(ParamVec)[cPosSource]))
+      diag(distances)[cPosTarget] <- ParamVec[cPosSource]
+    }
+    # off diagonal elements r.1.45
+    cPosSource <- grep("^r(\\.\\d+){2}$", names(ParamVec))
+    if (length(cPosSource) > 0) {
+      if (sum(!is.na(distances)) == 0)
+        distances <- odenet$distances
+      cTemp <- sub("\\D+", "", names(ParamVec)[cPosSource])
+      cPosTarget <- as.numeric(sub("\\.\\d+$", "", cTemp))
+      cPosTarget2 <- as.numeric(sub("^\\d+\\.", "", cTemp))
+      # delete lower triangonal
+      cTemp <- cPosTarget < cPosTarget2
+      cPosTarget <- cPosTarget[cTemp]
+      cPosTarget2 <- cPosTarget2[cTemp]
+      for (i in 1:length(cPosTarget)) {
+        distances[cPosTarget[i], cPosTarget2[i]] <- ParamVec[cPosSource[i]]
+      }
+    }
+    
     # state1
     cPosSource <- grep("^st1\\.\\d+$", names(ParamVec))
     if (length(cPosSource) > 0) {
@@ -133,7 +164,7 @@ updateOscillators.ODEnetwork <- function(odenet, ParamVec=NA
       state2[cPosTarget] <- ParamVec[cPosSource]
     }
   } else {
-    if ((sum(!is.na(masses)) + sum(!is.na(dampers)) + sum(!is.na(springs))
+    if ((sum(!is.na(masses)) + sum(!is.na(dampers)) + sum(!is.na(springs)) + sum(!is.na(distances))
          + sum(!is.na(state1)) + sum(!is.na(state2))) == 0)
       stop("Set at least one parameter.")
   }
@@ -161,6 +192,13 @@ updateOscillators.ODEnetwork <- function(odenet, ParamVec=NA
     # copy upper triangle to lower triangle => symmetric matrix
     springs[lower.tri(springs)] <- t(springs)[lower.tri(springs)]
     odenet$springs <- springs
+  }
+  if (sum(!is.na(distances)) > 0) {
+    checkArg(distances, "numeric", len=cLen^2, na.ok=FALSE)
+    checkArg(distances, "matrix", na.ok=FALSE)
+    # copy upper triangle to lower triangle => symmetric matrix
+    distances[lower.tri(distances)] <- t(distances)[lower.tri(distances)]
+    odenet$distances <- distances
   }
   if (sum(!is.na(state1)) > 0) {
     checkArg(state1, "numeric", len=cLen, na.ok=FALSE)

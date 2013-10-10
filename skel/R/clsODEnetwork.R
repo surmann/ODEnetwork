@@ -16,6 +16,12 @@
 #'    If \code{TRUE}, \code{state1} and \code{state2} are position and velocity,
 #'    otherwise angle and magnitude.
 #'    Default is \code{TRUE}.
+#' @param distances [\code{matrix}] quadratic of size n\cr
+#'    Describes the length of each spring.
+#'    Elements on the main diagonal describe spring length connecting the masses to the ground.
+#'    All upper triangle elements describe spring lengths between two masses.
+#'    Default is \code{NA}, which is equivalent to a zero matrix.
+#'    (Will be copied automatically to create a symmetric matrix.)
 #' @return a list of class [\code{\link{ODEnetwork}}].
 #' @export
 #' @examples
@@ -27,7 +33,7 @@
 #' mK[1, 2] <- 10
 #' mK[2, 3] <- 10
 #' odenet <- ODEnetwork(mM, mD, mK)
-ODEnetwork <- function(masses, dampers, springs, cartesian=TRUE) {
+ODEnetwork <- function(masses, dampers, springs, cartesian=TRUE, distances=NA) {
   checkArg(masses, "numeric", min.len=1L, na.ok=FALSE)
   checkArg(masses, "vector", min.len=1L, na.ok=FALSE)
   checkArg(dampers, "numeric", min.len=1L, na.ok=FALSE)
@@ -45,11 +51,17 @@ ODEnetwork <- function(masses, dampers, springs, cartesian=TRUE) {
   # positive springs
   if (sum(springs < 0) > 0)
     stop("Springs must be nonzero.")
+  # check distances
+  if (!is.matrix(distances) && !is.numeric(distances))
+    distances <- diag(0, length(masses))
+  if (is.matrix(distances))
+    distances[!is.numeric(distances)] <- 0
   
   # copy upper triangle to lower triangle => symmetric matrix
   dampers[lower.tri(dampers)] <- t(dampers)[lower.tri(dampers)]
   springs[lower.tri(springs)] <- t(springs)[lower.tri(springs)]
-
+  distances[lower.tri(distances)] <- t(distances)[lower.tri(distances)]
+  
   # set state type
   if (cartesian)
     coordtype <- "cartesian"
@@ -63,6 +75,7 @@ ODEnetwork <- function(masses, dampers, springs, cartesian=TRUE) {
   setClasses(list(masses = masses
                   , dampers = dampers
                   , springs = springs
+                  , distances = distances
                   , coordtype = coordtype
                   , state = states)
              , "ODEnetwork")

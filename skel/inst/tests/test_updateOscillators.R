@@ -4,7 +4,8 @@ test_that("updateOscillators", {
   masses <- c(1:5)
   dampers <- diag(-15:-11)
   springs <- diag(21:25)
-  odenet <- ODEnetwork(masses, dampers, springs)
+  distances <- diag(31:35)
+  odenet <- ODEnetwork(masses, dampers, springs, distances=distances)
   
   # errors in matrix update because of different lenght and sizes
   expect_error(updateOscillators(odenet, masses = c(1:4)))
@@ -17,6 +18,9 @@ test_that("updateOscillators", {
   expect_error(updateOscillators(odenet, springs = diag(10:15)))
   expect_error(updateOscillators(odenet, springs = diag(12:15)))
   expect_error(updateOscillators(odenet, springs = diag(-15:-11)))
+
+  expect_error(updateOscillators(odenet, distances = diag(10:15)))
+  expect_error(updateOscillators(odenet, distances = diag(12:15)))
   
   expect_error(updateOscillators(odenet, state1 = rep(10, 4)))
   expect_error(updateOscillators(odenet, state2 = rep(7, 6)))
@@ -35,6 +39,10 @@ test_that("updateOscillators", {
   odenet1 <- updateOscillators(odenet, springs = springs)
   springs[4, 1] <- 24
   expect_equal(odenet1$springs, springs)
+  distances[1, 4] <- 34
+  odenet1 <- updateOscillators(odenet, distances = distances)
+  distances[4, 1] <- 34
+  expect_equal(odenet1$distances, distances)
   
   # Bigger network: test copy of triangle
   odenet <- updateOscillators(odenet, c(d.1.2 = 101, d.3.4 = 102))
@@ -46,6 +54,11 @@ test_that("updateOscillators", {
   expect_true(isSymmetric(odenet$springs))
   expect_equal(odenet$springs[3, 5], 202)
   expect_equal(odenet$springs[5, 3], 202)
+  
+  odenet <- updateOscillators(odenet, c(r.1.2 = 301, r.3.5 = 302))
+  expect_true(isSymmetric(odenet$distances))
+  expect_equal(odenet$distances[3, 5], 302)
+  expect_equal(odenet$distances[5, 3], 302)
   
   # update states
   odenet <- updateOscillators(odenet, c(st1.2 = 11, st2.4 = 8))
