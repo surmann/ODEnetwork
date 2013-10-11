@@ -19,9 +19,9 @@
 #' @param distances [\code{matrix}] quadratic of size n\cr
 #'    Describes the length of each spring.
 #'    Elements on the main diagonal describe spring length connecting the masses to the ground.
-#'    All upper triangle elements describe spring lengths between two masses.
+#'    All upper triangle elements describe spring distance between two masses i < j.
 #'    Default is \code{NA}, which is equivalent to a zero matrix.
-#'    (Will be copied automatically to create a symmetric matrix.)
+#'    (Negative value will be copied automatically to lower triangle.)
 #' @return a list of class [\code{\link{ODEnetwork}}].
 #' @export
 #' @examples
@@ -60,7 +60,7 @@ ODEnetwork <- function(masses, dampers, springs, cartesian=TRUE, distances=NA) {
   # copy upper triangle to lower triangle => symmetric matrix
   dampers[lower.tri(dampers)] <- t(dampers)[lower.tri(dampers)]
   springs[lower.tri(springs)] <- t(springs)[lower.tri(springs)]
-  distances[lower.tri(distances)] <- t(distances)[lower.tri(distances)]
+  distances[lower.tri(distances)] <- -t(distances)[lower.tri(distances)]
   
   # set state type
   if (cartesian)

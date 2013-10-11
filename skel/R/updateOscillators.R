@@ -27,7 +27,8 @@
 #' @param springs [\code{matrix}] quadratic of size n\cr
 #'   The springs are defined in the network like matrix of dampers.
 #' @param distances [\code{matrix}] quadratic of size n\cr
-#'   The distances are defined in the network like matrix of dampers.
+#'   Describe spring distance between two masses i < j.
+#'   Negative value will be copied automatically to lower triangle.
 #' @param state1 [\code{vector}] of length n\cr
 #'   Starting values of state 1 (position or angle).
 #' @param state2 [\code{vector}] of length n\cr
@@ -197,7 +198,7 @@ updateOscillators.ODEnetwork <- function(odenet, ParamVec=NA
     checkArg(distances, "numeric", len=cLen^2, na.ok=FALSE)
     checkArg(distances, "matrix", na.ok=FALSE)
     # copy upper triangle to lower triangle => symmetric matrix
-    distances[lower.tri(distances)] <- t(distances)[lower.tri(distances)]
+    distances[lower.tri(distances)] <- -t(distances)[lower.tri(distances)]
     odenet$distances <- distances
   }
   if (sum(!is.na(state1)) > 0) {

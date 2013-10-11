@@ -35,7 +35,7 @@ test_that("ODEnetwork", {
   expect_equal(odenet$springs, springs2)
   
   distances2 <- distances
-  distances2[3, 1] <- 5
+  distances2[3, 1] <- -5
   expect_equal(odenet$distances, distances2)
   
   masses2 <- masses[-1]

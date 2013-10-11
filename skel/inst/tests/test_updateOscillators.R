@@ -41,7 +41,7 @@ test_that("updateOscillators", {
   expect_equal(odenet1$springs, springs)
   distances[1, 4] <- 34
   odenet1 <- updateOscillators(odenet, distances = distances)
-  distances[4, 1] <- 34
+  distances[4, 1] <- -34
   expect_equal(odenet1$distances, distances)
   
   # Bigger network: test copy of triangle
@@ -56,9 +56,8 @@ test_that("updateOscillators", {
   expect_equal(odenet$springs[5, 3], 202)
   
   odenet <- updateOscillators(odenet, c(r.1.2 = 301, r.3.5 = 302))
-  expect_true(isSymmetric(odenet$distances))
   expect_equal(odenet$distances[3, 5], 302)
-  expect_equal(odenet$distances[5, 3], 302)
+  expect_equal(odenet$distances[5, 3], -302)
   
   # update states
   odenet <- updateOscillators(odenet, c(st1.2 = 11, st2.4 = 8))
