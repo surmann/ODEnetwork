@@ -31,6 +31,8 @@ createParamVec.ODEnetwork <- function(odenet) {
     strParams <- paste(strParams, "d.", i, " = ", diag(odenet$dampers)[i], ", ", sep = "")
     # Feder
     strParams <- paste(strParams, "k.", i, " = ", diag(odenet$springs)[i], ", ", sep = "")
+    # length of springs
+    strParams <- paste(strParams, "r.", i, " = ", diag(odenet$distances)[i], ", ", sep = "")
     # Daempfer und Feder zu den verknuepften Massen
     for (j in 1:length(odenet$masses)) {
       # Knoten auf Diagonale ueberspringen
@@ -41,6 +43,9 @@ createParamVec.ODEnetwork <- function(odenet) {
       }
       if (odenet$springs[i, j] != 0) {
         strParams <- paste(strParams, "k.", i, ".", j, " = ", odenet$springs[i, j], ", ", sep = "")
+      }
+      if (odenet$distances[i, j] != 0) {
+        strParams <- paste(strParams, "r.", i, ".", j, " = ", odenet$distances[i, j], ", ", sep = "")
       }
     }
   }
