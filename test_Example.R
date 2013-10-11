@@ -12,8 +12,9 @@ load_all("skel", reset = TRUE)
 masses <- 1
 dampers <- as.matrix(0.5)
 springs <- as.matrix(4)
+distances <- as.matrix(2)
 
-odenet <- ODEnetwork(masses, dampers, springs)
+odenet <- ODEnetwork(masses, dampers, springs, distances=distances)
 
 # only state
 odenet <- setState(odenet, 3, 0)
@@ -22,6 +23,14 @@ plot(odenet)
 plot(odenet, state = "1vs2")
 
 # events
+eventdata <- data.frame(  var = c("x.1")
+                          , time = c(0)
+                          , value = c(3)
+)
+odenet <- setEvents(odenet, eventdata, type = "dirac")
+odenet <- simuNetwork(odenet, seq(0, 10, by = 0.1))
+plot(odenet)
+
 eventdata <- data.frame(  var = c("x.1", "x.1", "v.1")
                          , time = c(1, 2, 5)
                          , value = c(2, 3, 4)
