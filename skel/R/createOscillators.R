@@ -60,8 +60,14 @@ createOscillators.ODEnetwork <- function(odenet) {
     # dv1 <- (F1 - d*v1 - k*x1 - d12*(v1-v2) - k12*(x1-x2)) / m1
     # nur falls am Knoten eine aussere Anregung oder Anregungsaenderung vorliegt die Anregung einbauen
     strTemp <- paste("dv.", i, " <- (", sep = "")
-    # Daempfer und Feder der aktuellen Masse
-    strTemp <- paste(strTemp, " - d.", i, "*v.", i, " - k.", i, "*x.", i, sep = "")
+    # Daempfer der aktuellen Masse
+    strTemp <- paste(strTemp, " - d.", i, "*v.", i, sep = "")
+    # Feder der aktuellen Masse
+    if (odenet$distances[i, i] == 0) {
+      strTemp <- paste(strTemp, " - k.", i, "*x.", i, sep = "")
+    } else {
+      strTemp <- paste(strTemp, " - k.", i, "*(x.", i, "-r.", i, ")", sep = "")
+    }
     # Feder und Daempfer aller Koppelelemente
     for (j in 1:length(odenet$masses)) {
       # aktuellen Knoten ueberspringen
@@ -72,7 +78,12 @@ createOscillators.ODEnetwork <- function(odenet) {
         strTemp <- paste(strTemp, " - d.", i, ".", j, "*(v.", i, "-v.", j, ")", sep = "")
       }
       if (odenet$springs[i, j] != 0) {
-        strTemp <- paste(strTemp, " - k.", i, ".", j, "*(x.", i, "-x.", j, ")", sep = "")
+        strTemp <- paste(strTemp, " - k.", i, ".", j, "*(x.", i, "-x.", j, sep = "")
+        if (odenet$distances[i, j] == 0) {
+          strTemp <- paste(strTemp, ")", sep = "")
+        } else {
+          strTemp <- paste(strTemp, "+r.", i, ".", j, ")", sep = "")
+        }
       }
     }
     # Abschluss: Klammer schließen und durch Masse teilen
