@@ -42,6 +42,7 @@ test_that("updateOscillators", {
   distances[1, 4] <- 34
   odenet1 <- updateOscillators(odenet, distances = distances)
   distances[4, 1] <- -34
+  diag(distances) <- -diag(distances)
   expect_equal(odenet1$distances, distances)
   
   # Bigger network: test copy of triangle

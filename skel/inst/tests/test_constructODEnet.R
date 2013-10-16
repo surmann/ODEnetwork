@@ -36,6 +36,7 @@ test_that("ODEnetwork", {
   
   distances2 <- distances
   distances2[3, 1] <- -5
+  diag(distances2) <- -diag(distances2)
   expect_equal(odenet$distances, distances2)
   
   masses2 <- masses[-1]

@@ -9,7 +9,7 @@ test_that("createParamVec", {
   cPar <- createParamVec(odenet)
   
   expect_is(cPar, "numeric")
-  expect_equal(cPar, c(m.1=1, d.1=0.1, k.1=4, r.1=2))
+  expect_equal(cPar, c(m.1=1, d.1=0.1, k.1=4, r.1=-2))
   
   masses <- c(1, 2)
   dampers <- diag(c(0.1, 0.5))
@@ -21,8 +21,8 @@ test_that("createParamVec", {
   odenet <- ODEnetwork(masses, dampers, springs, distances=distances)
   cPar <- createParamVec(odenet)
   
-  expect_equal(cPar, c(m.1=1, d.1=0.1, k.1=4, r.1=3, d.1.2=0.05, k.1.2=6, r.1.2=4.5
-                       , m.2=2, d.2=0.5, k.2=10, r.2=5, d.2.1=0.05, k.2.1=6, r.2.1=-4.5))
+  expect_equal(cPar, c(m.1=1, d.1=0.1, k.1=4, r.1=-3, d.1.2=0.05, k.1.2=6, r.1.2=4.5
+                       , m.2=2, d.2=0.5, k.2=10, r.2=-5, d.2.1=0.05, k.2.1=6, r.2.1=-4.5))
   
   masses <- 1:5
   dampers <- diag(11:15)

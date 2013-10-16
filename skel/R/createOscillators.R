@@ -57,8 +57,10 @@ createOscillators.ODEnetwork <- function(odenet) {
       strFun <- c(strFun, strTemp)
       strFun <- c(strFun, "}")
     }
-    # dv1 <- (F1 - d*v1 - k*x1 - d12*(v1-v2) - k12*(x1-x2)) / m1
+    # dv1 <- (F1 - d*v1 - k*(x1+r1) - d12*(v1-v2) - k12*(x1-x2+r12)) / m1
     # nur falls am Knoten eine aussere Anregung oder Anregungsaenderung vorliegt die Anregung einbauen
+    # r1 wird addiert, da r1 negiert abgelegt wird. Entsprechend gilt r21=-r12, damit das plus-Zeichen
+    # bei den Verbindungsfedern bleibt
     strTemp <- paste("dv.", i, " <- (", sep = "")
     # Daempfer der aktuellen Masse
     strTemp <- paste(strTemp, " - d.", i, "*v.", i, sep = "")
@@ -66,7 +68,7 @@ createOscillators.ODEnetwork <- function(odenet) {
     if (odenet$distances[i, i] == 0) {
       strTemp <- paste(strTemp, " - k.", i, "*x.", i, sep = "")
     } else {
-      strTemp <- paste(strTemp, " - k.", i, "*(x.", i, "-r.", i, ")", sep = "")
+      strTemp <- paste(strTemp, " - k.", i, "*(x.", i, "+r.", i, ")", sep = "")
     }
     # Feder und Daempfer aller Koppelelemente
     for (j in 1:length(odenet$masses)) {

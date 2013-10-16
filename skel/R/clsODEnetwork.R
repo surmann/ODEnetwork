@@ -61,6 +61,7 @@ ODEnetwork <- function(masses, dampers, springs, cartesian=TRUE, distances=NA) {
   dampers[lower.tri(dampers)] <- t(dampers)[lower.tri(dampers)]
   springs[lower.tri(springs)] <- t(springs)[lower.tri(springs)]
   distances[lower.tri(distances)] <- -t(distances)[lower.tri(distances)]
+  diag(distances) <- -diag(distances)
   
   # set state type
   if (cartesian)
