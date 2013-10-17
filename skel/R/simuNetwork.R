@@ -79,13 +79,17 @@ simuNetwork.ODEnetwork <- function(odenet, times, ...) {
     diag(mK) <- -rowSums(mK)
     mK <- -mK
     # switch to ODEs of first order with x' = C * x
-    # C = rbind( (0, I), (-M^-1*K,-M^-1*D))
+    # C = rbind( (0, I), (-M^-1*K,-M^-1*D) )
     mC <- rbind(cbind(diag(0, cN), diag(1, cN)), cbind(-mMinv%*%mK, -mMinv%*%mD))
+    # starting vector y0
+    y0 <- matrix(odenet$state)
+    # adjust to distances between masses
+    
     # eigenvalues and -vectors of C
     lstEigen <- eigen(mC)
-    # constants from starting values
+    # constants from starting values: solve y0 = sum(c_i * eigenvec_i) = V %*% c for c
     cConstants <- solve(lstEigen$vectors, matrix(odenet$state))
-    # create solution x = exp(t*c)*x0 by eigenvalues etc
+    # create solution y = exp(t*c)*y0 by eigenvalues etc
     # empty function
     funODEs <- function() {}
     # time as parameter
