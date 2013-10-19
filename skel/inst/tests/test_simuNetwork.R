@@ -63,6 +63,30 @@ test_that("simuNetwork", {
   eventdata <- data.frame(var = c("v.1"), time = c(0), value = c(0))
   odenetNum <- setEvents(odenet, eventdata)
   odenetNum <- simuNetwork(odenetNum, seq(0, 20, by = 0.01))
+  expect_equal(odenetNum$simulation$method, "lsoda")
+  
+  expect_equal(odenetAna$simulation$results, odenetNum$simulation$results
+               , tolerance = tol, check.attributes = FALSE)
+  
+  # 2 nodes with distances
+  masses <- c(1, 1)
+  dampers <- diag(c(0.5, 0.5))
+  springs <- diag(c(1, 1))
+  springs[1, 2] <- 1
+  distances <- diag(c(1, 0))
+  distances[1, 2] <- -1
+  odenet <- ODEnetwork(masses, dampers, springs, distances=distances)
+  odenet <- setState(odenet, c(0.5, 1), c(0, 0))
+  
+  # analytisch
+  odenetAna <- simuNetwork(odenet, seq(0, 20, by = 0.01))
+  expect_equal(odenetAna$simulation$method, "analytic")
+  
+  # nummerisch
+  eventdata <- data.frame(var = c("v.1"), time = c(0), value = c(0))
+  odenetNum <- setEvents(odenet, eventdata, type = "dirac")
+  odenetNum <- simuNetwork(odenetNum, seq(0, 20, by = 0.01))
+  expect_equal(odenetNum$simulation$method, "lsoda")
   
   expect_equal(odenetAna$simulation$results, odenetNum$simulation$results
                , tolerance = tol, check.attributes = FALSE)

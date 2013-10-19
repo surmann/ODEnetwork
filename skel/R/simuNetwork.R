@@ -69,26 +69,30 @@ simuNetwork.ODEnetwork <- function(odenet, times, ...) {
   if (is.null(eventdat)) {
     # solve ODEs analytically
     cN <- length(odenet$masses)
-    # derive My'' + Dy' + Ky = 0
+    # derive 0 = My'' + Dy' + Ky + b
     # convert to y'' = -M^-1*D*y' - M^-1*K*y
     mMinv <- diag(1/odenet$masses, cN)
+    # get parameters and convert the matricies in the correct form
     mD <- odenet$dampers
     diag(mD) <- -rowSums(mD)
     mD <- -mD
     mK <- odenet$springs
     diag(mK) <- -rowSums(mK)
     mK <- -mK
+    mR <- odenet$distances
+    diag(mR) <- -diag(mR)
+    mR[lower.tri(mR)] <- -mR[lower.tri(mR)]
     # switch to ODEs of first order with x' = C * x
     # C = rbind( (0, I), (-M^-1*K,-M^-1*D) )
     mC <- rbind(cbind(diag(0, cN), diag(1, cN)), cbind(-mMinv%*%mK, -mMinv%*%mD))
-    # starting vector y0
-    y0 <- matrix(odenet$state)
-    # adjust to distances between masses
-    
+    # calculate vector b with b_i = sum(k_ij*r_ij, j=1..n)
+    b <- diag(odenet$springs %*% t(mR))
+    # starting vector y0, with adjusting position by the inhomogeneous part
+    y0 <- matrix(c(odenet$state[, "state1"] + ginv(odenet$springs) %*% b, odenet$state[, "state2"]))
     # eigenvalues and -vectors of C
     lstEigen <- eigen(mC)
     # constants from starting values: solve y0 = sum(c_i * eigenvec_i) = V %*% c for c
-    cConstants <- solve(lstEigen$vectors, matrix(odenet$state))
+    cConstants <- solve(lstEigen$vectors, y0)
     # create solution y = exp(t*c)*y0 by eigenvalues etc
     # empty function
     funODEs <- function() {}
@@ -110,6 +114,8 @@ simuNetwork.ODEnetwork <- function(odenet, times, ...) {
     mResOde <- cbind(time = times, t(Re(mResult[rep(1:cN, each = 2) + c(0, cN), ])))
     # set correct names
     colnames(mResOde)[2:ncol(mResOde)] <- paste(c("x", "v"), rep(1:cN, each=2), sep = ".")
+    # apply inhomogeneous part to positions
+    mResOde[, paste("x", 1:cN, sep = ".")] <- t(t(mResOde[, paste("x", 1:cN, sep = ".")]) - c(ginv(odenet$springs) %*% b))
     # extend the ODEnetwork object
     odenet$simulation$method <- "analytic"
     # add necessary deSolve class attributes
