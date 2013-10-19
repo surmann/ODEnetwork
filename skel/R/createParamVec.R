@@ -21,6 +21,10 @@ createParamVec <- function(odenet) {
 
 #' @S3method createParamVec ODEnetwork
 createParamVec.ODEnetwork <- function(odenet) {
+  # add correct signs to distance matrix to ensure a plus sign in the differential equations
+  mR <- odenet$distances
+  diag(mR) <- -diag(mR)
+  mR[lower.tri(mR)] <- -mR[lower.tri(mR)]
   # Parametervektor starten
   strParams <- "c("
   # Anregungen, Massen, Daempfer- und Federkonstanten auflisten	
@@ -32,7 +36,7 @@ createParamVec.ODEnetwork <- function(odenet) {
     # Feder
     strParams <- paste(strParams, "k.", i, " = ", diag(odenet$springs)[i], ", ", sep = "")
     # length of springs
-    strParams <- paste(strParams, "r.", i, " = ", diag(odenet$distances)[i], ", ", sep = "")
+    strParams <- paste(strParams, "r.", i, " = ", diag(mR)[i], ", ", sep = "")
     # Daempfer und Feder zu den verknuepften Massen
     for (j in 1:length(odenet$masses)) {
       # Knoten auf Diagonale ueberspringen
@@ -45,7 +49,7 @@ createParamVec.ODEnetwork <- function(odenet) {
         strParams <- paste(strParams, "k.", i, ".", j, " = ", odenet$springs[i, j], ", ", sep = "")
       }
       if (odenet$distances[i, j] != 0) {
-        strParams <- paste(strParams, "r.", i, ".", j, " = ", odenet$distances[i, j], ", ", sep = "")
+        strParams <- paste(strParams, "r.", i, ".", j, " = ", mR[i, j], ", ", sep = "")
       }
     }
   }

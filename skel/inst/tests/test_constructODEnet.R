@@ -35,8 +35,7 @@ test_that("ODEnetwork", {
   expect_equal(odenet$springs, springs2)
   
   distances2 <- distances
-  distances2[3, 1] <- -5
-  diag(distances2) <- -diag(distances2)
+  distances2[3, 1] <- 5
   expect_equal(odenet$distances, distances2)
   
   masses2 <- masses[-1]
@@ -67,9 +66,12 @@ test_that("ODEnetwork", {
     dampers[i+1, i] <- 15+i
   }
   springs <- dampers + 10
-  odenet <- ODEnetwork(masses, dampers, springs)
+  distances <- dampers + 20
+  odenet <- ODEnetwork(masses, dampers, springs, distances=distances)
   expect_true(isSymmetric(odenet$dampers))
   expect_equal(odenet$dampers, dampers)
   expect_true(isSymmetric(odenet$springs))
   expect_equal(odenet$springs, springs)
+  expect_true(isSymmetric(odenet$distances))
+  expect_equal(odenet$distances, distances)
 })

@@ -198,8 +198,7 @@ updateOscillators.ODEnetwork <- function(odenet, ParamVec=NA
     checkArg(distances, "numeric", len=cLen^2, na.ok=FALSE)
     checkArg(distances, "matrix", na.ok=FALSE)
     # copy upper triangle to lower triangle => symmetric matrix
-    distances[lower.tri(distances)] <- -t(distances)[lower.tri(distances)]
-    diag(distances) <- -diag(distances)
+    distances[lower.tri(distances)] <- t(distances)[lower.tri(distances)]
     odenet$distances <- distances
   }
   if (sum(!is.na(state1)) > 0) {
