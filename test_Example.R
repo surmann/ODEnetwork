@@ -3,6 +3,7 @@ library(testthat)
 
 library(BBmisc)
 library(deSolve)
+library(MASS)
 
 load_all("skel", reset = TRUE)
 
@@ -31,7 +32,7 @@ odenet <- setEvents(odenet, eventdata, type = "dirac")
 odenet <- simuNetwork(odenet, seq(0, 10, by = 0.1))
 plot(odenet)
 
-eventdata <- data.frame(  var = c("x.1", "x.1", "v.1")
+ceventdata <- data.frame(  var = c("x.1", "x.1", "v.1")
                          , time = c(1, 2, 5)
                          , value = c(2, 3, 4)
 )
@@ -75,6 +76,29 @@ plot(odenet, state = "1vs2")
 plot(odenet)
 
 #########################
+# 2d Beispiel (einfach)
+#########################
+masses <- c(1, 1)
+dampers <- diag(c(0.5, 0.5))
+springs <- diag(c(1, 1))
+springs[1, 2] <- 1
+distances <- diag(c(1, 0))
+distances[1, 2] <- -1
+times <- seq(0, 20, by = 0.01)
+
+# analytisch
+odenet <- ODEnetwork(masses, dampers, springs, distances=distances)
+odenet <- setState(odenet, c(0.5, 1), c(0, 0))
+odenet <- simuNetwork(odenet, times)
+plot(odenet, state = "1")
+
+# nummerisch
+eventdata <- data.frame(var = c("v.1"), time = c(0), value = c(0))
+odenet <- setEvents(odenet, eventdata, type = "dirac")
+odenet <- simuNetwork(odenet, times)
+plot(odenet, state = "1")
+
+#########################
 # 2d Beispiel
 #########################
 masses <- c(1, 2)
@@ -82,12 +106,13 @@ dampers <- diag(c(0.02, 0.1))
 dampers[1, 2] <- 0.1
 springs <- diag(c(4, 1))
 springs[1, 2] <- 2
+distances <- matrix(c(0, 0, 1, 0), ncol = 2)
 
-odenet <- ODEnetwork(masses, dampers, springs)
+odenet <- ODEnetwork(masses, dampers, springs, distances=distances)
 
 # state only
 odenet <- setState(odenet, c(1, 1), c(0, 0))
-odenet <- simuNetwork(odenet, seq(0, 40, by = 1))
+odenet <- simuNetwork(odenet, seq(0, 40, by = 0.01))
 calcResonances(odenet)
 odenet$state
 plot(odenet)
@@ -111,7 +136,7 @@ eventdata <- data.frame(var = c("m.2", "m.1", "m.1", "a.1", "m.1", "m.2")
 )
 
 odenet <- setEvents(odenet, eventdata, type = "linear")
-odenet <- simuNetwork(odenet, seq(0, 40, by = 1))
+odenet <- simuNetwork(odenet, seq(0, 40, by = 0.01))
 plot(odenet)
 plot(odenet, state = "1")
 plot(odenet, state = "2")
