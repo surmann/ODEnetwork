@@ -72,9 +72,9 @@ test_that("simuNetwork", {
   masses <- c(1, 1)
   dampers <- diag(c(0.5, 0.5))
   springs <- diag(c(1, 1))
-  springs[1, 2] <- 1
-  distances <- diag(c(1, 0))
-  distances[1, 2] <- -1
+  springs[1, 2] <- 5
+  distances <- diag(c(0, 2))
+  distances[1, 2] <- 1
   odenet <- ODEnetwork(masses, dampers, springs, distances=distances)
   odenet <- setState(odenet, c(0.5, 1), c(0, 0))
   

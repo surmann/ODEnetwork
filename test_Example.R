@@ -81,9 +81,9 @@ plot(odenet)
 masses <- c(1, 1)
 dampers <- diag(c(0.5, 0.5))
 springs <- diag(c(1, 1))
-springs[1, 2] <- 1
-distances <- diag(c(1, 0))
-distances[1, 2] <- -1
+springs[1, 2] <- 2
+distances <- diag(c(0, 2))
+distances[1, 2] <- 1
 times <- seq(0, 20, by = 0.01)
 
 # analytisch

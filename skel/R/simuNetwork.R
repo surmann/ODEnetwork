@@ -70,7 +70,7 @@ simuNetwork.ODEnetwork <- function(odenet, times, ...) {
     # solve ODEs analytically
     cN <- length(odenet$masses)
     # derive 0 = My'' + Dy' + Ky + b
-    # convert to y'' = -M^-1*D*y' - M^-1*K*y
+    # convert to y'' = -M^-1*D*y' - M^-1*K*y - M^-1*b
     mMinv <- diag(1/odenet$masses, cN)
     # get parameters and convert the matricies in the correct form
     mD <- odenet$dampers
@@ -79,20 +79,30 @@ simuNetwork.ODEnetwork <- function(odenet, times, ...) {
     mK <- odenet$springs
     diag(mK) <- -rowSums(mK)
     mK <- -mK
-    mR <- odenet$distances
-    diag(mR) <- -diag(mR)
-    mR[lower.tri(mR)] <- -mR[lower.tri(mR)]
     # switch to ODEs of first order with x' = C * x
     # C = rbind( (0, I), (-M^-1*K,-M^-1*D) )
     mC <- rbind(cbind(diag(0, cN), diag(1, cN)), cbind(-mMinv%*%mK, -mMinv%*%mD))
-    # calculate vector b with b_i = sum(k_ij*r_ij, j=1..n)
-    b <- diag(odenet$springs %*% t(mR))
+    if (sum(abs(odenet$distances)) > 0) {
+      # get distances and convert to correct form
+      mR <- odenet$distances
+      diag(mR) <- -diag(mR)
+      mR[lower.tri(mR)] <- -mR[lower.tri(mR)]
+      # calculate vector b with b_i = sum(k_ij*r_ij, j=1..n)
+      b <- diag(odenet$springs %*% t(mR))
+      # create vector h
+      h <- c(rep(0, cN), -mMinv %*% b)
+      # calculate vector for inhomogeneous solution
+      # (chol2inv(chol(M)) is faster, but only for symmetric matricies)
+      inhomo <- as.vector(ginv(mC) %*% h)
+    } else {
+      inhomo <- rep(0, 2*cN)
+    }
     # starting vector y0, with adjusting position by the inhomogeneous part
-    y0 <- matrix(c(odenet$state[, "state1"] + ginv(odenet$springs) %*% b, odenet$state[, "state2"]))
+    y0 <- matrix(odenet$state)
     # eigenvalues and -vectors of C
     lstEigen <- eigen(mC)
-    # constants from starting values: solve y0 = sum(c_i * eigenvec_i) = V %*% c for c
-    cConstants <- solve(lstEigen$vectors, y0)
+    # constants from starting values: solve [y0 + inv(C) %*% h = V %*% c] for c
+    cConstants <- solve(lstEigen$vectors, y0 + inhomo)
     # create solution y = exp(t*c)*y0 by eigenvalues etc
     # empty function
     funODEs <- function() {}
@@ -110,12 +120,15 @@ simuNetwork.ODEnetwork <- function(odenet, times, ...) {
     # the first n values are the positions, followed by the velocities
     body(funODEs) <- as.call(c(as.name("{"), parse(text = strFun)))
     mResult <- vapply(times, funODEs, rep(1i, 2*cN))
-    # sort to (time, x.1, v.1, x.2, v.2, ..., x.n, v.n)
+    # sort to alternating position and velocity:
+    # (time, x.1, v.1, x.2, v.2, ..., x.n, v.n)
     mResOde <- cbind(time = times, t(Re(mResult[rep(1:cN, each = 2) + c(0, cN), ])))
     # set correct names
     colnames(mResOde)[2:ncol(mResOde)] <- paste(c("x", "v"), rep(1:cN, each=2), sep = ".")
+    # reorder inhomogeneous vector to alternating position and velocity
+    inhomo <- inhomo[rep(1:cN, each = 2) + c(0, cN)]
     # apply inhomogeneous part to positions
-    mResOde[, paste("x", 1:cN, sep = ".")] <- t(t(mResOde[, paste("x", 1:cN, sep = ".")]) - c(ginv(odenet$springs) %*% b))
+    mResOde[, -1] <- t(t(mResOde[, -1]) - inhomo)
     # extend the ODEnetwork object
     odenet$simulation$method <- "analytic"
     # add necessary deSolve class attributes
