@@ -4,7 +4,6 @@ library(testthat)
 
 library(BBmisc)
 library(deSolve)
-library(MASS)
 
 if (interactive()) {
   load_all("skel", reset = TRUE)

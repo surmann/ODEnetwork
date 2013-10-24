@@ -3,7 +3,6 @@ library(testthat)
 
 library(BBmisc)
 library(deSolve)
-library(MASS)
 
 load_all("skel", reset = TRUE)
 

@@ -89,11 +89,9 @@ simuNetwork.ODEnetwork <- function(odenet, times, ...) {
       mR[lower.tri(mR)] <- -mR[lower.tri(mR)]
       # calculate vector b with b_i = sum(k_ij*r_ij, j=1..n)
       b <- diag(odenet$springs %*% t(mR))
-      # create vector h
-      h <- c(rep(0, cN), -mMinv %*% b)
       # calculate vector for inhomogeneous solution
-      # (chol2inv(chol(M)) is faster, but only for symmetric matricies)
-      inhomo <- as.vector(ginv(mC) %*% h)
+      # (chol2inv(chol(M)) possible because of symmetric posdev square matrix)
+      inhomo <- c(chol2inv(chol(mK)) %*% b, rep(0, cN))
     } else {
       inhomo <- rep(0, 2*cN)
     }
