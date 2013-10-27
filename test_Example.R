@@ -78,9 +78,9 @@ plot(odenet)
 # 2d Beispiel (einfach)
 #########################
 masses <- c(1, 1)
-dampers <- diag(c(0.5, 0.5))
+dampers <- diag(c(1, 1))
 springs <- diag(c(1, 1))
-springs[1, 2] <- 2
+springs[1, 2] <- 1
 distances <- diag(c(0, 2))
 distances[1, 2] <- 1
 times <- seq(0, 20, by = 0.01)
@@ -170,17 +170,20 @@ plot(odenet, var = 1)
 # 5d Beispiel
 #########################
 masses <- 1:5
-dampers <- diag(rep(1, 5))
+dampers <- diag(rep(2, 5))
 for (i in 1:(length(masses)-1)) {dampers[i, i+1] <- 2+i}
 dampers[2, 4] <- 1.5
 springs <- diag(11:15)
 for (i in 1:(length(masses)-1)) {springs[i, i+1] <- 15+i}
 springs[3, 5] <- 13.5
+equilibrium <- c(2, 2.5, 3, 3.5, 4)
+
 odenet <- ODEnetwork(masses, dampers, springs)
+odenet <- estimateDistances(odenet, equilibrium)
 odenet <- setState(odenet, c(rep(0, 4), 5), c(rep(0, 4), 5))
 odenet <- setState(odenet, seq(3, 5, length.out=5), seq(1, 3, length.out=5))
-odenet <- simuNetwork(odenet, seq(0, 10, by = 0.1))
-plot(odenet)
+odenet <- simuNetwork(odenet, seq(0, 20, by = 0.1))
+plot(odenet, state="1")
 
 #########################
 # 10d Beispiel

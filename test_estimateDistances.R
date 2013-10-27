@@ -1,0 +1,44 @@
+context("estimate distances")
+
+test_that("estimateDistances", {
+  # one mass
+  mass <- 1
+  damper <- as.matrix(1.5)
+  spring <- as.matrix(4)
+  odenet <- ODEnetwork(mass, damper, spring)
+  odenet <- estimateDistances(odenet, 1)
+  expect_equal(odenet$distances, as.matrix(1))
+  
+  odenet <- estimateDistances(odenet, 1, globalDist = 2)
+  expect_equal(odenet$distances, as.matrix(2))
+  
+  # two masses
+  masses <- c(1, 1)
+  dampers <- diag(c(1, 1))
+  springs <- diag(c(1, 1))
+  springs[1, 2] <- 1
+  equilibrium <- c(1/3, 5/3)  
+  
+  odenet <- ODEnetwork(masses, dampers, springs)
+  odenet <- estimateDistances(odenet, equilibrium)
+  expect_equal(odenet$distances, matrix(c(1, 2, 2, 1), ncol=2), tolerance=1e-3)
+  
+  # five masses
+  masses <- 1:5
+  dampers <- diag(rep(1, 5))
+  for (i in 1:(length(masses)-1)) {dampers[i, i+1] <- 2+i}
+  dampers[2, 4] <- 2
+  springs <- diag(11:15)
+  for (i in 1:(length(masses)-1)) {springs[i, i+1] <- 15+i}
+  springs[3, 5] <- 13.5
+  equilibrium <- c(2, 2.5, 3, 3.5, 4)
+  
+  odenet <- ODEnetwork(masses, dampers, springs)
+  odenet <- estimateDistances(odenet, equilibrium)
+  odenet <- simuNetwork(odenet, seq(0, 20, by = 0.1))
+  expect_equal(tail(odenet$simulation$results, n=1L)[, paste("x", 1:5, sep=".")]
+               , equilibrium, tolerance=1e-2, check.attributes=FALSE)
+  
+  expect_warning(estimateDistances(odenet, equilibrium, globalDist=1))
+})
+          
