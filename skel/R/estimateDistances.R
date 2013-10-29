@@ -36,6 +36,9 @@ estimateDistances.ODEnetwork <- function(odenet, equilibrium, globalDist=NA) {
   if (!is.na(globalDist))
     checkArg(globalDist, "numeric", len=1)
   
+  # delete names
+  names(equilibrium) <- NULL
+  
   # exception for one mass
   if (cN == 1) {
     if (is.na(globalDist))

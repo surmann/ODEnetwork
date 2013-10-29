@@ -12,6 +12,15 @@ test_that("estimateDistances", {
   odenet <- estimateDistances(odenet, 1, globalDist = 2)
   expect_equal(odenet$distances, as.matrix(2))
   
+  Temp <- matrix(11:22, ncol=4)
+  colnames(Temp) <- paste("tst", 1:4, sep = "")
+  odenet <- estimateDistances(odenet, Temp[2, 3])
+  expect_equal(odenet$distances, as.matrix(18))
+
+  rownames(Temp) <- paste("rw", 1:3, sep = "")
+  odenet <- estimateDistances(odenet, Temp[2, 2])
+  expect_equal(odenet$distances, as.matrix(15))
+  
   # two masses
   masses <- c(1, 1)
   dampers <- diag(c(1, 1))
