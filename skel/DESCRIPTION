@@ -6,6 +6,6 @@ Imports: BBmisc, deSolve
 Suggests: testthat
 Author: Dirk Surmann <surmann@statistik.tu-dortmund.de>
 Maintainer: Dirk Surmann <surmann@statistik.tu-dortmund.de>
-License: BSD
+License: BSD_3_clause + file LICENSE
 LazyData: yes
 ByteCompile: yes
