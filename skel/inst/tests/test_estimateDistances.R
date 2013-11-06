@@ -32,6 +32,15 @@ test_that("estimateDistances", {
   odenet <- estimateDistances(odenet, equilibrium)
   expect_equal(odenet$distances, matrix(c(1, 2, 2, 1), ncol=2), tolerance=1e-3)
   
+  # three masses
+  masses <- 1:3
+  dampers <- diag(rep(0.1, 3))
+  springs <- diag(rep(2.5, 3))
+  equilibrium <- c(2, 2.5, 3)
+  
+  odenet <- ODEnetwork(masses, dampers, springs)
+  expect_message(estimateDistances(odenet, equilibrium, globalDist=1), message("All parameters are fixed."))
+  
   # five masses
   masses <- 1:5
   dampers <- diag(rep(1, 5))

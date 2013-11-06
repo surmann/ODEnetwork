@@ -71,6 +71,12 @@ estimateDistances.ODEnetwork <- function(odenet, equilibrium, globalDist=NA) {
     }
   }
   
+  # exit, if no free parameters left
+  if (length(cParams) == 0) {
+    message("All parameters are fixed.")
+    return(odenet)
+  }
+  
   # calculate target vector
   mK <- odenet$springs
   diag(mK) <- -rowSums(mK)
