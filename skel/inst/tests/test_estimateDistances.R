@@ -39,7 +39,14 @@ test_that("estimateDistances", {
   equilibrium <- c(2, 2.5, 3)
   
   odenet <- ODEnetwork(masses, dampers, springs)
-  expect_message(estimateDistances(odenet, equilibrium, globalDist=1), message("All parameters are fixed."))
+  expect_message(estimateDistances(odenet, equilibrium, globalDist=1)
+                 , message("All parameters are fixed."))
+  
+  expect_error(estimateDistances(odenet, equilibrium, 9:8)
+                 , "The length of the global distance has to be 1 or n.")
+
+  odenet <- estimateDistances(odenet, equilibrium, 9:7)
+  expect_equal(diag(odenet$distances), 9:7)
   
   # five masses
   masses <- 1:5
@@ -59,4 +66,3 @@ test_that("estimateDistances", {
   
   expect_warning(estimateDistances(odenet, equilibrium, globalDist=1))
 })
-          

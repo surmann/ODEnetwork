@@ -5,10 +5,12 @@
 #' 
 #'  @param odenet [\code{ODEnetwork}]\cr
 #'    List of class \code{\link{ODEnetwork}}.
-#'  @param equilibrium [\code{vector}] of length n\cr
+#'  @param equilibrium [\code{numeric(n)}]\cr
 #'    The desired equilibrium positions of the oscillators.
-#'  @param globalDist [\code{numeric(1)}]\cr
-#'    Global distance of the oscillators from the ground.
+#'  @param globalDist [\code{numeric(1)}] or [\code{numeric(n)}]\cr
+#'    Distance of the oscillators from the ground.
+#'    On length 1, the distance is set globally.
+#'    The vector of length n contains a distance for every oscillator.
 #'    Default is \code{NA}, which estimates the global distance from the equilibrium.
 #'  @return an extended list of class [\code{\link{ODEnetwork}}].\cr
 #'    Matrix of distances is added or overwritten.
@@ -33,15 +35,22 @@ estimateDistances.ODEnetwork <- function(odenet, equilibrium, globalDist=NA) {
 
   checkArg(equilibrium, "numeric", na.ok=FALSE)
   checkArg(equilibrium, "vector", len=cN, na.ok=FALSE)
-  if (!is.na(globalDist))
-    checkArg(globalDist, "numeric", len=1)
+  if (sum(is.na(globalDist)) > 0) {
+    globalDist <- NA
+  } else {
+    checkArg(globalDist, "numeric", na.ok=FALSE)
+    checkArg(globalDist, "vector", na.ok=FALSE)
+    if (length(globalDist) != 1 && length(globalDist) != cN) {
+      stopf("The length of the global distance has to be 1 or n.")
+    }
+  }
   
   # delete names
   names(equilibrium) <- NULL
   
   # exception for one mass
   if (cN == 1) {
-    if (is.na(globalDist))
+    if (sum(is.na(globalDist)) > 0)
       odenet <- updateOscillators(odenet, ParamVec=c(r.1=equilibrium))
     else
       odenet <- updateOscillators(odenet, ParamVec=c(r.1=globalDist))
@@ -51,12 +60,16 @@ estimateDistances.ODEnetwork <- function(odenet, equilibrium, globalDist=NA) {
   # create parameter vector
   cParams <- numeric()
   # check global distance
-  if (is.na(globalDist)) {
+  if (sum(is.na(globalDist)) > 0) {
     globalDist <- median(equilibrium)
     # estimate global Distance
     cParams <- c(cParams, r.glob = globalDist)
   } else {
-    cTemp <- rep(globalDist, cN)
+    if (length(globalDist) == 1){
+      cTemp <- rep(globalDist, cN)
+    } else {
+      cTemp <- globalDist
+    }
     names(cTemp) <- paste("r", 1:cN, sep = ".")
     odenet <- updateOscillators(odenet, ParamVec=cTemp)
   }
