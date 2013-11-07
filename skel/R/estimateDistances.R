@@ -73,12 +73,12 @@ estimateDistances.ODEnetwork <- function(odenet, equilibrium, globalDist=NA) {
     names(cTemp) <- paste("r", 1:cN, sep = ".")
     odenet <- updateOscillators(odenet, ParamVec=cTemp)
   }
-  # add distances with respect to springs and dampers to parameter vector
+  # add distances between oscillators with respect to springs and dampers to parameter vector
   mConnect <- odenet$springs != 0
   for (iRow in 1:(cN-1)) {
     for (iCol in (iRow+1):cN) {
       if (mConnect[iRow, iCol]) {
-        cParams <- c(cParams, globalDist)
+        cParams <- c(cParams, odenet$distances[iRow, iCol])
         names(cParams)[length(cParams)] <- paste("r", iRow, iCol, sep = ".")
       }
     }
@@ -120,8 +120,8 @@ estimateDistances.ODEnetwork <- function(odenet, equilibrium, globalDist=NA) {
   }
   
   # optimise parameters
-  optimFit <- optim(cParams, distCost)
-  # Through warnings
+  optimFit <- optim(cParams, distCost, control=list(maxit=1000))
+  # Throw warnings
   if (optimFit$convergence != 0) {
     warningf(paste("No successful completition. Code:", optimFit$convergence))
   }
