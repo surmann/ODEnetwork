@@ -7,7 +7,7 @@
 #'    List of class \code{\link{ODEnetwork}}.
 #'  @param equilibrium [\code{numeric(n)}]\cr
 #'    The desired equilibrium positions of the oscillators.
-#'  @param globalDist [\code{numeric(1)}] or [\code{numeric(n)}]\cr
+#'  @param globalDist [\code{numeric(1)}] or [\code{numeric(n)}] or [\code{character(n)}]\cr
 #'    Distance of the oscillators from the ground.
 #'    On length 1, the distance is set globally.
 #'    The vector of length n contains a distance for every oscillator.
@@ -32,13 +32,14 @@ estimateDistances <- function(odenet, equilibrium, globalDist=NA) {
 estimateDistances.ODEnetwork <- function(odenet, equilibrium, globalDist=NA) {
   # number of oscillators
   cN <- length(odenet$masses)
-
+  # Equilibrium
   checkArg(equilibrium, "numeric", na.ok=FALSE)
   checkArg(equilibrium, "vector", len=cN, na.ok=FALSE)
+  # global distance
   if (sum(is.na(globalDist)) > 0) {
     globalDist <- NA
   } else {
-    checkArg(globalDist, "numeric", na.ok=FALSE)
+    checkArg(globalDist, c("numeric", "character"), na.ok=FALSE)
     checkArg(globalDist, "vector", na.ok=FALSE)
     if (length(globalDist) != 1 && length(globalDist) != cN) {
       stopf("The length of the global distance has to be 1 or n.")
@@ -68,7 +69,11 @@ estimateDistances.ODEnetwork <- function(odenet, equilibrium, globalDist=NA) {
     if (length(globalDist) == 1){
       cTemp <- rep(globalDist, cN)
     } else {
-      cTemp <- globalDist
+      if (is.numeric(globalDist)) {
+        cTemp <- globalDist
+      } else {
+        
+      }
     }
     names(cTemp) <- paste("r", 1:cN, sep = ".")
     odenet <- updateOscillators(odenet, ParamVec=cTemp)
