@@ -63,6 +63,11 @@ test_that("estimateDistances", {
   odenet <- simuNetwork(odenet, seq(0, 20, by = 0.1))
   expect_equal(tail(odenet$simulation$results, n=1L)[, paste("x", 1:5, sep=".")]
                , equilibrium, tolerance=1e-2, check.attributes=FALSE)
-  
+  # Warning: not able to fit the distances correctly
   expect_warning(estimateDistances(odenet, equilibrium, globalDist=1))
+  # estimate distance with groups
+  odenet <- estimateDistances(odenet, equilibrium, globalDist=c("A", "B", "B", "A", "A"))
+  temp <- var(diag(odenet$distances)[c(1, 4, 5)])
+  temp <- c(temp, var(diag(odenet$distances)[c(2, 3)]))
+  expect_equal(temp, c(0, 0))
 })

@@ -62,18 +62,21 @@ estimateDistances.ODEnetwork <- function(odenet, equilibrium, globalDist=NA) {
   cParams <- numeric()
   # check global distance
   if (sum(is.na(globalDist)) > 0) {
+    # one parameter to estimate the global distance
     globalDist <- median(equilibrium)
-    # estimate global Distance
     cParams <- c(cParams, r.glob = globalDist)
+  } else if (is.character(globalDist)) {
+    # character vector indicates the groups for the parameter estimation
+    for (grp in unique(globalDist)) {
+      cParams <- c(cParams, median(equilibrium[globalDist == grp]))
+      names(cParams)[length(cParams)] <- paste("r.glob", paste(which(globalDist == grp), collapse = "."), sep = ".")
+    }
   } else {
+    # set the global distance to fixed values
     if (length(globalDist) == 1){
       cTemp <- rep(globalDist, cN)
     } else {
-      if (is.numeric(globalDist)) {
-        cTemp <- globalDist
-      } else {
-        
-      }
+      cTemp <- globalDist
     }
     names(cTemp) <- paste("r", 1:cN, sep = ".")
     odenet <- updateOscillators(odenet, ParamVec=cTemp)
@@ -103,16 +106,7 @@ estimateDistances.ODEnetwork <- function(odenet, equilibrium, globalDist=NA) {
   
   # define cost function
   distCost <- function(cParameters) {
-    # if r.glob existing, replace with r.i
-    if (!is.na(cParameters["r.glob"])) {
-      globVal <- cParameters["r.glob"]
-      cParameters <- cParameters[-which(names(cParameters) == "r.glob")]
-      # add r.i's
-      for (i in length(odenet$masses):1) {
-        cParameters <- c(globVal, cParameters)
-        names(cParameters)[1] <- paste("r", i, sep = ".")
-      }
-    }
+    cParameters <- splitGlobalParams(cParameters)
     odenet <- updateOscillators(odenet, ParamVec=cParameters)
     # get distances and convert to correct form
     mR <- odenet$distances
@@ -122,6 +116,28 @@ estimateDistances.ODEnetwork <- function(odenet, equilibrium, globalDist=NA) {
     b <- diag(odenet$springs %*% t(mR))
     # return SSE
     return(sum((b-bTarget)^2))
+  }
+  # split the parameter vector with respect to estimate (grouped) global distances
+  splitGlobalParams <- function(cParameters) {
+    if (sum(grepl("r\\.glob", names(cParameters))) > 0) {
+      # estimate different groups of global distances
+      # extract the values
+      globVal <- cParameters[grep("r\\.glob", names(cParameters))]
+      cParameters <- cParameters[-grep("r\\.glob", names(cParameters))]
+      # one global distance, or different ones
+      if (length(globVal) == 1) {
+        lstMassGrps <- list(1:length(odenet$masses))
+      } else {
+        lstMassGrps <- gsub("r\\.glob\\.", "", names(globVal))
+        lstMassGrps <- strsplit(lstMassGrps, ".", fixed = TRUE)
+      }
+      # multiply values to the correct r.i's
+      for (i in length(lstMassGrps):1) {
+        cParameters <- c(rep(globVal[i], length(lstMassGrps[[i]])), cParameters)
+        names(cParameters)[1:length(lstMassGrps[[i]])] <- paste("r", lstMassGrps[[i]], sep = ".")
+      }
+    }
+    return(cParameters)
   }
   
   # optimise parameters
@@ -134,19 +150,8 @@ estimateDistances.ODEnetwork <- function(odenet, equilibrium, globalDist=NA) {
     warningf(paste("The SSE of the distances is large:", optimFit$value))
   }
 
-  # put the optimal valus in the odenet
-  cParams <- optimFit$par
-  # if r.glob existing, replace with r.i
-  if (!is.na(cParams["r.glob"])) {
-    globVal <- cParams["r.glob"]
-    cParams <- cParams[-which(names(cParams) == "r.glob")]
-    # add r.i's
-    for (i in cN:1) {
-      cParams <- c(globVal, cParams)
-      names(cParams)[1] <- paste("r", i, sep = ".")
-    }
-  }
-  odenet <- updateOscillators(odenet, ParamVec=cParams)
+  # update the optimal values to the odenet
+  odenet <- updateOscillators(odenet, ParamVec=splitGlobalParams(optimFit$par))
   
   return(odenet)
 }
