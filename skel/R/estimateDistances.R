@@ -7,11 +7,17 @@
 #'    List of class \code{\link{ODEnetwork}}.
 #'  @param equilibrium [\code{numeric(n)}]\cr
 #'    The desired equilibrium positions of the oscillators.
-#'  @param globalDist [\code{numeric(1)}] or [\code{numeric(n)}] or [\code{character(n)}]\cr
-#'    Distance of the oscillators from the ground.
-#'    On length 1, the distance is set globally.
-#'    The vector of length n contains a distance for every oscillator.
-#'    Default is \code{NA}, which estimates the global distance from the equilibrium.
+#'  @param distGround [\code{character(1)}] or [\code{character(n)}]\cr
+#'    \code{"combined"} estimates one value for all distances of the oscillators to the ground.
+#'    Optimisation starts from \code{median(equilibrium)}.\cr
+#'    \code{"individual"} estimates individual distance values for every oscillator.
+#'    Optimisation starts from \code{equilibrium}.\cr
+#'    \code{"fixed"} no estimation of the distances to the ground. 
+#'    Set to diagonal of distances matrix in \code{\link{ODEnetwork}}.\cr
+#'    \code{character(n)} specifies groups of oscillators which distances to the ground are 
+#'    estimated by the same value. Optimisation starts from \code{median(equilibrium)} of the 
+#'    specified groups.\cr
+#'    Default is \code{"combined"}
 #'  @return an extended list of class [\code{\link{ODEnetwork}}].\cr
 #'    Matrix of distances is added or overwritten.
 #'  @export
@@ -22,65 +28,59 @@
 #'    springs[1, 2] <- 1
 #'    equilibrium <- c(1/3, 5/3)
 #'    odenet <- ODEnetwork(masses, dampers, springs)
-#'    odenet <- estimateDistances(odenet, equilibrium)
+#'    estimateDistances(odenet, equilibrium)$distances
+#'    estimateDistances(odenet, equilibrium, distGround="individual")$distances
 
-estimateDistances <- function(odenet, equilibrium, globalDist=NA) {
+estimateDistances <- function(odenet, equilibrium, distGround=c("combined", "individual", "fixed", c("A", "B", "123", "A"))) {
   UseMethod("estimateDistances")
 }
 
 #' @S3method estimateDistances ODEnetwork
-estimateDistances.ODEnetwork <- function(odenet, equilibrium, globalDist=NA) {
+estimateDistances.ODEnetwork <- function(odenet, equilibrium, distGround="combined") {
   # number of oscillators
   cN <- length(odenet$masses)
   # Equilibrium
   checkArg(equilibrium, "numeric", na.ok=FALSE)
   checkArg(equilibrium, "vector", len=cN, na.ok=FALSE)
-  # global distance
-  if (sum(is.na(globalDist)) > 0) {
-    globalDist <- NA
-  } else {
-    checkArg(globalDist, c("numeric", "character"), na.ok=FALSE)
-    checkArg(globalDist, "vector", na.ok=FALSE)
-    if (length(globalDist) != 1 && length(globalDist) != cN) {
-      stopf("The length of the global distance has to be 1 or n.")
-    }
+  # distances to the ground
+  checkArg(distGround, "character", na.ok=FALSE)
+  if (length(distGround) != 1 && length(distGround) != cN) {
+    stopf("The length of the distances to the ground has to be 1 or n.")
+  }
+  # check arguments of distGround
+  if (cN > 1 && length(distGround) == 1) {
+    checkArg(distGround, choices=c("combined", "individual", "fixed"))
   }
   
   # delete names
   names(equilibrium) <- NULL
   
   # exception for one mass
-  if (cN == 1) {
-    if (sum(is.na(globalDist)) > 0)
-      odenet <- updateOscillators(odenet, ParamVec=c(r.1=equilibrium))
-    else
-      odenet <- updateOscillators(odenet, ParamVec=c(r.1=globalDist))
+  if (cN == 1 && distGround != "fixed") {
+    odenet <- updateOscillators(odenet, ParamVec=c(r.1=equilibrium))
     return(odenet)
   }
   
   # create parameter vector
   cParams <- numeric()
-  # check global distance
-  if (sum(is.na(globalDist)) > 0) {
-    # one parameter to estimate the global distance
-    globalDist <- median(equilibrium)
-    cParams <- c(cParams, r.glob = globalDist)
-  } else if (is.character(globalDist)) {
-    # character vector indicates the groups for the parameter estimation
-    for (grp in unique(globalDist)) {
-      cParams <- c(cParams, median(equilibrium[globalDist == grp]))
-      names(cParams)[length(cParams)] <- paste("r.glob", paste(which(globalDist == grp), collapse = "."), sep = ".")
+  # check distance estimation to the ground
+  if (length(distGround) == 1) {
+    if (distGround == "combined") {
+      # one parameter for all distances to the ground
+      cParams <- c(r.glob = median(equilibrium))
+    } else if (distGround == "individual") {
+      # one parameter for each distance
+      cParams <- c(equilibrium)
+      names(cParams) <- paste("r.glob", 1:cN, sep=".")
     }
   } else {
-    # set the global distance to fixed values
-    if (length(globalDist) == 1){
-      cTemp <- rep(globalDist, cN)
-    } else {
-      cTemp <- globalDist
+    # character vector indicates the groups for the parameter estimation
+    for (grp in unique(distGround)) {
+      cParams <- c(cParams, median(equilibrium[distGround == grp]))
+      names(cParams)[length(cParams)] <- paste("r.glob", paste(which(distGround == grp), collapse = "."), sep = ".")
     }
-    names(cTemp) <- paste("r", 1:cN, sep = ".")
-    odenet <- updateOscillators(odenet, ParamVec=cTemp)
   }
+
   # add distances between oscillators with respect to springs and dampers to parameter vector
   mConnect <- odenet$springs != 0
   for (iRow in 1:(cN-1)) {
@@ -92,7 +92,7 @@ estimateDistances.ODEnetwork <- function(odenet, equilibrium, globalDist=NA) {
     }
   }
   
-  # exit, if no free parameters left
+  # exit, if no free parameters available
   if (length(cParams) == 0) {
     message("All parameters are fixed.")
     return(odenet)

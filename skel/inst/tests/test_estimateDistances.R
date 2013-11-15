@@ -9,9 +9,6 @@ test_that("estimateDistances", {
   odenet <- estimateDistances(odenet, 1)
   expect_equal(odenet$distances, as.matrix(1))
   
-  odenet <- estimateDistances(odenet, 1, globalDist = 2)
-  expect_equal(odenet$distances, as.matrix(2))
-  
   Temp <- matrix(11:22, ncol=4)
   colnames(Temp) <- paste("tst", 1:4, sep = "")
   odenet <- estimateDistances(odenet, Temp[2, 3])
@@ -36,17 +33,17 @@ test_that("estimateDistances", {
   masses <- 1:3
   dampers <- diag(rep(0.1, 3))
   springs <- diag(rep(2.5, 3))
+  distances <- diag(rep(1, 3))
   equilibrium <- c(2, 2.5, 3)
   
-  odenet <- ODEnetwork(masses, dampers, springs)
-  expect_message(estimateDistances(odenet, equilibrium, globalDist=1)
+  odenet <- ODEnetwork(masses, dampers, springs, distances=distances)
+  expect_message(estimateDistances(odenet, equilibrium, distGround="fixed")
                  , message("All parameters are fixed."))
   
-  expect_error(estimateDistances(odenet, equilibrium, 9:8)
-                 , "The length of the global distance has to be 1 or n.")
+  expect_error(estimateDistances(odenet, equilibrium, distGround=c("A", "B"))
+                 , "The length of the distances to the ground has to be 1 or n.")
 
-  odenet <- estimateDistances(odenet, equilibrium, 9:7)
-  expect_equal(diag(odenet$distances), 9:7)
+  expect_equal(diag(odenet$distances), rep(1, 3))
   
   # five masses
   masses <- 1:5
@@ -64,9 +61,10 @@ test_that("estimateDistances", {
   expect_equal(tail(odenet$simulation$results, n=1L)[, paste("x", 1:5, sep=".")]
                , equilibrium, tolerance=1e-2, check.attributes=FALSE)
   # Warning: not able to fit the distances correctly
-  expect_warning(estimateDistances(odenet, equilibrium, globalDist=1))
+  odenet <- updateOscillators(odenet, distances=diag(rep(1, 5)))
+  expect_warning(estimateDistances(odenet, equilibrium, distGround="fixed"))
   # estimate distance with groups
-  odenet <- estimateDistances(odenet, equilibrium, globalDist=c("A", "B", "B", "A", "A"))
+  odenet <- estimateDistances(odenet, equilibrium, distGround=c("A", "B", "B", "A", "A"))
   temp <- var(diag(odenet$distances)[c(1, 4, 5)])
   temp <- c(temp, var(diag(odenet$distances)[c(2, 3)]))
   expect_equal(temp, c(0, 0))
