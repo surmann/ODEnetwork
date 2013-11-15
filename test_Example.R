@@ -179,6 +179,8 @@ springs[3, 5] <- 13.5
 equilibrium <- c(2, 2.5, 3, 3.5, 4)
 
 odenet <- ODEnetwork(masses, dampers, springs)
+estimateDistances(odenet, equilibrium)$distances
+estimateDistances(odenet, equilibrium, distGround="individual")$distances
 odenet <- estimateDistances(odenet, equilibrium)
 odenet <- setState(odenet, c(rep(0, 4), 5), c(rep(0, 4), 5))
 odenet <- setState(odenet, seq(3, 5, length.out=5), seq(1, 3, length.out=5))
