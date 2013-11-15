@@ -15,6 +15,7 @@
 #' @param var [\code{numeric(n)}]\cr
 #'    Subset of variables to plot. Default is \code{NULL}, which plots all variables.
 #' @param ... Additional arguments.
+#' @method plot ODEnetwork
 #' @export
 #' @examples
 #' masses <- c(1, 2)
