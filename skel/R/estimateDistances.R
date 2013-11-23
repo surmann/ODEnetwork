@@ -141,7 +141,7 @@ estimateDistances.ODEnetwork <- function(odenet, equilibrium, distGround="combin
   }
   
   # optimise parameters
-  optimFit <- optim(cParams, distCost, control=list(maxit=1000))
+  optimFit <- optim(cParams, distCost, method="BFGS", control=list(maxit=1000))
   # Throw warnings
   if (optimFit$convergence != 0) {
     warningf(paste("No successful completition. Code:", optimFit$convergence))
