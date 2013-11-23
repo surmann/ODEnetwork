@@ -147,6 +147,7 @@ estimateDistances.ODEnetwork <- function(odenet, equilibrium, distGround="combin
     warningf(paste("No successful completition. Code:", optimFit$convergence))
   }
   if (optimFit$value > 1e-7 * distCost(cParams)) {
+  if (optimFit$value > 10 * sqrt(.Machine$double.eps) * distCost(cParams)) {
     warningf(paste("The SSE of the distances is large:", optimFit$value))
   }
 
