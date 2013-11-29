@@ -3,6 +3,7 @@ library(testthat)
 
 library(BBmisc)
 library(deSolve)
+library(minpack.lm)
 
 load_all("skel", reset = TRUE)
 
