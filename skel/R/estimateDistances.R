@@ -31,7 +31,8 @@
 #'    estimateDistances(odenet, equilibrium)$distances
 #'    estimateDistances(odenet, equilibrium, distGround="individual")$distances
 
-estimateDistances <- function(odenet, equilibrium, distGround=c("combined", "individual", "fixed", c("A", "B", "123", "A"))) {
+estimateDistances <- function(odenet, equilibrium, 
+                              distGround=c("combined", "individual", "fixed", c("A", "B", "123", "A"))) {
   UseMethod("estimateDistances")
 }
 
@@ -80,7 +81,7 @@ estimateDistances.ODEnetwork <- function(odenet, equilibrium, distGround="combin
       names(cParams)[length(cParams)] <- paste("r.glob", paste(which(distGround == grp), collapse = "."), sep = ".")
     }
   }
-
+  
   # add distances between oscillators with respect to springs and dampers to parameter vector
   mConnect <- odenet$springs != 0
   for (iRow in 1:(cN-1)) {
@@ -104,8 +105,30 @@ estimateDistances.ODEnetwork <- function(odenet, equilibrium, distGround="combin
   mK <- -mK
   bTarget <- -mK %*% equilibrium
   
+  
+  ##### Berechne Grenzen fuer r.i
+  
+  dista <- diag(equilibrium)
+  # dista <- diag(odenet$distances)
+  
+  locat.spring <- which(odenet$springs != 0, arr.ind=TRUE)
+  
+  ## Ohne Diagnoale, Eintraege doppelt nicht noetig
+  locat.ok <- apply(locat.spring, 1, function(x) x[1] < x[2])
+  locat.spring <- locat.spring[locat.ok, ]
+  
+  for (i in 1:nrow(locat.spring)) {
+    row <- min(locat.spring[i, ])
+    col <- max(locat.spring[i, ])
+    dista[row, col] <- abs(diff(c(dista[row,row], dista[col, col])))
+  }
+
+  pTarget <- dista[locat.spring]
+  names(pTarget) <- paste("r.", apply(locat.spring, 1, paste, collapse="."), sep="")
+  pTarget <- c(cParams[grep("glob", names(cParams))], pTarget)
+  
   # define cost function
-  distCost <- function(cParameters) {
+  distCost <- function(cParameters, pTarget) {
     cParameters <- splitGlobalParams(cParameters)
     odenet <- updateOscillators(odenet, ParamVec=cParameters)
     # get distances and convert to correct form
@@ -114,11 +137,24 @@ estimateDistances.ODEnetwork <- function(odenet, equilibrium, distGround="combin
     mR[lower.tri(mR)] <- -mR[lower.tri(mR)]
     # calculate vector b with b_i = sum(k_ij*r_ij, j=1..n)
     b <- diag(odenet$springs %*% t(mR))
+    
+    ## Gewichte definieren
+    # target.zero <- pTarget == 0
+    # gewi <- rep(1, length(pTarget))
+    # if (sum(target.zero) > 0) gewi[target.zero] <- 1
+    # if (sum(!target.zero) > 0) gewi[!target.zero] <- 1/pTarget[!target.zero]
+    
+    gewi <- rep(1, length(cParams))
+    
+    # return(sum((b-bTarget)^2) +  sum(gewi %*% (cParams - pTarget)^2))
+    return(sum((b-bTarget)^2) +  sum((cParams - pTarget)^2))
+        
     # return SSE
-#     return(sum((b-bTarget)^2))
+    #     return(sum((b-bTarget)^2))
     # return residuals
-    return(bTarget-b)
+    # return(bTarget-b)
   }
+  
   # split the parameter vector with respect to estimate (grouped) global distances
   splitGlobalParams <- function(cParameters) {
     if (sum(grepl("r\\.glob", names(cParameters))) > 0) {
@@ -143,21 +179,27 @@ estimateDistances.ODEnetwork <- function(odenet, equilibrium, distGround="combin
   }
   
   # optimise parameters
-#   optimFit <- optim(cParams, distCost, method="BFGS", control=list(maxit=1000))
+  #   optimFit <- optim(cParams, distCost, method="BFGS", control=list(maxit=1000))
   print(paste("Params:", length(cParams)))
-  print(paste("Resid:", length(distCost(cParams))))
-  nlslmFit <- nls.lm(par=cParams, fn=distCost)
-#   # Throw warnings
-#   if (optimFit$convergence != 0) {
-#     warningf(paste("No successful completition. Code:", optimFit$convergence))
-#   }
-#   if (optimFit$value > 1e-7 * distCost(cParams)) {
-#   if (optimFit$value > 10 * sqrt(.Machine$double.eps) * distCost(cParams)) {
-#     warningf(paste("The SSE of the distances is large:", optimFit$value))
-#   }
-
+  print(paste("Resid:", length(distCost(cParams, pTarget))))
+  # nlslmFit <- nls.lm(par=cParams, fn=distCost)
+  
+  optimFit <- optim(cParams, distCost, pTarget=pTarget, method="BFGS")
+  checkFit <- optim(optimFit$par, distCost, pTarget=pTarget, method="BFGS")
+  if (checkFit$value/optimFit$value < 0.999)
+    warning("Optimization by estimateDistances() seems to be unsuccessful!")
+  
+  #   # Throw warnings
+  #   if (optimFit$convergence != 0) {
+  #     warningf(paste("No successful completition. Code:", optimFit$convergence))
+  #   }
+  #   if (optimFit$value > 1e-7 * distCost(cParams)) {
+  #   if (optimFit$value > 10 * sqrt(.Machine$double.eps) * distCost(cParams)) {
+  #     warningf(paste("The SSE of the distances is large:", optimFit$value))
+  #   }
+  
   # update the optimal values to the odenet
-  odenet <- updateOscillators(odenet, ParamVec=splitGlobalParams(nlslmFit$par))
+  odenet <- updateOscillators(odenet, ParamVec=splitGlobalParams(checkFit$par))
   
   return(odenet)
 }
