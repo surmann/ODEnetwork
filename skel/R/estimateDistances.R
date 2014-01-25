@@ -104,14 +104,8 @@ estimateDistances.ODEnetwork <- function(odenet, equilibrium, distGround="combin
   if (is.null(nrow(locat.spring))) locat.spring <- t(locat.spring)
   
   for (i in 1:nrow(locat.spring)) {
-        cParams <- c(cParams, odenet$distances[locat.spring[i,1], locat.spring[i,2]])
-        names(cParams)[length(cParams)] <- paste(c("r", locat.spring[i ,]), collapse = ".")
-  }
-  
-  
-  if (length(cParams) == 0) {
-  
-    
+    cParams <- c(cParams, odenet$distances[locat.spring[i,1], locat.spring[i,2]])
+    names(cParams)[length(cParams)] <- paste(c("r", locat.spring[i ,]), collapse = ".")
   }
   
   # calculate target vector
@@ -132,8 +126,7 @@ estimateDistances.ODEnetwork <- function(odenet, equilibrium, distGround="combin
   }
 
   pTarget <- dista[locat.spring]
-  names(pTarget) <- paste("r.", apply(locat.spring, 1, paste, collapse="."), 
-                          sep="")
+  names(pTarget) <- paste("r.", apply(locat.spring, 1, paste, collapse="."), sep="")
   pTarget <- c(cParams[grep("glob", names(cParams))], pTarget)
   
   # define cost function
