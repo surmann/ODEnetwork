@@ -18,7 +18,10 @@
 #'    estimated by the same value. Optimisation starts from \code{median(equilibrium)} of the 
 #'    specified groups.\cr
 #'    Default is \code{"combined"}
-#'  @return an extended list of class [\code{\link{ODEnetwork}}].\cr
+#'  @param optim.control [\code{list()}]\cr
+#'    A list of control parameters for optim.
+#'    See \code{\link{optim}}.
+#'  @return an extended list of class \code{\link{ODEnetwork}}.\cr
 #'    Matrix of distances is added or overwritten.
 #'  @export
 #'  @examples
