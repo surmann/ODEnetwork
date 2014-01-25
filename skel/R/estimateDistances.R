@@ -32,14 +32,14 @@
 #'    estimateDistances(odenet, equilibrium, distGround="individual")$distances
 
 estimateDistances <- function(odenet, equilibrium,
-    distGround=c("combined", "individual", "fixed", c("A", "B", "123", "A")), 
-                              optim.control=list()) {
+    distGround=c("combined", "individual", "fixed", c("A", "B", "123", "A"))
+                 , optim.control=list()) {
   UseMethod("estimateDistances")
 }
 
 #' @S3method estimateDistances ODEnetwork
-estimateDistances.ODEnetwork <- function(odenet, equilibrium, distGround="combined",
-                                         optim.control=list()) {
+estimateDistances.ODEnetwork <- function(odenet, equilibrium, distGround="combined"
+                                         , optim.control=list()) {
   # number of oscillators
   cN <- length(odenet$masses)
   # Equilibrium
@@ -185,14 +185,14 @@ estimateDistances.ODEnetwork <- function(odenet, equilibrium, distGround="combin
   }
   
   # optimise parameters
-  print(paste("Params:", length(cParams)))
-  print(paste("Resid:", length(distCost(cParams, pTarget))))
+#   print(paste("Params:", length(cParams)))
+#   print(paste("Resid:", length(distCost(cParams, pTarget))))
   
-  firstFit <- optim(cParams, distCost, pTarget=pTarget, method="BFGS",
-                    control=optim.control)
+  firstFit <- optim(cParams, distCost, pTarget=pTarget, method="BFGS"
+                    , control=optim.control)
   ## Check, ob neuer Lauf nennenswert besseres Ergebnis bringt
-  checkFit <- optim(firstFit$par, distCost, pTarget=pTarget, method="BFGS",
-                    control=optim.control)
+  checkFit <- optim(firstFit$par, distCost, pTarget=pTarget, method="BFGS"
+                    , control=optim.control)
   if (checkFit$value/firstFit$value < 0.999)
     warning("Optimization by estimateDistances() seems to be unsuccessful!")
   

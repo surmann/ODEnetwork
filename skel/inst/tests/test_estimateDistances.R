@@ -1,9 +1,3 @@
-### Aenderungen: 
-### Zeile 67 auskommentiert (expect warning), alle Szenarien sollten jetzt 
-### klappen.
-### Neue Testfaelle fuer Parameter optim.control ergaenzt (Zeilen )
-
-
 context("estimate distances")
 
 test_that("estimateDistances", {
@@ -43,8 +37,8 @@ test_that("estimateDistances", {
   equilibrium <- c(2, 2.5, 3)
   
   odenet <- ODEnetwork(masses, dampers, springs, distances=distances)
-  expect_message(estimateDistances(odenet, equilibrium, distGround="fixed"),
-                 "All parameters are fixed.")
+  expect_message(estimateDistances(odenet, equilibrium, distGround="fixed")
+                 , "All parameters are fixed.")
   
   expect_error(estimateDistances(odenet, equilibrium, distGround=c("A", "B"))
                  , "The length of the distances to the ground has to be 1 or n.")
@@ -63,21 +57,17 @@ test_that("estimateDistances", {
   
   odenet <- ODEnetwork(masses, dampers, springs)
   
-  expect_warning(estimateDistances(odenet, equilibrium, 
-                                   optim.control=list(maxit=3)))
+  expect_warning(estimateDistances(odenet, equilibrium, optim.control=list(maxit=3)))
   
-  expect_warning(estimateDistances(odenet, equilibrium, 
-                                   optim.control=list(reltol=1)))
+  expect_warning(estimateDistances(odenet, equilibrium, optim.control=list(reltol=1)))
   
-  expect_output(estimateDistances(odenet, equilibrium, 
-                                 optim.control=list(trace=1)), "converged")
+  expect_output(estimateDistances(odenet, equilibrium, optim.control=list(trace=1)), "converged")
    
   odenet <- estimateDistances(odenet, equilibrium)
   odenet <- simuNetwork(odenet, seq(0, 20, by = 0.1))
   expect_equal(tail(odenet$simulation$results, n=1L)[, paste("x", 1:5, sep=".")]
                , equilibrium, tolerance=1e-2, check.attributes=FALSE)
   odenet <- updateOscillators(odenet, distances=diag(rep(1, 5)))
-  # expect_warning(estimateDistances(odenet, equilibrium, distGround="fixed"))
   # estimate distance with groups
   odenet <- estimateDistances(odenet, equilibrium, distGround=c("A", "B", "B", "A", "A"))
   temp <- var(diag(odenet$distances)[c(1, 4, 5)])
