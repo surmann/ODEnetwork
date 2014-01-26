@@ -34,9 +34,9 @@
 #'    estimateDistances(odenet, equilibrium)$distances
 #'    estimateDistances(odenet, equilibrium, distGround="individual")$distances
 
-estimateDistances <- function(odenet, equilibrium,
-    distGround=c("combined", "individual", "fixed", c("A", "B", "123", "A"))
-                 , optim.control=list()) {
+estimateDistances <- function(odenet, equilibrium
+                , distGround=c("combined", "individual", "fixed", c("A", "B", "123", "A"))
+                , optim.control=list()) {
   UseMethod("estimateDistances")
 }
 
@@ -114,20 +114,21 @@ estimateDistances.ODEnetwork <- function(odenet, equilibrium, distGround="combin
   mK <- -mK
   bTarget <- -mK %*% equilibrium
   
-  ##### Berechne Grenzen fuer r.i
-  
-  dista <- diag(equilibrium)
-  # dista <- diag(odenet$distances)
+  # Cacluate regularisation target for distances
+#   dista <- diag(equilibrium)
+  dista <- odenet$distances
   
   for (i in 1:nrow(locat.spring)) {
     row <- locat.spring[i,1]
     col <- locat.spring[i,2]
-    dista[row, col] <- abs(diff(c(dista[row,row], dista[col, col])))
+    dista[row, col] <- diff(c(dista[row,row], dista[col, col]))
   }
 
   pTarget <- dista[locat.spring]
   names(pTarget) <- paste("r.", apply(locat.spring, 1, paste, collapse="."), sep="")
   pTarget <- c(cParams[grep("glob", names(cParams))], pTarget)
+  pTarget[c(1, 2)] <- c(345, 220)
+#   print(pTarget)
   
   # define cost function
   distCost <- function(cParameters, pTarget) {
