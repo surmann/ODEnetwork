@@ -163,8 +163,11 @@ estimateDistances.ODEnetwork <- function(odenet, equilibrium, distGround="combin
 #     print(cParameters)
 #     print("pTarget:\n")
 #     print(pTarget)
-    return(sum((b-bTarget)^2)
-#            + sum((cParameters - pTarget)^2)
+    delta.b <- sum((b-bTarget)^2)
+    print(sprintf("Resid b: %.2f", delta.b))
+    print(sprintf("Resid Param: %.2f", sum((cParameters-pTarget)^2)))
+    return(delta.b
+           + sum((cParameters-pTarget)^2) * exp(-10*delta.b)
            )
         
     # return SSE
