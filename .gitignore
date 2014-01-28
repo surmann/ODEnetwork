@@ -3,3 +3,4 @@
 .RData
 pkg
 pkg.Rcheck
+*.tar.gz

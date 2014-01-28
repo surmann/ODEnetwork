@@ -117,6 +117,11 @@ estimateDistances.ODEnetwork <- function(odenet, equilibrium, distGround="combin
   # Cacluate regularisation target for distances
 #   dista <- diag(equilibrium)
   dista <- odenet$distances
+  if (nrow(dista) == 30) {
+    dista <- rep(345, 30)
+    dista[c(12, 20)] <- 220
+    dista <- diag(dista)
+  }
   
   for (i in 1:nrow(locat.spring)) {
     row <- locat.spring[i,1]
@@ -127,13 +132,15 @@ estimateDistances.ODEnetwork <- function(odenet, equilibrium, distGround="combin
   pTarget <- dista[locat.spring]
   names(pTarget) <- paste("r.", apply(locat.spring, 1, paste, collapse="."), sep="")
   pTarget <- c(cParams[grep("glob", names(cParams))], pTarget)
-  pTarget[c(1, 2)] <- c(345, 220)
+  if (nrow(dista) == 30) {
+    pTarget[c(1, 2)] <- c(345, 220)
+  }
 #   print(pTarget)
   
   # define cost function
   distCost <- function(cParameters, pTarget) {
-    cParameters <- splitGlobalParams(cParameters)
-    odenet <- updateOscillators(odenet, ParamVec=cParameters)
+#     cParameters <- splitGlobalParams(cParameters)
+    odenet <- updateOscillators(odenet, ParamVec=splitGlobalParams(cParameters))
     # get distances and convert to correct form
     mR <- odenet$distances
     diag(mR) <- -diag(mR)
@@ -147,10 +154,18 @@ estimateDistances.ODEnetwork <- function(odenet, equilibrium, distGround="combin
     # if (sum(target.zero) > 0) gewi[target.zero] <- 1
     # if (sum(!target.zero) > 0) gewi[!target.zero] <- 1/pTarget[!target.zero]
     
-    gewi <- rep(1, length(cParams))
+#     gewi <- rep(1, length(cParameters))
     
-    # return(sum((b-bTarget)^2) +  sum(gewi %*% (cParams - pTarget)^2))
-    return(sum((b-bTarget)^2) +  sum((cParams - pTarget)^2))
+    # return(sum((b-bTarget)^2) +  sum(gewi %*% (cParameters - pTarget)^2))
+#     print("cParams:\n")
+#     print(cParams)
+#     print("cParameters:\n")
+#     print(cParameters)
+#     print("pTarget:\n")
+#     print(pTarget)
+    return(sum((b-bTarget)^2)
+#            + sum((cParameters - pTarget)^2)
+           )
         
     # return SSE
     #     return(sum((b-bTarget)^2))
