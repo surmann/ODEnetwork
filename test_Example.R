@@ -5,7 +5,7 @@ library(BBmisc)
 library(deSolve)
 library(minpack.lm)
 
-load_all("skel", reset = TRUE)
+load_all(".", reset = TRUE)
 
 #########################
 # 1d Beispiel

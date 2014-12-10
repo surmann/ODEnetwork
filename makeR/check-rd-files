@@ -1,13 +1,12 @@
-library(devtools)
+#!/usr/bin/env Rscript
+
 library(BBmisc)
 
-load_all("skel", reset = TRUE)
-
-dir = file.path("pkg", "man")
+dir = file.path("man")
 fs = list.files(dir, pattern=".Rd", full.names=TRUE)
 for (f in fs) {
-  print(f)
-  args = c("CMD", "Rd2pdf", "-o check-rds.pdf", "--force", "--no-preview", f)
+  messagef(f)
+  args = c("CMD", "Rd2pdf", "-o check-rds.pdf", "--force",  "--no-preview", f)
   #cmd = sprintf("R CMD Rd2pdf -o check.pdf --force  --no-preview %s > /dev/null", f)
   system3("R", args, stdout=TRUE, stderr=TRUE)
   unlink("check-rds.pdf")

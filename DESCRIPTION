@@ -1,0 +1,17 @@
+Package: ODEnetwork
+Title: Network of Differential Equations
+Description: Simulates a network of ordinary differential equations of order two
+Authors@R: c(person("Dirk", "Surmann", email =
+    "surmann@statistik.tu-dortmund.de", role = c("aut", "cre"))
+URL: https://bitbucket.org/surmann/odenetwork/
+License: BSD_3_clause + file LICENSE
+Encoding: URF-8
+Roxygen: list(wrap = FALSE)
+Imports:
+    BBmisc,
+    deSolve
+Suggests:
+    testthat
+LazyData: yes
+ByteCompile: yes
+Version: 1.0

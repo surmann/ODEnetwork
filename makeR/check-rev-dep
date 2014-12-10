@@ -1,9 +1,11 @@
+#!/usr/bin/env Rscript
+
 require("devtools")
 
 libpath = file.path(tempdir(), "R-lib")
 dir.create(libpath)
 
-pkg = read.dcf("skel/DESCRIPTION")[[1,"Package"]]
+pkg = read.dcf("DESCRIPTION")[[1,"Package"]]
 deps = revdep(pkg)
 
 install.packages(deps, lib = libpath)
@@ -16,3 +18,4 @@ if(!all(sapply(ok, is.null))) {
 
 message("All reverse dependencies ok!")
 
+# vim: ft=r

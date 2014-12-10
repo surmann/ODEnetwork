@@ -1,6 +1,6 @@
 .Rproj.user
 .Rhistory
 .RData
-pkg
-pkg.Rcheck
-*.tar.gz
+man/
+ODEnetwork*.tar.gz
+NAMESPACE
