@@ -50,7 +50,8 @@ updateOscillators <- function(odenet, ParamVec=NA
   UseMethod("updateOscillators")
 }
 
-#' @S3method updateOscillators ODEnetwork
+#' @method updateOscillators ODEnetwork
+#' @export
 updateOscillators.ODEnetwork <- function(odenet, ParamVec=NA
                                          , masses=NA, dampers=NA, springs=NA, distances=NA
                                          , state1=NA, state2=NA) {

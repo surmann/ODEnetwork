@@ -19,7 +19,8 @@ createParamVec <- function(odenet) {
   UseMethod("createParamVec")
 }
 
-#' @S3method createParamVec ODEnetwork
+#' @method createParamVec ODEnetwork
+#' @export
 createParamVec.ODEnetwork <- function(odenet) {
   # add correct signs to distance matrix to ensure a plus sign in the differential equations
   mR <- odenet$distances

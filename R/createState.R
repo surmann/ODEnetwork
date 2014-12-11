@@ -19,7 +19,8 @@ createState <- function(odenet) {
   UseMethod("createState")
 }
 
-#' @S3method createState ODEnetwork
+#' @method createState ODEnetwork
+#' @export
 createState.ODEnetwork <- function(odenet) {
   if (is.null(odenet$state)) {
     mState <- matrix(0, ncol = 2, nrow = length(odenet$masses))

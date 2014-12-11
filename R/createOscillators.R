@@ -19,7 +19,8 @@ createOscillators <- function(odenet) {
   UseMethod("createOscillators")
 }
 
-#' @S3method createOscillators ODEnetwork
+#' @method createOscillators ODEnetwork
+#' @export
 createOscillators.ODEnetwork <- function(odenet) {
   # Funktion ZeroDeriv falls vorhanden auslesen ansonsten immer NA zurückgeben
   if (is.null(odenet$events$zeroderiv)) {

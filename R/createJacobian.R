@@ -32,7 +32,8 @@ createJacobian <- function(odenet, ParamVec=NA) {
   UseMethod("createJacobian")
 }
 
-#' @S3method createJacobian ODEnetwork
+#' @method createJacobian ODEnetwork
+#' @export
 createJacobian.ODEnetwork <- function(odenet, ParamVec=NA) {
   if (sum(!is.na(ParamVec)) > 0) {
     odenet <- ODEnetwork::updateOscillators(odenet, ParamVec)

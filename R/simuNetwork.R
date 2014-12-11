@@ -24,7 +24,8 @@ simuNetwork <- function(odenet, times, ...) {
   UseMethod("simuNetwork")
 }
 
-#' @S3method simuNetwork ODEnetwork
+#' @method simuNetwork ODEnetwork
+#' @export
 simuNetwork.ODEnetwork <- function(odenet, times, ...) {
   checkArg(times, "numeric", na.ok=FALSE)
   checkArg(times, "vector", na.ok=FALSE)

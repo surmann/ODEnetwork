@@ -24,7 +24,8 @@ createEvents <- function(odenet) {
   UseMethod("createEvents")
 }
 
-#' @S3method createEvents ODEnetwork
+#' @method createEvents ODEnetwork
+#' @export
 createEvents.ODEnetwork <- function(odenet) {
   if (is.null(odenet$events))
     return(odenet)

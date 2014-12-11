@@ -40,7 +40,8 @@ estimateDistances <- function(odenet, equilibrium
   UseMethod("estimateDistances")
 }
 
-#' @S3method estimateDistances ODEnetwork
+#' @method estimateDistances ODEnetwork
+#' @export
 estimateDistances.ODEnetwork <- function(odenet, equilibrium, distGround="combined"
                                          , optim.control=list()) {
   # number of oscillators

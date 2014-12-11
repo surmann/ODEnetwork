@@ -22,7 +22,8 @@ setState <- function(odenet, state1, state2) {
   UseMethod("setState")
 }
 
-#' @S3method setState ODEnetwork
+#' @method setState ODEnetwork
+#' @export
 setState.ODEnetwork <- function(odenet, state1, state2) {
   checkArg(state1, "numeric", len=length(odenet$masses), na.ok=FALSE)
   checkArg(state1, "vector", len=length(odenet$masses), na.ok=FALSE)

@@ -35,7 +35,8 @@ setEvents <- function(odenet, events, type="dirac") {
   UseMethod("setEvents")
 }
 
-#' @S3method setEvents ODEnetwork
+#' @method setEvents ODEnetwork
+#' @export
 setEvents.ODEnetwork <- function(odenet, events, type="dirac") {
   checkArg(events, "data.frame", na.ok=FALSE)
   checkArg(type, "character", len=1, na.ok=FALSE)

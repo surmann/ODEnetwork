@@ -16,7 +16,8 @@ calcResonances <- function(odenet) {
   UseMethod("calcResonances")
 }
 
-#' @S3method calcResonances ODEnetwork
+#' @method calcResonances ODEnetwork
+#' @export
 calcResonances.ODEnetwork <- function(odenet) {
   # test arguments
   checkArg(odenet, "ODEnetwork", na.ok=FALSE)
