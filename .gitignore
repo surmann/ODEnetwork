@@ -1,6 +1,7 @@
 ODEnetwork.Rcheck
 ODEnetwork*.tar.gz
 .Rproj.user
+*.Rproj
 .Rhistory
 .RData
 man/
