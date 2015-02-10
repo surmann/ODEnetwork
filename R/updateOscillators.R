@@ -44,27 +44,27 @@
 #' odenet <- updateOscillators(odenet, c(k.1.2 = 201, k.3.5 = 202, r.1 = 2))
 #' # Warning: Following value is ignored, because it is on the lower triangle
 #' odenet <- updateOscillators(odenet, c(d.2.1 = 101))
-updateOscillators <- function(odenet, ParamVec=NA
-                              , masses=NA, dampers=NA, springs=NA, distances=NA
-                              , state1=NA, state2=NA) {
+updateOscillators <- function(odenet, ParamVec=NULL
+                              , masses=NULL, dampers=NULL, springs=NULL, distances=NULL
+                              , state1=NULL, state2=NULL) {
   UseMethod("updateOscillators")
 }
 
 #' @method updateOscillators ODEnetwork
 #' @export
-updateOscillators.ODEnetwork <- function(odenet, ParamVec=NA
-                                         , masses=NA, dampers=NA, springs=NA, distances=NA
-                                         , state1=NA, state2=NA) {
+updateOscillators.ODEnetwork <- function(odenet, ParamVec=NULL
+                                         , masses=NULL, dampers=NULL, springs=NULL, distances=NULL
+                                         , state1=NULL, state2=NULL) {
   cLen <- length(odenet$masses)
-  if (sum(!is.na(ParamVec)) > 0) {
+  if (!is.null(ParamVec)) {
     # checking arguments
-    checkArg(ParamVec, "numeric", min.len=1L, na.ok=FALSE)
-    checkArg(ParamVec, "vector", min.len=1L, na.ok=FALSE)
+    assertNumeric(ParamVec)
+    assertVector(ParamVec, strict = TRUE, any.missing = FALSE, min.len = 1L)
     # delete matricies
-    masses <- NA
-    dampers <- NA
-    springs <- NA
-    distances <- NA
+    masses <- NULL
+    dampers <- NULL
+    springs <- NULL
+    distances <- NULL
     
     # extract parameter settings from the vector to change odenet parameters
     # masses
@@ -86,7 +86,7 @@ updateOscillators.ODEnetwork <- function(odenet, ParamVec=NA
     # off diagonal elements d.1.45
     cPosSource <- grep("^d(\\.\\d+){2}$", names(ParamVec))
     if (length(cPosSource) > 0) {
-      if (sum(!is.na(dampers)) == 0)
+      if (is.null(dampers))
         dampers <- odenet$dampers
       cTemp <- sub("\\D+", "", names(ParamVec)[cPosSource])
       cPosTarget <- as.numeric(sub("\\.\\d+$", "", cTemp))
@@ -111,7 +111,7 @@ updateOscillators.ODEnetwork <- function(odenet, ParamVec=NA
     # off diagonal elements k.1.45
     cPosSource <- grep("^k(\\.\\d+){2}$", names(ParamVec))
     if (length(cPosSource) > 0) {
-      if (sum(!is.na(springs)) == 0)
+      if (is.null(springs))
         springs <- odenet$springs
       cTemp <- sub("\\D+", "", names(ParamVec)[cPosSource])
       cPosTarget <- as.numeric(sub("\\.\\d+$", "", cTemp))
@@ -136,7 +136,7 @@ updateOscillators.ODEnetwork <- function(odenet, ParamVec=NA
     # off diagonal elements r.1.45
     cPosSource <- grep("^r(\\.\\d+){2}$", names(ParamVec))
     if (length(cPosSource) > 0) {
-      if (sum(!is.na(distances)) == 0)
+      if (is.null(distances))
         distances <- odenet$distances
       cTemp <- sub("\\D+", "", names(ParamVec)[cPosSource])
       cPosTarget <- as.numeric(sub("\\.\\d+$", "", cTemp))
@@ -166,50 +166,44 @@ updateOscillators.ODEnetwork <- function(odenet, ParamVec=NA
       state2[cPosTarget] <- ParamVec[cPosSource]
     }
   } else {
-    if ((sum(!is.na(masses)) + sum(!is.na(dampers)) + sum(!is.na(springs)) + sum(!is.na(distances))
-         + sum(!is.na(state1)) + sum(!is.na(state2))) == 0)
+    if (is.null(masses) & is.null(dampers) & is.null(springs) 
+        & is.null(distances) & is.null(state1) & is.null(state2))
       stop("Set at least one parameter.")
   }
   
-  if (sum(!is.na(masses)) > 0) {
-    checkArg(masses, "numeric", len=cLen, na.ok=FALSE)
-    checkArg(masses, "vector", na.ok=FALSE)
-    if (sum(masses <= 0) > 0)
-      stop("All masses have to be positive!")
+  if (!is.null(masses)) {
+    qassert(masses, "N+(0,)")
+    assertVector(masses, strict = TRUE, any.missing = FALSE, len = cLen)
     odenet$masses <- masses
   }
-  if (sum(!is.na(dampers)) > 0) {
-    checkArg(dampers, "numeric", len=cLen^2, na.ok=FALSE)
-    checkArg(dampers, "matrix", na.ok=FALSE)
+  if (!is.null(dampers)) {
+    assertMatrix(dampers, mode = "numeric", any.missing = FALSE, nrows = cLen, ncols = cLen)
     # copy upper triangle to lower triangle => symmetric matrix
     dampers[lower.tri(dampers)] <- t(dampers)[lower.tri(dampers)]
     odenet$dampers <- dampers
   }
-  if (sum(!is.na(springs)) > 0) {
-    checkArg(springs, "numeric", len=cLen^2, na.ok=FALSE)
-    checkArg(springs, "matrix", na.ok=FALSE)
+  if (!is.null(springs)) {
+    assertMatrix(springs, any.missing = FALSE, nrows = cLen, ncols = cLen)
     # positive springs
-    if (sum(springs < 0) > 0)
-      stop("Springs must be nonzero.")
+    assertNumeric(springs, lower = 0)
     # copy upper triangle to lower triangle => symmetric matrix
     springs[lower.tri(springs)] <- t(springs)[lower.tri(springs)]
     odenet$springs <- springs
   }
-  if (sum(!is.na(distances)) > 0) {
-    checkArg(distances, "numeric", len=cLen^2, na.ok=FALSE)
-    checkArg(distances, "matrix", na.ok=FALSE)
+  if (!is.null(distances)) {
+    assertMatrix(distances, mode = "numeric", any.missing = FALSE, nrows = cLen, ncols = cLen)
     # copy upper triangle to lower triangle => symmetric matrix
     distances[lower.tri(distances)] <- t(distances)[lower.tri(distances)]
     odenet$distances <- distances
   }
-  if (sum(!is.na(state1)) > 0) {
-    checkArg(state1, "numeric", len=cLen, na.ok=FALSE)
-    checkArg(state1, "vector", na.ok=FALSE)
+  if (!is.null(state1)) {
+    assertNumeric(state1)
+    assertVector(state1, strict = TRUE, any.missing = FALSE, len = cLen)
     odenet$state[, "state1"] <- state1
   }
-  if (sum(!is.na(state2)) > 0) {
-    checkArg(state2, "numeric", len=cLen, na.ok=FALSE)
-    checkArg(state2, "vector", na.ok=FALSE)
+  if (!is.null(state2)) {
+    assertNumeric(state2)
+    assertVector(state2, strict = TRUE, any.missing = FALSE, len = cLen)
     odenet$state[, "state2"] <- state2
   }
   

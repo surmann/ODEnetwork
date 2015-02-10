@@ -38,20 +38,16 @@ setEvents <- function(odenet, events, type="dirac") {
 #' @method setEvents ODEnetwork
 #' @export
 setEvents.ODEnetwork <- function(odenet, events, type="dirac") {
-  checkArg(events, "data.frame", na.ok=FALSE)
-  checkArg(type, "character", len=1, na.ok=FALSE)
-  checkArg(type, "character", choices=c("dirac", "constant", "linear"))
+  assert(
+    checkDataFrame(events, types = c("factor", "numeric", "numeric"), any.missing = FALSE, ncols = 3)
+    , checkDataFrame(events, types = c("factor", "numeric", "numeric", "factor"), any.missing = FALSE, ncols = 4)
+  )
+  assertSubset(names(events), c("var", "time", "value", "rep"))
+  assertChoice(type, c("dirac", "constant", "linear"))
   
   # clear events
   odenet$events <- NULL
   
-  # test data frame
-  if (ncol(events) < 3 || ncol(events) > 4)
-    stop ("The events data.frame must have 3 or 4 columns.")
-  
-  # convert variable-name to factor
-  if (!is.factor(events$var))
-    events$var <- as.factor(events$var)
   # get correct variable prefix
   if (odenet$coordtype == "cartesian") {
     cNames <- c("x", "v")

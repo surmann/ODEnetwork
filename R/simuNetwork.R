@@ -27,8 +27,8 @@ simuNetwork <- function(odenet, times, ...) {
 #' @method simuNetwork ODEnetwork
 #' @export
 simuNetwork.ODEnetwork <- function(odenet, times, ...) {
-  checkArg(times, "numeric", na.ok=FALSE)
-  checkArg(times, "vector", na.ok=FALSE)
+  assertNumeric(times)
+  assertVector(times, any.missing = FALSE)
   
   # create events structure from events data
   odenet <- createEvents(odenet)

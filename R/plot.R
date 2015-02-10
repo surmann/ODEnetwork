@@ -27,15 +27,14 @@
 #' odenet <- setState(odenet, c(1, 3), c(0, 0))
 #' odenet <- simuNetwork(odenet, seq(0, 10, by = 0.05))
 #' plot(odenet)
-#' plot(odenet, var = 2)
+#' plot(odenet, var = 2L)
 #' plot(odenet, state = "1")
 #' plot(odenet, state = "2")
 #' plot(odenet, state = "1vs2")
 plot.ODEnetwork <- function(x, ..., state = "12", var = NULL) {
-  checkArg(state, "character", len=1, na.ok=FALSE)
-  checkArg(state, subset = c("12", "1", "2", "1vs2"))
+  assertChoice(state, c("12", "1", "2", "1vs2"))
   if (!is.null(var))
-    checkArg(var, "numeric", lower = 1, upper = length(x$masses), na.ok = FALSE)
+    assertInteger(var, lower = 1L, upper = length(x$masses), any.missing = FALSE)
   # Check ode result
   if (is.null(x$simulation$results))
     stop("Simulation results missing!")

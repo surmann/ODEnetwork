@@ -1,5 +1,6 @@
-#' Calculate Resonance Frequencies
+#' @title Calculate Resonance Frequencies
 #' 
+#' @description
 #' Calculates the resonance frequencies of a given \code{\link{ODEnetwork}}.
 #' The resonance frequencies are calculated without respect to the dampers and neighourhood structure.
 #'
@@ -20,7 +21,7 @@ calcResonances <- function(odenet) {
 #' @export
 calcResonances.ODEnetwork <- function(odenet) {
   # test arguments
-  checkArg(odenet, "ODEnetwork", na.ok=FALSE)
+  assertClass(odenet, "ODEnetwork")
   
   # Resonanzfrequenz
   cResonances <- sqrt(diag(odenet$springs) / odenet$masses) / (2*pi)

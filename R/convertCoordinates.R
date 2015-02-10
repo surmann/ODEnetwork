@@ -18,9 +18,8 @@
 #'   coordsP <- convertCoordinates(coordsK, "polar")
 #' }
 convertCoordinates <- function(coords, convertto = "cartesian") {
-  checkArg(coords, "matrix", na.ok = FALSE)
-  checkArg(convertto, "character", len = 1)
-  checkArg(convertto, subset = c("cartesian", "polar"))
+  assertMatrix(coords, mode="numeric", any.missing=FALSE, min.rows=1L, ncols=2L)
+  assertChoice(convertto, c("cartesian", "polar"))
   
   if (ncol(coords) != 2)
     stop("The matrix with coordinates has to contain two columns.")

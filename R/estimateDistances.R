@@ -47,16 +47,16 @@ estimateDistances.ODEnetwork <- function(odenet, equilibrium, distGround="combin
   # number of oscillators
   cN <- length(odenet$masses)
   # Equilibrium
-  checkArg(equilibrium, "numeric", na.ok=FALSE)
-  checkArg(equilibrium, "vector", len=cN, na.ok=FALSE)
+  assertNumeric(equilibrium, any.missing=FALSE, len=cN)
+  assertVector(equilibrium, strict=TRUE)
   # distances to the ground
-  checkArg(distGround, "character", na.ok=FALSE)
-  if (length(distGround) != 1 && length(distGround) != cN) {
-    stopf("The length of the distances to the ground has to be 1 or n.")
-  }
+  assert(
+    checkCharacter(distGround, any.missing=FALSE, len=1L)
+    , checkCharacter(distGround, any.missing=FALSE, len=cN)
+    )
   # check arguments of distGround
   if (cN > 1 && length(distGround) == 1) {
-    checkArg(distGround, choices=c("combined", "individual", "fixed"))
+    assertChoice(distGround, c("combined", "individual", "fixed"))
   }
   
   # delete names

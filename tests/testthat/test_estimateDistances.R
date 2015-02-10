@@ -43,7 +43,7 @@ test_that("estimateDistances", {
                  , "All parameters are fixed.")
   
   expect_error(estimateDistances(odenet, equilibrium, distGround=c("A", "B"))
-                 , "The length of the distances to the ground has to be 1 or n.")
+               , "Must have length")
   
   expect_equal(diag(odenet$distances), rep(1, 3))
   

@@ -34,13 +34,11 @@
 #' mK[2, 3] <- 10
 #' odenet <- ODEnetwork(mM, mD, mK)
 ODEnetwork <- function(masses, dampers, springs, cartesian=TRUE, distances=NA) {
-  checkArg(masses, "numeric", min.len=1L, na.ok=FALSE)
-  checkArg(masses, "vector", min.len=1L, na.ok=FALSE)
-  checkArg(dampers, "numeric", min.len=1L, na.ok=FALSE)
-  checkArg(dampers, "matrix", min.len=1L, na.ok=FALSE)
-  checkArg(springs, "numeric", min.len=1L, na.ok=FALSE)
-  checkArg(springs, "matrix", min.len=1L, na.ok=FALSE)
-  checkArg(cartesian, "logical", len=1, na.ok=FALSE)
+  assertNumeric(masses, any.missing=FALSE, min.len=1L)
+  assertVector(masses, strict=TRUE)
+  assertMatrix(dampers, mode="numeric", any.missing=FALSE, min.rows=1L, min.cols=1L)
+  assertMatrix(springs, mode="numeric", any.missing=FALSE, min.rows=1L, min.cols=1L)
+  assertLogical(cartesian, any.missing=FALSE, len=1L)
   
   # test on equal dimenstions
   if (var(c(length(masses), dim(dampers), dim(springs))) != 0)

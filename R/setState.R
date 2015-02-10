@@ -25,10 +25,10 @@ setState <- function(odenet, state1, state2) {
 #' @method setState ODEnetwork
 #' @export
 setState.ODEnetwork <- function(odenet, state1, state2) {
-  checkArg(state1, "numeric", len=length(odenet$masses), na.ok=FALSE)
-  checkArg(state1, "vector", len=length(odenet$masses), na.ok=FALSE)
-  checkArg(state2, "numeric", len=length(odenet$masses), na.ok=FALSE)
-  checkArg(state2, "vector", len=length(odenet$masses), na.ok=FALSE)
+  assertNumeric(state1)
+  assertVector(state1, strict = TRUE, any.missing = FALSE, len = length(odenet$masses))
+  assertNumeric(state2)
+  assertVector(state2, strict = TRUE, any.missing = FALSE, len = length(odenet$masses))
   
   # set state1 and state2
   odenet$state <- cbind(state1, state2)
