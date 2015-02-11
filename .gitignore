@@ -4,5 +4,3 @@ ODEnetwork*.tar.gz
 *.Rproj
 .Rhistory
 .RData
-man/
-NAMESPACE
