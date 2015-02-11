@@ -135,4 +135,6 @@ plot.ODEnetwork <- function(x, ..., state = "12", var = NULL) {
           par(op)
         }
   )
+  
+  return(invisible(TRUE))
 }
