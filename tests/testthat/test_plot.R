@@ -28,7 +28,9 @@ test_that("plot", {
   expect_error(plot(odenet, var = 11L))
   expect_error(plot(odenet, var = c(3L, -5L, 7L)))
   expect_error(plot(odenet, state = "1vs3"))
-
+  # positive with polar coordinates
+  expect_true(plot(odenet, state = "1vs2", var = 2:4, ask = FALSE))
+  
   # define network
   odenet <- ODEnetwork(masses, dampers, springs)
   odenet <- setState(odenet, c(1, rep(0, 9)), rep(0, 10))
@@ -36,7 +38,9 @@ test_that("plot", {
   
   # positive tests
   expect_true(plot(odenet, ask = FALSE))
-  expect_true(plot(odenet, state = "12", var = 1L, ask = FALSE))
-  expect_true(plot(odenet, state = "1", var = 2:4, ask = FALSE))
-  expect_true(plot(odenet, state = "2", var = 5:10, ask = FALSE))
+  expect_true(plot(odenet, state = "1", var = 1L, ask = FALSE))
+  expect_true(plot(odenet, state = "2", var = 2L, ask = FALSE))
+  expect_true(plot(odenet, state = "1vs2", var = 3L, ask = FALSE))
+  expect_true(plot(odenet, state = "1vs2", var = 2:4, ask = FALSE))
+  expect_true(plot(odenet, state = "1vs2", var = 5:10, ask = FALSE))
 })
