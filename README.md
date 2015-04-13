@@ -28,7 +28,7 @@ dampers <- as.matrix(0.5)
 springs <- as.matrix(4)
 distances <- as.matrix(2)
 
-odenet <- ODEnetwork(masses, dampers, springs, distances=distances)
+odenet <- ODEnetwork(masses, dampers, springs, distances = distances)
 
 odenet <- setState(odenet, 3, 0)
 ```
@@ -50,9 +50,8 @@ springs <- diag(c(4, 1))
 springs[1, 2] <- 2
 distances <- matrix(c(0, 0, 1, 0), ncol = 2)
 
-odenet <- ODEnetwork(masses, dampers, springs, distances=distances)
+odenet <- ODEnetwork(masses, dampers, springs, distances = distances)
 
-# state only
 odenet <- setState(odenet, c(1, 1), c(0, 0))
 odenet <- simuNetwork(odenet, seq(0, 40, by = 0.01))
 calcResonances(odenet)
