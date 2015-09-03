@@ -1,6 +1,8 @@
 Package: ODEnetwork
 Title: Network of Differential Equations
-Description: Simulates a network of ordinary differential equations of order two
+Description: Simulates a network of ordinary differential equations of order two.
+    The package provides an easy interface to construct networks.
+    In addition you are able to define different external triggers to manipulate the trajectory.
 Authors@R: c(person("Dirk", "Surmann", email =
     "surmann@statistik.tu-dortmund.de", role = c("aut", "cre")))
 URL: https://bitbucket.org/surmann/odenetwork/
