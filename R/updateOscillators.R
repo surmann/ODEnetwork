@@ -12,8 +12,9 @@
 #'   Named vector to overwrite corresponding parameters.
 #'   Masses start with "m." followed by a number (e.g.: "m.12").
 #'   Dampers start with "d." followed by one or two numbers seperated by a dot (e.g.: "d.2", "d.5.6").
-#'   Springs start with "k.", like dampers (e.g.: "k.4", "k.3.9").
-#'   The triangle elements of the dampers and springs are characterised by increasing numbers.
+#'   Springs start with "k.", like dampers (e.g.: "k.4", "k.3.9")
+#'   Distances start with "r.", like dampers (e.g.: "r.7", "r.1.9")
+#'   The triangle elements of the dampers, springs, and distances are characterised by increasing numbers.
 #'   A name "d.3.5" is correct, in contrast to "d.5.3" which is ignored.
 #'   This is done to speed up, because the matricies are symmetric.
 #'   State1 and state2 start with "st1." or "st2." respectivley, followed by a number (e.g.: "st1.15", "st2.8").
