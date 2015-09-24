@@ -7,8 +7,11 @@
 #' @param odenet [\code{ODEnetwork}]\cr
 #'    List of class \code{\link{ODEnetwork}}.
 #' @param times [\code{numeric}]\cr
-#'    time sequence for which output is wanted,
-#'    the first value of \code{times} is the initial time.
+#'    Time sequence to calculate or simulate the ode network.
+#' @param origin.min.time [\code{logical(1L)}]\cr
+#'    Define origin of ode time.
+#'    \code{FALSE} sets it to 0, \code{TRUE} to the minimum of \code{times}.
+#'    Default is \code{FALSE}.
 #' @param ... Additional arguments.
 #' @return an extended list of class [\code{\link{ODEnetwork}}].
 #' @export
@@ -20,15 +23,23 @@
 #' position <- rep(10, 3)
 #' velocity <- rep(0, 3)
 #' odenet <- setState(odenet, position, velocity)
-simuNetwork <- function(odenet, times, ...) {
+simuNetwork <- function(odenet, times, origin.min.time = FALSE, ...) {
   UseMethod("simuNetwork")
 }
 
 #' @method simuNetwork ODEnetwork
 #' @export
-simuNetwork.ODEnetwork <- function(odenet, times, ...) {
-  assertNumeric(times)
-  assertVector(times, any.missing = FALSE)
+simuNetwork.ODEnetwork <- function(odenet, times, origin.min.time = FALSE, ...) {
+  assertNumeric(times, any.missing = FALSE)
+  assertFlag(origin.min.time)
+  
+  # calc time origin
+  if (origin.min.time) {
+    time.origin <- min(times)
+    times = times - time.origin
+  } else {
+    time.origin <- 0
+  }
   
   # create events structure from events data
   odenet <- createEvents(odenet)
@@ -121,7 +132,7 @@ simuNetwork.ODEnetwork <- function(odenet, times, ...) {
     mResult <- vapply(times, funODEs, rep(1i, 2*cN))
     # sort to alternating position and velocity:
     # (time, x.1, v.1, x.2, v.2, ..., x.n, v.n)
-    mResOde <- cbind(time = times, t(Re(mResult[rep(1:cN, each = 2) + c(0, cN), ])))
+    mResOde <- cbind(time = times + time.origin, t(Re(mResult[rep(1:cN, each = 2) + c(0, cN), ])))
     # set correct names
     colnames(mResOde)[2:ncol(mResOde)] <- paste(c("x", "v"), rep(1:cN, each=2), sep = ".")
     # reorder inhomogeneous vector to alternating position and velocity
@@ -141,6 +152,7 @@ simuNetwork.ODEnetwork <- function(odenet, times, ...) {
                    , events = eventdat
                    , ...
     )
+    mResOde[, "time"] = mResOde[, "time"] + time.origin
     # extend the ODEnetwork object
     odenet$simulation$method <- attr(mResOde, "type")
     # overwrite calculations with forcings

@@ -4,15 +4,19 @@
 \alias{simuNetwork}
 \title{Simulation of the Differential Equations}
 \usage{
-simuNetwork(odenet, times, ...)
+simuNetwork(odenet, times, origin.min.time = FALSE, ...)
 }
 \arguments{
 \item{odenet}{[\code{ODEnetwork}]\cr
 List of class \code{\link{ODEnetwork}}.}
 
 \item{times}{[\code{numeric}]\cr
-time sequence for which output is wanted,
-the first value of \code{times} is the initial time.}
+Time sequence to calculate or simulate the ode network.}
+
+\item{origin.min.time}{[\code{logical(1L)}]\cr
+Define origin of ode time.
+\code{FALSE} sets it to 0, \code{TRUE} to the minimum of \code{times}.
+Default is \code{FALSE}.}
 
 \item{...}{Additional arguments.}
 }

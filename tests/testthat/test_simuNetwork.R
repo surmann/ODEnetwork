@@ -37,7 +37,9 @@ test_that("simuNetwork", {
   eventdata <- data.frame(var = c("m.1", "m.1"), time = c(1, 2), value = c(5, 2))
   odenet <- setEvents(odenet, eventdata, type = "dirac")
   expect_warning(odenet <- simuNetwork(odenet, seq(0, 4, by = 1)))
-  
+})
+
+test_that("simuNetwork calc vs. simu", {
   # compare analytic to numeric results
   tol = .Machine$double.eps ^ 0.5 * 10^2
   # 1 node
@@ -110,4 +112,33 @@ test_that("simuNetwork", {
   
   expect_equal(odenetAna$simulation$results, odenetNum$simulation$results
                , tolerance = tol, check.attributes = FALSE)
+})
+
+test_that("simuNetwork time origins", {
+  # compare analytic to numeric results
+  tol = .Machine$double.eps ^ 0.5 * 10^2
+
+  masses <- 1
+  dampers <- as.matrix(0.1)
+  springs <- as.matrix(4)
+  odenet <- ODEnetwork(masses, dampers, springs)
+  odenet <- setState(odenet, 1, 0)
+  
+  odenet.zero <- simuNetwork(odenet, seq(0, 10, by = 0.1))
+  odenet.min <- simuNetwork(odenet, seq(10, 20, by = 0.1), origin.min.time = TRUE)
+  
+  expect_equal(odenet.zero$simulation$results[, "time"], seq(0, 10, by = 0.1))
+  expect_equal(odenet.min$simulation$results[, "time"], seq(10, 20, by = 0.1))
+  expect_equal(odenet.zero$simulation$results[, "x.1"], odenet.min$simulation$results[, "x.1"]
+               , tolerance = tol
+               )
+  
+  eventdata <- data.frame(var = c("v.1"), time = c(0), value = c(0))
+  odenet <- setEvents(odenet, eventdata)
+  
+  odenet.min.num <- simuNetwork(odenet, seq(10, 20, by = 0.1), origin.min.time = TRUE)
+
+  expect_equal(odenet.min$simulation$results, odenet.min.num$simulation$results
+               , tolerance = tol, check.attributes = FALSE
+               )
 })
