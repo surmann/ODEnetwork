@@ -22,7 +22,7 @@ createOscillators <- function(odenet) {
 #' @method createOscillators ODEnetwork
 #' @export
 createOscillators.ODEnetwork <- function(odenet) {
-  # Funktion ZeroDeriv falls vorhanden auslesen ansonsten immer NA zurückgeben
+  # Funktion ZeroDeriv falls vorhanden auslesen ansonsten immer NA zurueckgeben
   if (is.null(odenet$events$zeroderiv)) {
     fktZeroDeriv <- function(cState) NA
   } else {
@@ -42,7 +42,7 @@ createOscillators.ODEnetwork <- function(odenet) {
   }
   # Einzelnen Knoten durchgehen und die Differentialgleichungen erstellen
   for (i in 1:length(odenet$masses)) {
-    # keine äußere Anregung mehr vorhanden, alle F. sind 0
+    # keine aeussere (?) Anregung mehr vorhanden, alle F. sind 0
     # Erstelle das Differentialgleichungs-System der Feder-Masse-Schwingers
     # Es werden nur Differentialgleichungen der 1. Ordnung verwendet
     # dx <- v
@@ -89,7 +89,7 @@ createOscillators.ODEnetwork <- function(odenet) {
         }
       }
     }
-    # Abschluss: Klammer schließen und durch Masse teilen
+    # Abschluss: Klammer schliessen und durch Masse teilen
     strTemp <- paste(strTemp, ")/m.", i, sep = "")
     if (is.na(fktZeroDeriv(paste("v.", i, sep = "")))) {
       strFun <- c(strFun, strTemp)
@@ -133,7 +133,7 @@ createOscillators.ODEnetwork <- function(odenet) {
   formals(fktOszillator) <- alist(cTime=, cState=, cParameters=)
   # Funktionstext in Funktion verpacken
   expstrFun <- parse(text = strFun)
-  # Funktion in den K?rper der leeren Funktion packen
+  # Funktion in den Koerper der leeren Funktion packen
   body(fktOszillator) <- as.call(c(as.name("{"), expstrFun))
   
   # Fertige Funktion des DGL-Systems ausgeben
