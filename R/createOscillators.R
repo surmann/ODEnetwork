@@ -42,7 +42,7 @@ createOscillators.ODEnetwork <- function(odenet) {
   }
   # Einzelnen Knoten durchgehen und die Differentialgleichungen erstellen
   for (i in 1:length(odenet$masses)) {
-    # keine aeussere (?) Anregung mehr vorhanden, alle F. sind 0
+    # keine aeussere Anregung mehr vorhanden, alle F. sind 0
     # Erstelle das Differentialgleichungs-System der Feder-Masse-Schwingers
     # Es werden nur Differentialgleichungen der 1. Ordnung verwendet
     # dx <- v
