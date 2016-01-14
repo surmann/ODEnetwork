@@ -5,6 +5,7 @@
 #' @param odenet [\code{ODEnetwork}]\cr
 #'   List of class \code{\link{ODEnetwork}}.
 #' @return a named vector with assigned starting state
+#' @export
 #' @examples
 #' if (interactive()) {
 #'   masses <- c(1, 2)
