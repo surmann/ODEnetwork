@@ -5,6 +5,7 @@
 #' @param odenet [\code{ODEnetwork}]\cr
 #'   List of class \code{\link{ODEnetwork}}.
 #' @return a function with a set of differential equations of order one to use in a numerical step
+#' @export
 #' @examples
 #' if (interactive()) {
 #'   masses <- c(1, 2)
