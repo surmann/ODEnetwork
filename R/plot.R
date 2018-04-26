@@ -7,10 +7,10 @@
 #'    List of class \code{\link{ODEnetwork}}.
 #' @param state [\code{character}]\cr
 #'    The type of result, that is plotted.
-#'    If \code{state1}, only state1 (position or angle) is plotted over time.
-#'    If \code{state2}, only state2 (velocity or magnitude) is plotted over time.
-#'    If \code{state12}, state1 and state2 are plotted over time.
-#'    If \code{state1vs2}, state2 is plotted over state1.
+#'    If \code{1}, only state1 (position or angle) is plotted over time.
+#'    If \code{2}, only state2 (velocity or magnitude) is plotted over time.
+#'    If \code{12}, state1 and state2 are plotted over time.
+#'    If \code{1vs2}, state2 is plotted over state1.
 #'    Default is \code{state12}
 #' @param var [\code{numeric(n)}]\cr
 #'    Subset of variables to plot. Default is \code{NULL}, which plots all variables.
@@ -33,8 +33,7 @@
 #' plot(odenet, state = "1vs2")
 plot.ODEnetwork <- function(x, ..., state = "12", var = NULL) {
   assertChoice(state, c("12", "1", "2", "1vs2"))
-  if (!is.null(var))
-    assertInteger(var, lower = 1L, upper = length(x$masses), any.missing = FALSE)
+  assertIntegerish(var, lower = 1L, upper = length(x$masses), any.missing = FALSE, null.ok = TRUE)
   # Check ode result
   if (is.null(x$simulation$results))
     stop("Simulation results missing!")
