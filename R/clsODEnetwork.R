@@ -70,11 +70,9 @@ ODEnetwork <- function(masses, dampers, springs, cartesian=TRUE, distances=NA) {
   states <- cbind(state1 = rep(0, length(masses)), state2 = rep(0, length(masses)))
   
   # return network
-  setClasses(list(masses = masses
-                  , dampers = dampers
-                  , springs = springs
-                  , distances = distances
-                  , coordtype = coordtype
-                  , state = states)
-             , "ODEnetwork")
+  odenet = list(masses = masses, dampers = dampers, springs = springs
+                , distances = distances, coordtype = coordtype, state = states
+                )
+  class(odenet) = "ODEnetwork"
+  return(odenet)
 }

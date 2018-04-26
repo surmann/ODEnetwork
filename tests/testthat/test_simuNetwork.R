@@ -133,10 +133,12 @@ test_that("simuNetwork time origins", {
                , tolerance = tol
                )
   
+  # update to higher accuracy
+  odenet.min <- simuNetwork(odenet, seq(10, 20, by = 0.01), origin.min.time = TRUE)
   eventdata <- data.frame(var = c("v.1"), time = c(0), value = c(0))
   odenet <- setEvents(odenet, eventdata)
   
-  odenet.min.num <- simuNetwork(odenet, seq(10, 20, by = 0.1), origin.min.time = TRUE)
+  odenet.min.num <- simuNetwork(odenet, seq(10, 20, by = 0.01), origin.min.time = TRUE)
 
   expect_equal(odenet.min$simulation$results, odenet.min.num$simulation$results
                , tolerance = tol, check.attributes = FALSE

@@ -5,18 +5,20 @@ Description: Simulates a network of ordinary differential equations of order
     you are able to define different external triggers to manipulate the trajectory.
 Authors@R: c(person("Dirk", "Surmann", email =
     "surmann@statistik.tu-dortmund.de", role = c("aut", "cre")))
-URL: https://bitbucket.org/surmann/odenetwork/
+URL: https://github.com/surmann/ODEnetwork
 License: BSD_3_clause + file LICENSE
 Encoding: UTF-8
 Roxygen: list(wrap = FALSE)
 Depends:
     R (>= 3.0.2),
-    BBmisc (>= 1.8),
     checkmate (>= 1.5),
     deSolve
 Suggests:
-    testthat
+    testthat,
+    knitr,
+    rmarkdown
 LazyData: yes
 ByteCompile: yes
 Version: 1.2
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
+VignetteBuilder: knitr

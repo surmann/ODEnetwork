@@ -4,3 +4,4 @@ ODEnetwork*.tar.gz
 *.Rproj
 .Rhistory
 .RData
+inst/doc
