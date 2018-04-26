@@ -23,6 +23,7 @@
 #' position <- rep(10, 3)
 #' velocity <- rep(0, 3)
 #' odenet <- setState(odenet, position, velocity)
+#' odenet <- simuNetwork(odenet = odenet, times = seq(0, 20))
 simuNetwork <- function(odenet, times, origin.min.time = FALSE, ...) {
   UseMethod("simuNetwork")
 }
