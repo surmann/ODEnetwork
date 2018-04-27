@@ -84,7 +84,7 @@ spring[1, 2] = 1
 spring[2, 3] = 1
 odenet = ODEnetwork(masses = mass, dampers = damper, springs = spring)
 ```
-In the next step, it is neccesary to define the start conditions.
+In the next step, it is neccesary to define the start conditions for the two states which are the position and velocity of each oscillator.
 ```{r}
 position = rep(1, 3)
 velocity = c(0, 1, -1)
@@ -92,6 +92,9 @@ odenet = setState(odenet = odenet, state1 = position, state2 = velocity)
 ```
 
 ### Results
+
+#### Graphs
+
 Now we run the simulation over a time interval of 20 seconds and plot the result of the first state, which is the position of the oscillator.
 ```{r, include = FALSE}
 odenet = simuNetwork(odenet = odenet, times = seq(0, 20, 0.01))
@@ -105,3 +108,36 @@ plot(odenet, state = "1", var = 1)
 plot(odenet, state = "1", var = 2)
 plot(odenet, state = "1", var = 3)
 ```
+
+It is possible to take a look at the position `x.1` and velocity `v.1` in one graph:
+```{r, fig.height = 7}
+plot(odenet, state = "1vs2", var = 1)
+```
+
+#### Calculations
+
+To calculate the resonance frequencies of each oscillator we call the function `calcResonances()`.
+```{r}
+calcResonances(odenet)
+```
+By default all springs in these networks have the length 0.
+Using the variable `distances` in `ODEnetwork` or `updateOscillators` we can define values for the spring length.
+Sometimes it is necessary to calculate these distances from an equilibrium state.
+So, what would be a possible set of spring length, if we provide an equilibrium state?
+We can calculate this via the function `estimateDistances()`.
+```{r}
+odenet = estimateDistances(odenet, equilibrium = c(1, 2, 3))
+odenet$distances
+odenet = estimateDistances(odenet, equilibrium = c(1, 2, 3), distGround = "individual")
+odenet$distances
+```
+The first calculation defines the spring length from the ground (or reference point) equally.
+It estimates the spring length between the oscillators with one value, because all spring constants are equal.
+The second calculation enables the estimation to calculate individual length to the reference point, which effects the distances between the oscillators, too.
+
+
+## Simulation with Events over Time
+
+All calculations in the examples above are done from a defined starting point over time.
+
+This is not possible any
