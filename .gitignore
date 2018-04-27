@@ -5,3 +5,5 @@ ODEnetwork*.tar.gz
 .Rhistory
 .RData
 inst/doc
+tests/testthat/Rplots.pdf
+
