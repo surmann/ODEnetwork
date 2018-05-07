@@ -19,6 +19,6 @@ Suggests:
     rmarkdown
 LazyData: yes
 ByteCompile: yes
-Version: 1.3
+Version: 1.3.0
 RoxygenNote: 6.0.1
 VignetteBuilder: knitr
