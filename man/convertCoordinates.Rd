@@ -29,4 +29,3 @@ if (interactive()) {
   coordsP <- convertCoordinates(coordsK, "polar")
 }
 }
-

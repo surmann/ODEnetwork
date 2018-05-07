@@ -40,4 +40,3 @@ velocity <- rep(0, 3)
 odenet <- setState(odenet, position, velocity)
 jac <- createJacobian(odenet)
 }
-

@@ -48,4 +48,3 @@ odenet <- ODEnetwork(masses, dampers, springs)
 estimateDistances(odenet, equilibrium)$distances
 estimateDistances(odenet, equilibrium, distGround="individual")$distances
 }
-

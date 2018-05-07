@@ -31,4 +31,3 @@ position <- rep(10, 3)
 velocity <- rep(0, 3)
 odenet <- setState(odenet, position, velocity)
 }
-

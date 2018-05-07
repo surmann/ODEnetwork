@@ -23,4 +23,3 @@ springs <- as.matrix(4)
 odenet <- ODEnetwork(masses, dampers, springs)
 getResult(odenet)
 }
-

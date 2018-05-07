@@ -12,7 +12,7 @@ The masses of the mechanical oscillators.}
 
 \item{dampers}{[\code{matrix}] quadratic of size n\cr
 The dampers of the mechanical oscillators on the main diagonal.
-Connecting dampers between oscillators on the upper triangel.
+Connecting dampers between oscillators on the upper triangle.
 (Will be copied automatically to create a symmetric matrix.)}
 
 \item{springs}{[\code{matrix}] quadratic of size n\cr
@@ -48,4 +48,3 @@ mK[1, 2] <- 10
 mK[2, 3] <- 10
 odenet <- ODEnetwork(mM, mD, mK)
 }
-

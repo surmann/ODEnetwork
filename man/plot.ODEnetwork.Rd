@@ -14,10 +14,10 @@ List of class \code{\link{ODEnetwork}}.}
 
 \item{state}{[\code{character}]\cr
 The type of result, that is plotted.
-If \code{state1}, only state1 (position or angle) is plotted over time.
-If \code{state2}, only state2 (velocity or magnitude) is plotted over time.
-If \code{state12}, state1 and state2 are plotted over time.
-If \code{state1vs2}, state2 is plotted over state1.
+If \code{1}, only state1 (position or angle) is plotted over time.
+If \code{2}, only state2 (velocity or magnitude) is plotted over time.
+If \code{12}, state1 and state2 are plotted over time.
+If \code{1vs2}, state2 is plotted over state1.
 Default is \code{state12}}
 
 \item{var}{[\code{numeric(n)}]\cr
@@ -42,4 +42,3 @@ plot(odenet, state = "1")
 plot(odenet, state = "2")
 plot(odenet, state = "1vs2")
 }
-

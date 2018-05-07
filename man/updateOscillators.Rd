@@ -64,4 +64,3 @@ odenet <- updateOscillators(odenet, c(k.1.2 = 201, k.3.5 = 202, r.1 = 2))
 # Warning: Following value is ignored, because it is on the lower triangle
 odenet <- updateOscillators(odenet, c(d.2.1 = 101))
 }
-

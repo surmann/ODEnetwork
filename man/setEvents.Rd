@@ -44,4 +44,3 @@ odenet <- setEvents(odenet, eventdat)
 odenet <- simuNetwork(odenet, seq(0, 10, by = 0.1))
 plot(odenet)
 }
-

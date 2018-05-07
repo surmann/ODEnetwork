@@ -32,4 +32,3 @@ if (interactive()) {
   createEvents(odenet)
 }
 }
-
