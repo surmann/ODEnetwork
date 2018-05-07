@@ -36,7 +36,7 @@ a list of class [\code{\link{ODEnetwork}}].
 \description{
 Creates a list of class \code{ODEnetwork}.
 The coordinate type can be set to cartesian (position and
-velocitiy) or to polar coordinates (angle and magnitude).
+velocity) or to polar coordinates (angle and magnitude).
 }
 \examples{
 mM <- c(40, 10, 10)

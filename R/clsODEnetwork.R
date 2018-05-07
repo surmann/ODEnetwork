@@ -2,7 +2,7 @@
 #' 
 #' Creates a list of class \code{ODEnetwork}.
 #' The coordinate type can be set to cartesian (position and
-#' velocitiy) or to polar coordinates (angle and magnitude).
+#' velocity) or to polar coordinates (angle and magnitude).
 #'
 #' @param masses [\code{vector}] of length n\cr
 #'   The masses of the mechanical oscillators.
@@ -41,7 +41,7 @@ ODEnetwork <- function(masses, dampers, springs, cartesian=TRUE, distances=NA) {
   assertLogical(cartesian, any.missing=FALSE, len=1L)
   
   # test on equal dimenstions
-  if (var(c(length(masses), dim(dampers), dim(springs))) != 0)
+  if (stats::var(c(length(masses), dim(dampers), dim(springs))) != 0)
     stop("All parameter have be of the same length or size!")
   # mass has to be positive
   if (sum(masses <= 0) > 0)

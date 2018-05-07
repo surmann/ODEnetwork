@@ -2,28 +2,28 @@
 #' 
 #' Updates the parameters of an existing ODE network.
 #' Possible parameters are the oscillator configuration and the starting values.
-#' The function overwrites the parameters in the vector and matricies.
+#' The function overwrites the parameters in the vector and matrices.
 #' It will not change the size of the network.
-#' It is possible to set a new vector and new matricies, or single parameters in a names vector.
+#' It is possible to set a new vector and new matrices, or single parameters in a names vector.
 #' 
 #' @param odenet [\code{ODEnetwork}]\cr
 #'    List of class \code{\link{ODEnetwork}}.
 #' @param ParamVec [\code{vector}] of length n\cr
 #'   Named vector to overwrite corresponding parameters.
 #'   Masses start with "m." followed by a number (e.g.: "m.12").
-#'   Dampers start with "d." followed by one or two numbers seperated by a dot (e.g.: "d.2", "d.5.6").
+#'   Dampers start with "d." followed by one or two numbers separated by a dot (e.g.: "d.2", "d.5.6").
 #'   Springs start with "k.", like dampers (e.g.: "k.4", "k.3.9")
 #'   Distances start with "r.", like dampers (e.g.: "r.7", "r.1.9")
 #'   The triangle elements of the dampers, springs, and distances are characterised by increasing numbers.
 #'   A name "d.3.5" is correct, in contrast to "d.5.3" which is ignored.
-#'   This is done to speed up, because the matricies are symmetric.
-#'   State1 and state2 start with "st1." or "st2." respectivley, followed by a number (e.g.: "st1.15", "st2.8").
+#'   This is done to speed up, because the matrices are symmetric.
+#'   State1 and state2 start with "st1." or "st2." respectively, followed by a number (e.g.: "st1.15", "st2.8").
 #'   If the vector is set, the following parameters are ignored.
 #' @param masses [\code{vector}] of length n\cr
 #'   The masses of the mechanical oscillators.
 #' @param dampers [\code{matrix}] quadratic of size n\cr
 #'   The dampers of the mechanical oscillators on the main diagonal.
-#'   Connecting dampers between oscillators on the upper triangel.
+#'   Connecting dampers between oscillators on the upper triangle.
 #'   (Will be copied automatically to create a symmetric matrix.)
 #' @param springs [\code{matrix}] quadratic of size n\cr
 #'   The springs are defined in the network like matrix of dampers.
@@ -61,7 +61,7 @@ updateOscillators.ODEnetwork <- function(odenet, ParamVec=NULL
     # checking arguments
     assertNumeric(ParamVec)
     assertVector(ParamVec, strict = TRUE, any.missing = FALSE, min.len = 1L)
-    # delete matricies
+    # delete matrices
     masses <- NULL
     dampers <- NULL
     springs <- NULL

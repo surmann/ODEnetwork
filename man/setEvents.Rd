@@ -17,8 +17,8 @@ See \code{\link{events}} for detailed definition of \code{events}.}
 \item{type}{[\code{character}]\cr
 The type of the events to use.
 Possible values are \code{dirac}, \code{constant} or \code{linear}.\cr
-Type \code{dirac} sets the current state at a given timepoint to a new value.
-\code{Constant} sets the state to the given value und the state does not change until
+Type \code{dirac} sets the current state at a given time point to a new value.
+\code{Constant} sets the state to the given value and the state does not change until
 setting new value or the end of \code{events}.
 \code{Linear} interpolates linear between \code{events} and sets the state variables
 to this value.\cr
@@ -28,7 +28,7 @@ Default is \code{dirac}.}
 an extended list of class [\code{\link{ODEnetwork}}].
 }
 \description{
-Sets diffent types of events for the given \code{\link{ODEnetwork}}.
+Sets different types of events for the given \code{\link{ODEnetwork}}.
 }
 \examples{
 masses <- 1

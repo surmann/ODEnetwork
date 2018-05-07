@@ -2,7 +2,7 @@
 #' 
 #' @description
 #' Calculates the resonance frequencies of a given \code{\link{ODEnetwork}}.
-#' The resonance frequencies are calculated without respect to the dampers and neighourhood structure.
+#' The resonance frequencies are calculated without respect to the dampers and neighbourhood structure.
 #'
 #' @param odenet Object of class \code{\link{ODEnetwork}}.
 #' @return a data frame with a vector of resonance frequencies.

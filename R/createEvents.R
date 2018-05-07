@@ -30,6 +30,9 @@ createEvents.ODEnetwork <- function(odenet) {
   if (is.null(odenet$events))
     return(odenet)
   
+  # https://stackoverflow.com/questions/9439256/how-can-i-handle-r-cmd-check-no-visible-binding-for-global-variable-notes-when
+  var <- NULL
+  
   # read events data
   dfEvents <- odenet$events$data
   # throw warning
@@ -64,7 +67,7 @@ createEvents.ODEnetwork <- function(odenet) {
   if (odenet$events$type == "linear") {
     if (odenet$coordtype == "polar") {
       # pairwise polar coordinates are necessary, delete other variable columns
-      dfEventsR <- reshape(dfEvents, v.names = "value", idvar = "time", timevar = "var", direction = "wide")
+      dfEventsR <- stats::reshape(dfEvents, v.names = "value", idvar = "time", timevar = "var", direction = "wide")
       # pairwise check
       for (i in 1:length(odenet$masses)) {
         strSubs <- paste(c("value.m", "value.a"), i, sep = ".")
@@ -85,7 +88,7 @@ createEvents.ODEnetwork <- function(odenet) {
         dfEventsR[!blnNA, strSubs] <- convertCoordinates(as.matrix(dfEventsR[!blnNA, strSubs]))
       }
       # reshape and order to origin format
-      dfEvents <- reshape(dfEventsR, direction = "long")
+      dfEvents <- stats::reshape(dfEventsR, direction = "long")
       dfEvents <- dfEvents[, c("var", "time", "value", "method")]
       # replace "m" with "x" and "a" with "v"
       levels(dfEvents$var) <- gsub("m", "x", levels(dfEvents$var))
@@ -102,7 +105,7 @@ createEvents.ODEnetwork <- function(odenet) {
       if (table(dfEvents$var)[strVar] == 1)
         next
       # create function
-      odenet$events$linear[[strVar]] <- approxfun(subset(dfEvents, var == strVar)[, c("time", "value")])
+      odenet$events$linear[[strVar]] <- stats::approxfun(subset(dfEvents, var == strVar)[, c("time", "value")])
       # add link to switch statement
       strFun <- paste(strFun, ", ", strVar, " = odenet$events$linear$", strVar, "(cTime)", sep = "")
     }

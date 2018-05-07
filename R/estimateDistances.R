@@ -74,7 +74,7 @@ estimateDistances.ODEnetwork <- function(odenet, equilibrium, distGround="combin
   if (length(distGround) == 1) {
     if (distGround == "combined") {
       # one parameter for all distances to the ground
-      cParams <- c(r.glob = median(equilibrium))
+      cParams <- c(r.glob = stats::median(equilibrium))
     } else if (distGround == "individual") {
       # one parameter for each distance
       cParams <- c(equilibrium)
@@ -83,7 +83,7 @@ estimateDistances.ODEnetwork <- function(odenet, equilibrium, distGround="combin
   } else {
     # character vector indicates the groups for the parameter estimation
     for (grp in unique(distGround)) {
-      cParams <- c(cParams, median(equilibrium[distGround == grp]))
+      cParams <- c(cParams, stats::median(equilibrium[distGround == grp]))
       names(cParams)[length(cParams)] <- paste("r.glob", paste(which(distGround == grp), collapse = "."), sep = ".")
     }
   }
@@ -204,11 +204,9 @@ estimateDistances.ODEnetwork <- function(odenet, equilibrium, distGround="combin
 #   print(paste("Params:", length(cParams)))
 #   print(paste("Resid:", length(distCost(cParams, pTarget))))
   
-  firstFit <- optim(cParams, distCost, pTarget=pTarget, method="BFGS"
-                    , control=optim.control)
+  firstFit <- stats::optim(cParams, distCost, pTarget=pTarget, method="BFGS", control=optim.control)
   ## Check, ob neuer Lauf nennenswert besseres Ergebnis bringt
-  checkFit <- optim(firstFit$par, distCost, pTarget=pTarget, method="BFGS"
-                    , control=optim.control)
+  checkFit <- stats::optim(firstFit$par, distCost, pTarget=pTarget, method="BFGS", control=optim.control)
   if (checkFit$value/firstFit$value < 0.999)
     warning("Optimization by estimateDistances() seems to be unsuccessful!")
   

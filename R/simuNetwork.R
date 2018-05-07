@@ -166,7 +166,7 @@ simuNetwork.ODEnetwork <- function(odenet, times, origin.min.time = FALSE, ...) 
             stateF <- paste(strVar, i, "Force", sep = "")
             # replace non-forcing with forcing, where forcings are not NA
             mResOde[!is.na(mResOde[, stateF]), state] <- mResOde[!is.na(mResOde[, stateF]), stateF]
-            mResOde <- mResOde[, colnames(mResOde) %nin% stateF]
+            mResOde <- mResOde[, !(colnames(mResOde) %in% stateF)]
           }
         }
       }
