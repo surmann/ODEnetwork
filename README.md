@@ -1,8 +1,9 @@
-# ODEnetwork
+coverall# ODEnetwork
 
-[![Build status](https://ci.appveyor.com/api/projects/status/nqkrw6ayyresytjw/branch/master?svg=true)](https://ci.appveyor.com/project/DirkSurmann/odenetwork/branch/master)
-[![Build Status](https://travis-ci.org/surmann/ODEnetwork.svg)](https://travis-ci.org/surmann/ODEnetwork)
-[![Coverage Status](https://coveralls.io/repos/surmann/ODEnetwork/badge.svg?branch=master)](https://coveralls.io/r/surmann/ODEnetwork?branch=master)
+[![CRAN status](https://www.r-pkg.org/badges/version/ODEnetwork)](https://cran.r-project.org/package=ODEnetwork)
+[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/nqkrw6ayyresytjw/branch/master?svg=true)](https://ci.appveyor.com/project/DirkSurmann/odenetwork/branch/master)
+[![Travis build Status](https://travis-ci.org/surmann/ODEnetwork.svg)](https://travis-ci.org/surmann/ODEnetwork)
+[![Coverage Status](https://coveralls.io/repos/github/surmann/ODEnetwork/badge.svg?branch=master)](https://coveralls.io/github/surmann/ODEnetwork?branch=master)
 
 The **ODEnetwork** package provides a framework to construct networks of second order differential equations in an efficient way.
 A solution of each network is calculated analytically.

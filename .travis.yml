@@ -1,15 +1,5 @@
-# travis config
+# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
-language: r
+language: R
+sudo: false
 cache: packages
-
-r_github_packages:
-  - jimhester/covr
-
-after_success:
-  - Rscript -e 'library(covr);coveralls()'
-
-notifications:
-  email:
-    on_success: change
-    on_failure: change
