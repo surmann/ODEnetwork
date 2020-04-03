@@ -68,6 +68,7 @@ In this example we chose a linear connection between the three time points.
 eventdata <- data.frame(var = c("x.1", "x.1", "x.1")
                         , time = c(10, 13, 15)
                         , value = c(0, 1, 1)
+                        , stringsAsFactors = TRUE
 )
 odenet <- setEvents(odenet, eventdata, type = "linear")
 odenet <- simuNetwork(odenet, seq(0, 40, by = 0.01))

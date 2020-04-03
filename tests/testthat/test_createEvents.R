@@ -8,6 +8,7 @@ test_that("createEvents", {
   eventdata <- data.frame(  var = c("x.1")
                             , time = c(0.5)
                             , value = c(3)
+                            , stringsAsFactors = TRUE
   )
   odenet <- setEvents(odenet, eventdata)
   
@@ -20,6 +21,7 @@ test_that("createEvents", {
   eventdata <- data.frame(  var = c("x.1", "x.1", "v.1")
                             , time = c(1, 2, 5)
                             , value = c(2, 3, 4)
+                            , stringsAsFactors = TRUE
   )
   odenet <- setEvents(odenet, eventdata, type = "constant")
   odenet <- createEvents(odenet)
@@ -28,6 +30,7 @@ test_that("createEvents", {
   eventdata <- data.frame(  var = c("x.1", "x.1", "x.1")
                             , time = c(1, 2, 10)
                             , value = c(0, 3, 3)
+                            , stringsAsFactors = TRUE
   )
   odenet <- setEvents(odenet, eventdata, type = "linear")
   odenet <- createEvents(odenet)
@@ -39,6 +42,7 @@ test_that("createEvents", {
   eventdata <- data.frame(  var = c("x.1", "x.1", "v.1", "v.1")
                             , time = c(1, 2, 3, 4)
                             , value = c(0, 3, 4, 2)
+                            , stringsAsFactors = TRUE
   )
   odenet <- setEvents(odenet, eventdata, type = "linear")
   odenet <- createEvents(odenet)
@@ -52,6 +56,7 @@ test_that("createEvents", {
   eventdata <- data.frame(  var = c("m.1", "m.1", "a.1", "a.1")
                             , time = c(1, 2, 3, 4)
                             , value = c(0, 3, 4, 2)
+                            , stringsAsFactors = TRUE
   )
   odenet <- setEvents(odenet, eventdata, type = "linear")
   expect_error(createEvents(odenet))
@@ -59,6 +64,7 @@ test_that("createEvents", {
   eventdata <- data.frame(  var = c("m.1", "m.1", "a.1", "a.1")
                             , time = c(1, 2, 1, 2)
                             , value = c(0, 3, 4, 2)
+                            , stringsAsFactors = TRUE
   )
   odenet <- setEvents(odenet, eventdata, type = "linear")
   odenet <- createEvents(odenet)

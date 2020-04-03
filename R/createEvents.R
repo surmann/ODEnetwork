@@ -15,6 +15,7 @@
 #'   eventdat <- data.frame(  var = c("x.1", "x.1")
 #'                          , time = c(1, 3)
 #'                          , value = c(1, 3)
+#'                          , stringsAsFactors = TRUE
 #'                          )
 #'   odenet <- setState(odenet, 0, 0)
 #'   odenet <- setEvents(odenet, eventdat)

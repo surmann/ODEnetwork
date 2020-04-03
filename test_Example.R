@@ -27,6 +27,7 @@ plot(odenet, state = "1vs2")
 eventdata <- data.frame(  var = c("x.1")
                           , time = c(0)
                           , value = c(3)
+                          , stringsAsFactors = TRUE
 )
 odenet <- setEvents(odenet, eventdata, type = "dirac")
 odenet <- simuNetwork(odenet, seq(0, 10, by = 0.1))
@@ -35,6 +36,7 @@ plot(odenet)
 ceventdata <- data.frame(  var = c("x.1", "x.1", "v.1")
                          , time = c(1, 2, 5)
                          , value = c(2, 3, 4)
+                         , stringsAsFactors = TRUE
 )
 odenet <- setEvents(odenet, eventdata, type = "constant")
 odenet <- simuNetwork(odenet, seq(0, 10, by = 0.1))
@@ -44,10 +46,12 @@ odenet <- setState(odenet, 0, 0)
 eventdata <- data.frame(  var = c("x.1", "x.1", "v.1", "v.1")
                           , time = c(1, 2, 3, 4)
                           , value = c(0, 3, 4, 2)
+                          , stringsAsFactors = TRUE
 )
 eventdata <- data.frame(  var = c("x.1", "x.1", "x.1")
                           , time = c(1, 4, 10)
                           , value = c(0, 3, 3)
+                          , stringsAsFactors = TRUE
 )
 odenet <- setEvents(odenet, eventdata, type = "linear")
 odenet <- simuNetwork(odenet, seq(0, 11, by = 0.1))
@@ -63,11 +67,13 @@ odenet <- ODEnetwork(masses, dampers, springs, FALSE)
 eventdata <- data.frame(  var = "m.1"
                           , time = seq(0, 2, length.out = 100)
                           , value = seq(2, 2, length.out = 100)
+                          , stringsAsFactors = TRUE
 )
 eventdata <- rbind(eventdata, 
                    data.frame(  var = "a.1"
                           , time = seq(0, 2, length.out = 100)
                           , value = seq(0, -9/5*pi, length.out = 100)
+                          , stringsAsFactors = TRUE
                    )
 )
 odenet <- setEvents(odenet, eventdata, type = "linear")
@@ -154,11 +160,13 @@ springs[1, 2] <- 6
 eventdata <- data.frame(  var = "m.1"
                           , time = seq(0, 5, length.out = 100)
                           , value = seq(2, 2, length.out = 100)
+                          , stringsAsFactors = TRUE
 )
 eventdata <- rbind(eventdata, 
                    data.frame(  var = "a.1"
                                 , time = seq(0, 5, length.out = 100)
                                 , value = seq(0, -9/5*pi, length.out = 100)
+                                , stringsAsFactors = TRUE
                    )
 )
 odenet <- ODEnetwork(masses, dampers, springs, FALSE)

@@ -4,8 +4,16 @@
 \alias{updateOscillators}
 \title{Update oscillator parameter of an existing ODE network.}
 \usage{
-updateOscillators(odenet, ParamVec = NULL, masses = NULL, dampers = NULL,
-  springs = NULL, distances = NULL, state1 = NULL, state2 = NULL)
+updateOscillators(
+  odenet,
+  ParamVec = NULL,
+  masses = NULL,
+  dampers = NULL,
+  springs = NULL,
+  distances = NULL,
+  state1 = NULL,
+  state2 = NULL
+)
 }
 \arguments{
 \item{odenet}{[\code{ODEnetwork}]\cr

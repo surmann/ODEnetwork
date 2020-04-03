@@ -11,6 +11,7 @@ test_that("setEvents", {
   eventdata <- data.frame(  var = c("x.1")
                           , time = c(0.5)
                           , value = c(3)
+                          , stringsAsFactors = TRUE
   )
   expect_error(setEvents(odenet, eventdata, "foo"))
   
@@ -24,6 +25,7 @@ test_that("setEvents", {
   eventdata <- data.frame(  var = c("x.1", "x.1", "v.1")
                             , time = c(1, 2, 5)
                             , value = c(2, 3, 4)
+                            , stringsAsFactors = TRUE
   )
   odenet <- setEvents(odenet, eventdata, type = "constant")
   expect_equal(odenet$events$type, "constant")
@@ -33,6 +35,7 @@ test_that("setEvents", {
   eventdata <- data.frame(  var = c("x.1", "x.1", "x.1")
                             , time = c(1, 2, 10)
                             , value = c(0, 3, 3)
+                            , stringsAsFactors = TRUE
   )
   odenet <- setEvents(odenet, eventdata, type = "linear")
   expect_equal(odenet$events$type, "linear")
@@ -43,6 +46,7 @@ test_that("setEvents", {
   eventdata <- data.frame(  var = c("x.1", "x.1", "x.2")
                             , time = c(1, 2, 10)
                             , value = c(0, 3, 3)
+                            , stringsAsFactors = TRUE
   )
   expect_error(setEvents(odenet, eventdata))
 })

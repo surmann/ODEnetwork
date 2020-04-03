@@ -4,8 +4,12 @@
 \alias{estimateDistances}
 \title{Estimate distances between oscillators}
 \usage{
-estimateDistances(odenet, equilibrium, distGround = c("combined",
-  "individual", "fixed", c("A", "B", "123", "A")), optim.control = list())
+estimateDistances(
+  odenet,
+  equilibrium,
+  distGround = c("combined", "individual", "fixed", c("A", "B", "123", "A")),
+  optim.control = list()
+)
 }
 \arguments{
 \item{odenet}{[\code{ODEnetwork}]\cr
